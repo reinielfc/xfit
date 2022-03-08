@@ -13,34 +13,35 @@
 	
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"telemetry.telemetryLevel": "off",
-		"workbench.colorTheme": "Atom One Dark",
-		"editor.bracketPairColorization.enabled": true
+		"telemetry.telemetryLevel": "off",				// disable telemetry
+		"workbench.colorTheme": "Atom One Dark",		// enable dark theme
+		"editor.bracketPairColorization.enabled": true	// enable bracket pair {} colorization
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		// editor
-		"akamud.vscode-theme-onedark",
-		"esbenp.prettier-vscode",
-		"yzhang.markdown-all-in-one",
-		"redhat.vscode-yaml",
-		"redhat.vscode-xml",
+		"akamud.vscode-theme-onedark",				// dark theme
+		"esbenp.prettier-vscode",					// code formatter
+		"yzhang.markdown-all-in-one",				// markdown language support
+		"redhat.vscode-yaml",						// yaml language support
+		"redhat.vscode-xml",						// xml language support
 		
 		// project
-		"eamodio.gitlens",
-		"ms-azuretools.vscode-docker", 
-		"redhat.fabric8-analytics",
+		"eamodio.gitlens",							// enhance git in vscode
+		"ms-azuretools.vscode-docker", 				// manage docker containers
+		"redhat.fabric8-analytics",					// find vulnerabilities and outdated plugins in maven
+		"ms-vsliveshare.vsliveshare",				// live collaboration tool
 
 		// back end
-		"vscjava.vscode-java-pack",
+		"vscjava.vscode-java-pack",					// extension pack for java development
 		
 		// front end
-		"formulahendry.auto-close-tag",
-		"formulahendry.auto-rename-tag",
-		"JakeWilson.vscode-cdnjs",
-		"AnbuselvanRocky.bootstrap5-vscode",
-		"ritwickdey.LiveServer"
+		"formulahendry.auto-close-tag",				// auto-close tags
+		"formulahendry.auto-rename-tag",			// auto-rename tags
+		"JakeWilson.vscode-cdnjs",					// find CDNs for js and css libraries
+		"AnbuselvanRocky.bootstrap5-vscode",		// snippets for bootstrap 5
+		"ritwickdey.LiveServer",					// live server to debug html
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
