@@ -258,29 +258,6 @@ if [ -z "$(git config --get core.editor)" ] && [ -z "${GIT_EDITOR}" ]; then
     fi
 fi
 
-# git aliases
-
-alias \
-    {init,ginit}='git init' \
-    {clone,gclone}='git clone' \
-    {fetch,gfetch}='git fetch' \
-    {merge,gmerge}='git merge' \
-    {branch,gbranch}='git branch' \
-    {check,checkout,gcheck,gcheckout}='git checkout' \
-    {stash.gstash}='git stash' \
-    {status,gstatus}='git status' \
-    {switch,gswitch}='git switch' \
-    {tag,gtag}='git tag' \
-    {add,gadd}='git add' \
-    {clean,gclean}='git clean' \ 
-    {commitm,gcommitm}='git commit -m' \
-    {tag,gtag}='git tag' \
-    {pull,gpull}='git pull' \
-    {push,gpush}='git push' \
-    glog='git log' \
-    gdiff='git diff' \
-    greset='git reset'
-    
 EOF
 )"
 
