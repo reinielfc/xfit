@@ -1,0 +1,50 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "lifecycle",
+            "type": "shell",
+            "command": "mvn ${input:lifecycleTask} -f ${workspaceFolder}/pom.xml",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "build-and-deploy",
+            "type": "shell",
+            "command": "mvn clean validate compile package verify tomcat7:redeploy -f ${workspaceFolder}/pom.xml",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "group": "build"
+        }
+    ],
+    "inputs": [
+        {
+            "type": "pickString",
+            "id": "lifecycleTask",
+            "description": "What tasks do you want to run?",
+            "options": [
+                "clean validate compile package verify tomcat7:redeploy",
+                "clean validate compile",
+                "package verify tomcat7:redeploy",
+                "verify tomcat7:redeploy",
+                "tomcat7:deploy",
+                "tomcat7:undeploy"
+            ],
+            "default": "clean validate compile package verify tomcat7:redeploy"
+        }
+    ]
+}

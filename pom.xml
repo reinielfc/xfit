@@ -72,6 +72,7 @@
           <artifactId>tomcat7-maven-plugin</artifactId>
           <version>2.2</version>
           <configuration>
+            <!-- devcontainer: web: Tomcat server address and credentials -->
             <url>http://web:8080/manager/text</url>
             <username>manager</username>
             <password>s3cret</password>
