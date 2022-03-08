@@ -12,15 +12,39 @@
 	},
 	
 	// Set *default* container specific settings.json values on container create.
-	"settings": {},
+	"settings": {
+		"telemetry.telemetryLevel": "off",
+		"workbench.colorTheme": "Atom One Dark",
+		"editor.bracketPairColorization.enabled": true
+	},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-azuretools.vscode-docker"
+		// editor
+		"akamud.vscode-theme-onedark",
+		"esbenp.prettier-vscode",
+		"yzhang.markdown-all-in-one",
+		"redhat.vscode-yaml",
+		"redhat.vscode-xml",
+		
+		// project
+		"eamodio.gitlens",
+		"ms-azuretools.vscode-docker", 
+		"redhat.fabric8-analytics",
+
+		// back end
+		"vscjava.vscode-java-pack",
+		
+		// front end
+		"formulahendry.auto-close-tag",
+		"formulahendry.auto-rename-tag",
+		"JakeWilson.vscode-cdnjs",
+		"AnbuselvanRocky.bootstrap5-vscode",
+		"ritwickdey.LiveServer"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [5500],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "docker --version",
@@ -28,7 +52,6 @@
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "dev",
 	"features": {
-		"docker-in-docker": "latest",
 		"docker-from-docker": "latest",
 		"git": "latest",
 		"java": "17",
