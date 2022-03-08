@@ -42,6 +42,10 @@
 		"JakeWilson.vscode-cdnjs",					// find CDNs for js and css libraries
 		"AnbuselvanRocky.bootstrap5-vscode",		// snippets for bootstrap 5
 		"ritwickdey.LiveServer",					// live server to debug html
+
+		// debugging
+		"firefox-devtools.vscode-firefox-debug",	// firefox debugger
+		"ms-vscode.js-debug"					 	// chrome debugger
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
