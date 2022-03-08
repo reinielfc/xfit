@@ -53,7 +53,10 @@
 	"remoteUser": "vscode",
 	"features": {
 		"docker-from-docker": "latest",
-		"git": "latest",
+		"git": {
+			"version": "latest",
+			"ppa": true
+		},
 		"java": "17",
 		"maven": "3.8"
 	}
