@@ -1,0 +1,50 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Java",
+            "request": "attach",
+            // devcontainer: web: Tomcat container
+            "hostName": "web",
+            // decontainer: web: JPDA port
+            "port": "8787"
+        },
+        {
+            "type": "firefox",
+            "name": "Firefox",
+            "request": "launch",
+            "reAttach": true,
+            "url": "http://localhost:8888/xfit"
+        },
+        {
+            "type": "chrome",
+            "name": "Chrome",
+            "request": "launch",
+            "url": "http://localhost:8888/xfit"  
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch In Firefox",
+            "preLaunchTask": "build-and-deploy",
+            "configurations": [
+                "Java",
+                "Firefox",
+            ],
+            "stopAll": false
+        },
+        {
+            "name": "Launch In Chrome",
+            "preLaunchTask": "build-and-deploy",
+            "configurations": [
+                "Java",
+                "Chrome",
+            ],
+            "stopAll": false
+        }
+    ]
+}
