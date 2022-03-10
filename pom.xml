@@ -33,9 +33,15 @@
       <version>3.1.0-M1</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>8.0.1</version>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>4.0.1</version>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
