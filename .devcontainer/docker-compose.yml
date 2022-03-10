@@ -38,3 +38,19 @@ services:
     environment:
       - JPDA_OPTS="-agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8787,server=y,suspend=n"
     command: ["catalina.sh", "jpda", "run"]
+  
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=s3cret
+  
+  pma:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8686:80
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=s3cret

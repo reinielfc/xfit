@@ -26,5 +26,3 @@ RUN xmlstarlet ed -L \
     -i '//userTMP' -t attr -n 'roles' -v 'standard,manager-script' \
     -r '//userTMP' -v 'user' \
     /usr/local/tomcat/conf/tomcat-users.xml
-
-EXPOSE 8080

@@ -13,9 +13,10 @@
 	
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"telemetry.telemetryLevel": "off",				// disable telemetry
-		"workbench.colorTheme": "Atom One Dark",		// enable dark theme
-		"editor.bracketPairColorization.enabled": true	// enable bracket pair {} colorization
+		"telemetry.telemetryLevel": "off",							// disable telemetry
+		"workbench.colorTheme": "Atom One Dark",					// enable dark theme
+		"editor.bracketPairColorization.enabled": true,				// enable bracket pair {} colorization
+		"java.configuration.updateBuildConfiguration": "automatic" 	// update Java classpath automatically
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
