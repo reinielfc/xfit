@@ -35,6 +35,12 @@
               </a>
             </li>
           </ul>
+          <button class="btn btn-outline-secondary" data-toggle="modal" data-target="#signup-modal" type="button">
+            <i class="fas fa-user-circle"></i>
+            Sign Up
+          </button>
         </div>
       </div>
     </nav>
+
+  <c:import url="/user/form-signup.html" />
