@@ -1,8 +1,6 @@
 package coach.xfitness.controller;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import coach.xfitness.business.User;
 import coach.xfitness.data.UserDB;
-import coach.xfitness.util.PasswordUtil;
 
 @WebServlet(name = "UserController", urlPatterns = {"/u/*"})
 public class UserController extends HttpServlet {
@@ -50,18 +47,7 @@ public class UserController extends HttpServlet {
             request.setAttribute("message", message);
             url = "/"; // TODO: add URL
         } else {
-            try {
-                String hashedPassword = PasswordUtil.generate(password);
-                user.setPassword(hashedPassword);
-                UserDB.insert(user);
-            } catch (NoSuchAlgorithmException e) {
-                System.out.println(e); // TODO: Add error message
-            } catch (InvalidKeySpecException e) {
-                System.out.println(e); // TODO: Add error message
-            } finally {
-                user.setPassword("");
-            }
-
+            UserDB.insert(user);
             message = "";
             request.setAttribute("message", message);
             url = "/"; // TODO: add URL
