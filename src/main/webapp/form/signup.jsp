@@ -1,8 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-    <!-- SignUp Modal -->
-    <!--TODO: Add image-->
-    <div class="modal fade" id="signup-modal" tabindex="-1" role="dialog">
+    <!-- signup modal -->
+    <!-- TODO: Add image-->
       <div class="modal-dialog modal-fullscreen-md-down" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -13,7 +12,7 @@
           </div>
           <form action="u/signup" method="post">
             <div class="modal-body">
-              <!--name-->
+                <!-- name -->
               <div class="form-group">
                 <label for="name">Name</label>
                 <div class="input-group">
@@ -28,7 +27,7 @@
                 </div>
               </div>
 
-              <!--email-->
+                <!-- email -->
               <div class="form-group">
                 <label for="email">Email Address</label>
                 <div class="input-group">
@@ -43,7 +42,7 @@
                 </div>
               </div>
 
-              <!--password-->
+                <!-- password -->
               <div class="form-group">
                 <label for="password">Password</label>
                 <div class="input-group">
@@ -59,7 +58,7 @@
                 </div>
               </div>
 
-              <!--confirm password-->
+                <!-- confirm password -->
               <div class="form-group">
                 <label for="confirm-password">Confirm Password</label>
                 <div class="input-group">
@@ -93,7 +92,7 @@
                 confirmPassword.onkeyup = validatePassword;
               </script>
 
-              <!--password strength-->
+                <!-- password strength -->
               <div class="progress my-2">
                 <div class="progress-bar" id="password-strength-meter" role="progressbar" style="width: 0%"></div>
               </div>
