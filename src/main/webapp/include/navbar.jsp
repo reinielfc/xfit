@@ -43,4 +43,4 @@
       </div>
     </nav>
 
-  <c:import url="/user/form-signup.html" />
+  <c:import url="/form/signup.jsp" />
