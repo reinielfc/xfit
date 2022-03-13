@@ -45,4 +45,8 @@ public class UserDB {
         return user != null;
     }
 
+    public static boolean updateUser( User user) {
+        return true;
+    }
+
 }
