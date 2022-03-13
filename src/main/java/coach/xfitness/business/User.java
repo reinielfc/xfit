@@ -15,12 +15,14 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userID;
-    private String name;
+    private String firstname;
+    private String lastname;
     private String email;
     private String password;
 
     public User() {
-        this.name = "";
+        this.firstname = "";
+        this.lastname = "";
         this.email = "";
         this.password = "";
     }
@@ -33,12 +35,20 @@ public class User implements Serializable {
         this.userID = userID;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String name){
+        this.firstname = name;
+    }
+
+    public String getLastName(){
+        return lastname;
+    }
+
+    public void setLastName(String name) {
+        this.lastname = name;
     }
 
     public String getEmail() {
