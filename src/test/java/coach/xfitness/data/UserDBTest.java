@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,16 +13,25 @@ import coach.xfitness.business.User;
 
 public class UserDBTest {
    
+    private final ByteArrayOutputStream out= new ByteArrayOutputStream();
 	private final ByteArrayOutputStream err = new ByteArrayOutputStream();
 
 
     @Before
 	// runs before each test starts - redirects streams to local variables
 	public void setUpStreams() {
+        System.setOut(new PrintStream(out));
 	    System.setErr(new PrintStream(err));
 	}
 
-   
+    @After
+	// runs after each test ends - cleans up streams to defaults
+	public void cleanUpStreams() {
+	    System.setOut(null);
+	    System.setErr(null);
+	    System.setIn(System.in); //reset System.in to its original
+	}
+
     @Test
     //test that user is inputted into the data and exists in exists and deletes afterward
     public void testInsert() {
@@ -48,6 +58,7 @@ public class UserDBTest {
     @Test
     //test that duplicate insertion of emails will result in an error
     public void testInsertduplicateUserEmails(){
+        String message = "Failed to add User.";
         User test1 = new User();
         test1.setUserID((long) 10);
         test1.setEmail("JSmith001@gmail.com");
@@ -58,12 +69,12 @@ public class UserDBTest {
         test2.setEmail("JSmith001@gmail.com");
         test2.setName("JavierHerdocia");
         test2.setPassword("pass");
-
+        //insert
         UserDB.insert(test1);
         UserDB.insert(test2);
+        String output = out.toString();
+        assertTrue(output.contains(message));
         UserDB.deleteUser(test1.getEmail());
-        UserDB.deleteUser(test2.getEmail());
-        fail("Cannot add duplicate ID's");
     }
 
     @Test
