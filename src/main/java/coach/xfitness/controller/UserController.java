@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import coach.xfitness.business.User;
 import coach.xfitness.data.UserDB;
+//import coach.xfitness.util.PasswordUtil;
 
 @WebServlet(name = "UserController", urlPatterns = {"/u/*"})
 public class UserController extends HttpServlet {
@@ -57,7 +58,26 @@ public class UserController extends HttpServlet {
     }
 
     private String logIn(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+        String url, message;
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        if(UserDB.hasUser(email)){
+            User search = UserDB.selectUser(email);
+            
+            if(true/*PasswordUtil.validate(password, search.getPassword())*/){
+                url = "/"; //Direct to Todays workout page
+            }
+            else{
+                message = "Invalid Password.";
+                url = "/"; //Refresh to current page
+            }
+        }
+        else{
+            message = "Invalid Email and/or Password.";
+            url = "/"; //Refresh to current page
+        }
+        return url;
     }
     
 }
