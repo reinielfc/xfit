@@ -40,11 +40,13 @@ services:
     command: ["catalina.sh", "jpda", "run"]
   
   db:
-    image: mariadb
+    build:
+      context: .
+      dockerfile: ./db/Dockerfile
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=s3cret
-  
+
   pma:
     image: phpmyadmin
     restart: always
