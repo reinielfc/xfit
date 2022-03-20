@@ -7,6 +7,13 @@ EXERCISE_JSON_FILES=`find "$EXERCISES_DIR" -name '*.json' -printf '%p\n' | sort`
 # exercise
 exerciseInsertList=""
 
+# muscle
+MUSCLES_JSON=`jq '.primary, .secondary' $EXERCISE_JSON_FILES | jq -s 'add | unique'`
+muscleInsertList=`echo $MUSCLES_JSON | jq -r $'.[] | "\t( \'\(.)\' ),"'`
+
+# exercise muscle
+exerciseMuscleInsertList=""
+
 # equipment
 EQUIPMENT_JSON=`jq .equipment $EXERCISE_JSON_FILES | jq -s 'add | unique'`
 equipmentInsertList=`echo $EQUIPMENT_JSON | jq -r $'.[] | "\t( \'\(.)\' ),"'`
@@ -17,7 +24,6 @@ exerciseEquipmentInsertList=""
 # image
 imageInsertList=""
 exerciseImageInsertList=""
-
 imageID=0
 
 # junction table inserts
@@ -42,6 +48,8 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 		exercisePrimer=\(.primer | @json)
 		exerciseType=\(.type | @json)
 		exerciseEquipment=\(.equipment | join("\n"))
+		exercisePrimaryMuscles=\(.primary | join("\n"))
+		exerciseSecondaryMuscles=\(.secondary | join("\n"))
 		exerciseSteps=\(.steps | join("\\\\n") | @json)
 		exerciseTips=\(.tips | join("\\\\n") | @json)
 		exerciseReferences=\(.references | join("\\\\n") | @json)
@@ -61,6 +69,11 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 	END
 	`
 	exerciseInsertList="$exerciseInsertList""$exerciseInsert"
+
+	# muscle
+	exercisePrimaryMuscleInsert="$(junctionTableInsert "$exercisePrimaryMuscles" "$MUSCLES_JSON" "\t( $exerciseID, %u, 0 ),\\\n")"
+	exerciseSecondaryMuscleInsert="$(junctionTableInsert "$exerciseSecondaryMuscles" "$MUSCLES_JSON" "\t( $exerciseID, %u, 1 ),\\\n")"
+	exerciseMuscleInsertList="$exerciseMuscleInsertList""$exercisePrimaryMuscleInsert""$exerciseSecondaryMuscleInsert"
 
 	# equipment
 	exerciseEquipmentInsert="$(junctionTableInsert "$exerciseEquipment" "$EQUIPMENT_JSON" "\t( $exerciseID, %u ),\\\n" )"
@@ -83,6 +96,9 @@ done
 
 # remove last comma and/or newline
 exerciseInsertList=${exerciseInsertList::-3}
+
+muscleInsertList=${muscleInsertList::-1}
+exerciseMuscleInsertList=${exerciseMuscleInsertList::-3}
 
 equipmentInsertList=${equipmentInsertList::-1}
 exerciseEquipmentInsertList=${exerciseEquipmentInsertList::-3}
@@ -110,6 +126,28 @@ CREATE TABLE
 		links		TEXT,
 
 		PRIMARY KEY(ID)
+	);
+
+-- MUSCLE ------------------------------------------------------------ MUSCLE --
+
+CREATE TABLE IF NOT EXISTS
+	Muscle (
+		ID		INT			NOT NULL AUTO_INCREMENT,
+		name	VARCHAR(32)	NOT NULL,
+
+		PRIMARY KEY(ID)
+	);
+
+CREATE TABLE
+	ExerciseMuscle (
+		ID					INT	NOT NULL AUTO_INCREMENT,
+		exerciseID			INT	NOT NULL,
+		muscleID			INT	NOT NULL,
+		isSecondary			INT	NOT NULL DEFAULT 0,
+
+		PRIMARY KEY(ID),
+		FOREIGN KEY(exerciseID)	REFERENCES Exercise(ID),
+		FOREIGN KEY(muscleID)	REFERENCES Muscle(ID)
 	);
 
 -- EQUIPMENT ------------------------------------------------------ EQUIPMENT --
@@ -160,6 +198,18 @@ INSERT INTO
 	Exercise (ID, title, primer, type, steps, tips, links)
 VALUES
 $exerciseInsertList;
+
+-- INSERT ------------------------------------------------------------ MUSCLE --
+
+INSERT INTO
+	Muscle (name)
+VALUES
+$muscleInsertList;
+
+INSERT INTO
+	ExerciseMuscle (exerciseID, muscleID, isSecondary)
+VALUES
+$exerciseMuscleInsertList;
 
 -- INSERT --------------------------------------------------------- EQUIPMENT --
 
