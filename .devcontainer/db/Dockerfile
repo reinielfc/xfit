@@ -5,4 +5,6 @@ COPY ./db/my.cnf /etc/mysql/my.cnf
 COPY ./db/exercises /mysql/xfit/exercises
 
 COPY ./db/makeExercisesSQL.sh /tmp/xfit/
-RUN /tmp/xfit/makeExercisesSQL.sh /mysql/xfit/exercises > /docker-entrypoint-initdb.d/exercises.sql
+RUN apt update \
+    && apt install jq\
+    && /tmp/xfit/makeExercisesSQL.sh /mysql/xfit/exercises > /docker-entrypoint-initdb.d/exercises.sql

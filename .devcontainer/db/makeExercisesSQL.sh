@@ -1,31 +1,63 @@
 #!/usr/bin/env bash
 
+# data
 EXERCISES_DIR=${1:-./exercises}
+EXERCISE_JSON_FILES=`find "$EXERCISES_DIR" -name '*.json' -printf '%p\n' | sort`
 
+# exercise
+exerciseInsertList=""
+
+# image
 imageInsertList=""
 exerciseImageInsertList=""
 
 imageID=0
 
-for folder in $EXERCISES_DIR/by-id/*; do
-    exerciseID=`basename $folder | sed 's/^0*//'`
-    
-    for image in $folder/images/*; do
-        imageID=$((imageID+1))
+for exerciseJSON in $EXERCISE_JSON_FILES; do
 
-        # images
-        imageInsert="\t( LOAD_FILE('$image') ),\n"
-        imageInsertList="$imageInsertList $imageInsert"
-        
-        # exercise images
-        imageType=`basename $image | cut -d'.' -f1`
-        exerciseImageInsert="\t( $exerciseID, $imageID, '$imageType' ),\n"
-        exerciseImageInsertList="$exerciseImageInsertList $exerciseImageInsert"
-    done
+	# exercise
+	eval "`jq -r '@sh "
+		exerciseID=\(.id)
+		exerciseTitle=\(.title | @json)
+		exercisePrimer=\(.primer | @json)
+		exerciseType=\(.type | @json)
+		exerciseSteps=\(.steps | join("\\\\n") | @json)
+		exerciseTips=\(.tips | join("\\\\n") | @json)
+		exerciseReferences=\(.references | join("\\\\n") | @json)
+		"' $exerciseJSON`"
 
+	exerciseID=`echo $exerciseID | sed "s/^0*//"`
+	exerciseInsert=`cat <<-END
+		\t(
+		\t\t$exerciseID,
+		\t\t$exerciseTitle,
+		\t\t$exercisePrimer,
+		\t\t$exerciseType,
+		\t\t$exerciseSteps,
+		\t\t$exerciseTips,
+		\t\t$exerciseReferences
+		\t),\n
+	END
+	`
+	exerciseInsertList="$exerciseInsertList""$exerciseInsert"
+
+	# image
+	for image in `dirname $exerciseJSON`/images/*.png; do
+		imageID=$((imageID+1))
+
+		imageInsert="\t( LOAD_FILE('$image') ),\n"
+		imageInsertList="$imageInsertList""$imageInsert"
+
+		# exercise image
+		exerciseImageState=`basename $image | cut -d'.' -f1`
+		exerciseImageInsert="\t( $exerciseID, $imageID, '$exerciseImageState' ),\n"
+		exerciseImageInsertList="$exerciseImageInsertList""$exerciseImageInsert"
+	done
+	
 done
 
-# remove last comma and newline
+# remove last comma and/or newline
+exerciseInsertList=${exerciseInsertList::-3}
 imageInsertList=${imageInsertList::-3}
 exerciseImageInsertList=${exerciseImageInsertList::-3}
 
@@ -36,32 +68,58 @@ CREATE DATABASE xfit;
 
 USE xfit;
 
-CREATE TABLE
-    Image (
-        id      INT         NOT NULL AUTO_INCREMENT,
-        image   MEDIUMBLOB,
-
-        PRIMARY KEY(id)
-    );
+-- EXERCISE -------------------------------------------------------- EXERCISE --
 
 CREATE TABLE
-    ExerciseImage (
-        id          INT         NOT NULL AUTO_INCREMENT,
-        exerciseID  INT         NOT NULL,
-        imageID     INT         NOT NULL,
-        type        VARCHAR(32) NOT NULL,
-        
-        PRIMARY KEY(id),
-        FOREIGN KEY(imageID) REFERENCES Image(id)
-    );
+	Exercise (
+		ID			INT				NOT NULL AUTO_INCREMENT,
+		title		VARCHAR(256)	NOT NULL,
+		primer		VARCHAR(512),
+		type		VARCHAR(32),
+		steps		TEXT,
+		tips		TEXT,
+		links		TEXT,
+
+		PRIMARY KEY(ID)
+	);
+
+-- IMAGE -------------------------------------------------------------- IMAGE --
+
+CREATE TABLE
+	Image (
+		ID		INT			NOT NULL AUTO_INCREMENT,
+		image	MEDIUMBLOB,
+
+		PRIMARY KEY(ID)
+	);
+
+CREATE TABLE
+	ExerciseImage (
+		ID				INT			NOT NULL AUTO_INCREMENT,
+		exerciseID		INT			NOT NULL,
+		imageID			INT			NOT NULL,
+		exerciseState	VARCHAR(32)	NOT NULL,
+		
+		PRIMARY KEY(ID),
+		FOREIGN KEY(imageID) REFERENCES Image(ID)
+	);
+
+-- INSERT ---------------------------------------------------------- EXERCISE --
 
 INSERT INTO
-    Image (image)
+	Exercise (ID, title, primer, type, steps, tips, links)
+VALUES
+$exerciseInsertList;
+
+-- INSERT ------------------------------------------------------------- IMAGE --
+
+INSERT INTO
+	Image (image)
 VALUES
 $imageInsertList;
 
 INSERT INTO
-    ExerciseImage (exerciseID, imageID, type)
+	ExerciseImage (exerciseID, imageID, exerciseState)
 VALUES
 $exerciseImageInsertList;
 "
