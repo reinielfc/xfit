@@ -7,11 +7,31 @@ EXERCISE_JSON_FILES=`find "$EXERCISES_DIR" -name '*.json' -printf '%p\n' | sort`
 # exercise
 exerciseInsertList=""
 
+# equipment
+EQUIPMENT_JSON=`jq .equipment $EXERCISE_JSON_FILES | jq -s 'add | unique'`
+equipmentInsertList=`echo $EQUIPMENT_JSON | jq -r $'.[] | "\t( \'\(.)\' ),"'`
+
+# exercise equipment
+exerciseEquipmentInsertList=""
+
 # image
 imageInsertList=""
 exerciseImageInsertList=""
 
 imageID=0
+
+# junction table inserts
+junctionTableInsert() {
+	ARRAY_PROPERTY=$1
+	PROPERTY_TABLE_JSON=$2
+	INSERT_FORMAT=$3
+	insertList=""
+
+	while IFS= read -r item; do
+		propertyTableID=`echo $PROPERTY_TABLE_JSON | jq 'map(. == "'"$item"'") | index(true)'`
+		printf "$INSERT_FORMAT" $((propertyTableID+1))
+	done <<< "$ARRAY_PROPERTY"
+}
 
 for exerciseJSON in $EXERCISE_JSON_FILES; do
 
@@ -21,6 +41,7 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 		exerciseTitle=\(.title | @json)
 		exercisePrimer=\(.primer | @json)
 		exerciseType=\(.type | @json)
+		exerciseEquipment=\(.equipment | join("\n"))
 		exerciseSteps=\(.steps | join("\\\\n") | @json)
 		exerciseTips=\(.tips | join("\\\\n") | @json)
 		exerciseReferences=\(.references | join("\\\\n") | @json)
@@ -41,6 +62,10 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 	`
 	exerciseInsertList="$exerciseInsertList""$exerciseInsert"
 
+	# equipment
+	exerciseEquipmentInsert="$(junctionTableInsert "$exerciseEquipment" "$EQUIPMENT_JSON" "\t( $exerciseID, %u ),\\\n" )"
+	exerciseEquipmentInsertList="$exerciseEquipmentInsertList""$exerciseEquipmentInsert"
+
 	# image
 	for image in `dirname $exerciseJSON`/images/*.png; do
 		imageID=$((imageID+1))
@@ -58,6 +83,10 @@ done
 
 # remove last comma and/or newline
 exerciseInsertList=${exerciseInsertList::-3}
+
+equipmentInsertList=${equipmentInsertList::-1}
+exerciseEquipmentInsertList=${exerciseEquipmentInsertList::-3}
+
 imageInsertList=${imageInsertList::-3}
 exerciseImageInsertList=${exerciseImageInsertList::-3}
 
@@ -81,6 +110,27 @@ CREATE TABLE
 		links		TEXT,
 
 		PRIMARY KEY(ID)
+	);
+
+-- EQUIPMENT ------------------------------------------------------ EQUIPMENT --
+
+CREATE TABLE
+	Equipment (
+		ID		INT			NOT NULL AUTO_INCREMENT,
+		name	VARCHAR(32)	NOT NULL,
+
+		PRIMARY KEY(ID)
+	);
+
+CREATE TABLE
+	ExerciseEquipment (
+		ID			INT	NOT NULL AUTO_INCREMENT,
+		exerciseID	INT	NOT NULL,
+		equipmentID	INT	NOT NULL,
+
+		PRIMARY KEY(ID),
+		FOREIGN KEY(exerciseID)		REFERENCES Exercise(ID),
+		FOREIGN KEY(equipmentID)	REFERENCES Equipment(ID)
 	);
 
 -- IMAGE -------------------------------------------------------------- IMAGE --
@@ -110,6 +160,18 @@ INSERT INTO
 	Exercise (ID, title, primer, type, steps, tips, links)
 VALUES
 $exerciseInsertList;
+
+-- INSERT --------------------------------------------------------- EQUIPMENT --
+
+INSERT INTO
+	Equipment (name)
+VALUES
+$equipmentInsertList;
+
+INSERT INTO
+	ExerciseEquipment (exerciseID, equipmentID)
+VALUES
+$exerciseEquipmentInsertList;
 
 -- INSERT ------------------------------------------------------------- IMAGE --
 
