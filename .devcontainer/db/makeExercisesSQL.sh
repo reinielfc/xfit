@@ -102,6 +102,7 @@ exerciseEquipmentInsertList=${exerciseEquipmentInsertList::-3}
 imageInsertList=${imageInsertList::-3}
 exerciseImageInsertList=${exerciseImageInsertList::-3}
 
+# SQL
 echo -e "
 DROP DATABASE IF EXISTS xfit;
 
@@ -126,7 +127,7 @@ CREATE TABLE
 
 -- MUSCLE ------------------------------------------------------------ MUSCLE --
 
-CREATE TABLE IF NOT EXISTS
+CREATE TABLE
 	Muscle (
 		ID		INT			NOT NULL AUTO_INCREMENT,
 		name	VARCHAR(32)	NOT NULL,
@@ -185,6 +186,7 @@ CREATE TABLE
 		exerciseState	VARCHAR(32)	NOT NULL,
 		
 		PRIMARY KEY(ID),
+		FOREIGN KEY(exerciseID) REFERENCES Exercise(ID),
 		FOREIGN KEY(imageID) REFERENCES Image(ID)
 	);
 
