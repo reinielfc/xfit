@@ -17,4 +17,6 @@ RUN apt update \
     # the script needs jq to be installed
     && apt install -y jq \
     # run script
-    && /tmp/xfit/makeExercisesSQL.sh /mysql/xfit/exercises > /docker-entrypoint-initdb.d/exercises.sql
+    && /tmp/xfit/makeExercisesSQL.sh /mysql/xfit/exercises > /docker-entrypoint-initdb.d/exercises.sql \
+    # remove jq (no longer needed)
+    && apt remove -y jq
