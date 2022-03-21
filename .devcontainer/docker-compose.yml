@@ -40,9 +40,7 @@ services:
     command: ["catalina.sh", "jpda", "run"]
   
   db:
-    build:
-      context: .
-      dockerfile: ./db/Dockerfile
+    image: reinielfc/xfit:db
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=s3cret
