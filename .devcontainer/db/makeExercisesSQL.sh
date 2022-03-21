@@ -29,7 +29,7 @@ junctionTableInsert() {
 	INSERT_FORMAT=$3
 	insertList=""
 
-	while IFS= read -r item; do
+	[[ ! -z "$ARRAY_PROPERTY" ]] && while IFS= read -r item; do
 		propertyTableID=`echo $PROPERTY_TABLE_JSON | jq 'map(. == "'"$item"'") | index(true)'`
 		printf "$INSERT_FORMAT" $((propertyTableID+1))
 	done <<< "$ARRAY_PROPERTY"
