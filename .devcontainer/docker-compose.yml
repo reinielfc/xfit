@@ -4,7 +4,7 @@ services:
   dev:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./dev/Dockerfile
       args:
         UPGRADE_PACKAGES: "true"
 
@@ -40,11 +40,11 @@ services:
     command: ["catalina.sh", "jpda", "run"]
   
   db:
-    image: mariadb
+    image: reinielfc/xfit:db
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=s3cret
-  
+
   pma:
     image: phpmyadmin
     restart: always
