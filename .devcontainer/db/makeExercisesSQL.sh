@@ -10,15 +10,11 @@ exerciseInsertList=""
 # muscle
 MUSCLES_JSON=`jq '.primary, .secondary' $EXERCISE_JSON_FILES | jq -s 'add | unique'`
 muscleInsertList=`echo $MUSCLES_JSON | jq -r $'.[] | "\t( \'\(.)\' ),"'`
-
-# exercise muscle
 exerciseMuscleInsertList=""
 
 # equipment
 EQUIPMENT_JSON=`jq .equipment $EXERCISE_JSON_FILES | jq -s 'add | unique'`
 equipmentInsertList=`echo $EQUIPMENT_JSON | jq -r $'.[] | "\t( \'\(.)\' ),"'`
-
-# exercise equipment
 exerciseEquipmentInsertList=""
 
 # image
@@ -91,7 +87,7 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 		exerciseImageInsert="\t( $exerciseID, $imageID, '$exerciseImageState' ),\n"
 		exerciseImageInsertList="$exerciseImageInsertList""$exerciseImageInsert"
 	done
-	
+
 done
 
 # remove last comma and/or newline
