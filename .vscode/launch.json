@@ -30,7 +30,7 @@
     "compounds": [
         {
             "name": "Launch In Firefox",
-            "preLaunchTask": "build-and-deploy",
+            "preLaunchTask": "build",
             "configurations": [
                 "Java",
                 "Firefox",
@@ -39,7 +39,7 @@
         },
         {
             "name": "Launch In Chrome",
-            "preLaunchTask": "build-and-deploy",
+            "preLaunchTask": "build",
             "configurations": [
                 "Java",
                 "Chrome",
