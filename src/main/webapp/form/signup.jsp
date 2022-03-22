@@ -9,7 +9,7 @@
               <h5 class="modal-title">Sign Up</h5>
               <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
             </div>
-            <form action="<c:url value='/u/signup'/>" method="post">
+            <form action="<c:url value='/register'/>" method="post">
               <div class="modal-body">
                 <!-- name -->
                 <div class="form-group">
