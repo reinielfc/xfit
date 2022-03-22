@@ -46,29 +46,27 @@ public class UserController extends HttpServlet {
 
         request.setAttribute("user", user);
 
-        String url;
-        String message;
+        String url = "";
+        String message = "";
         if (UserDB.hasUser(email)) {
             message = "This email address is already in use.";
-            request.setAttribute("message", message);
-            url = "/"; // TODO: add URL
         } else {
             try {
                 String hashedPassword = PasswordUtil.generate(password);
                 user.setPassword(hashedPassword);
                 UserDB.insert(user);
-            } catch (NoSuchAlgorithmException e) {
-                System.out.println(e); // TODO: Add error message
-            } catch (InvalidKeySpecException e) {
-                System.out.println(e); // TODO: Add error message
+                message = "";
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                System.out.println(e);
+                // url = "?"; // TODO: add error page
             } finally {
                 user.setPassword("");
             }
 
-            message = "";
-            request.setAttribute("message", message);
-            url = "/"; // TODO: add URL
+            url = "/equipment";
         }
+
+        request.setAttribute("message", message);
 
         return url;
     }
