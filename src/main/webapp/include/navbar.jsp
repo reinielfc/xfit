@@ -1,6 +1,15 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-    <!-- Navbar -->
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+    <style>
+        body::before {
+        display: block;
+        content: "";
+        height: 72px;
+      }
+    </style>
+    
+    <!-- navbar -->
     <nav class="navbar navbar-expand-md bg-dark navbar-dark py-3 fixed-top">
       <div class="container">
         <a href="#" class="navbar-brand"><b>XFit</b></a>
@@ -8,14 +17,14 @@
         <button
           class="navbar-toggler"
           type="button"
-          data-toggle="collapse"
-          data-target="#navmenu"
+          data-bs-toggle="collapse"
+          data-bs-target="#navmenu"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navmenu">
-          <ul class="navbar-nav mr-auto">
+          <ul class="navbar-nav me-auto">
             <li class="nav-item">
               <a href="#" class="nav-link active">
                 <i class="fas fa-home"></i>
@@ -35,7 +44,7 @@
               </a>
             </li>
           </ul>
-          <button class="btn btn-outline-secondary" data-toggle="modal" data-target="#signup-modal" type="button">
+          <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#signup-modal" type="button">
             <i class="fas fa-user-circle"></i>
             Sign Up
           </button>
@@ -43,4 +52,5 @@
       </div>
     </nav>
 
-  <c:import url="/user/form-signup.html" />
+  <c:import url="/form/signup.jsp" />
+  
