@@ -21,6 +21,7 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         String url = "";
+
         if (requestURI.endsWith("/register")) {
             url = register(request, response);
         } else if (requestURI.endsWith("/signin")) {
@@ -28,7 +29,7 @@ public class UserController extends HttpServlet {
         } else if (requestURI.endsWith("/settings")) {
             url = configure(request, response);
         }
-        
+
         getServletContext()
                 .getRequestDispatcher(url)
                 .forward(request, response);
