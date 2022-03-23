@@ -34,10 +34,6 @@ public class UserController extends HttpServlet {
         } else if (requestURI.endsWith("/" /* TO BE DECIDED */)){
             url = autolog(request, response);
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> reinielfc-feature-signin
         getServletContext()
                 .getRequestDispatcher(url)
                 .forward(request, response);
@@ -100,13 +96,9 @@ public class UserController extends HttpServlet {
                 user.setPassword("");
             }
 
-<<<<<<< HEAD
             message = "";
             request.setAttribute("message", message);
             url = "/"; // EMAIL CONFIRMATION LINK
-=======
-            url = "/equipment";
->>>>>>> reinielfc-feature-signin
         }
 
         request.setAttribute("message", message);
@@ -122,7 +114,7 @@ public class UserController extends HttpServlet {
         if(UserDB.hasUser(email)){
             User search = UserDB.selectUser(email);
             
-            if(true/*PasswordUtil.validate(password, search.getPassword())*/){
+            if(PasswordUtil.validate(password, search.getPassword())*/){
                 url = "/"; //Direct to Todays workout page
                 Cookie log1 = new Cookie("loginCookie", search.getEmail());
                 log1.setMaxAge(60*60*24*3); //cookie max age is 2 days
