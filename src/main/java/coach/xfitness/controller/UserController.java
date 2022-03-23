@@ -23,6 +23,7 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         String url = "";
+
         if (requestURI.endsWith("/register")) {
             url = register(request, response);
         } else if (requestURI.endsWith("/signin")) {
@@ -33,6 +34,10 @@ public class UserController extends HttpServlet {
         } else if (requestURI.endsWith("/" /* TO BE DECIDED */)){
             url = autolog(request, response);
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> reinielfc-feature-signin
         getServletContext()
                 .getRequestDispatcher(url)
                 .forward(request, response);
@@ -78,29 +83,33 @@ public class UserController extends HttpServlet {
 
         request.setAttribute("user", user);
 
-        String url;
-        String message;
+        String url = "";
+        String message = "";
         if (UserDB.hasUser(email)) {
             message = "This email address is already in use.";
-            request.setAttribute("message", message);
-            url = "/"; // TODO: add URL
         } else {
             try {
                 String hashedPassword = PasswordUtil.generate(password);
                 user.setPassword(hashedPassword);
                 UserDB.insert(user);
-            } catch (NoSuchAlgorithmException e) {
-                System.out.println(e); // TODO: Add error message
-            } catch (InvalidKeySpecException e) {
-                System.out.println(e); // TODO: Add error message
+                message = "";
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                System.out.println(e);
+                // url = "?"; // TODO: add error page
             } finally {
                 user.setPassword("");
             }
 
+<<<<<<< HEAD
             message = "";
             request.setAttribute("message", message);
             url = "/"; // EMAIL CONFIRMATION LINK
+=======
+            url = "/equipment";
+>>>>>>> reinielfc-feature-signin
         }
+
+        request.setAttribute("message", message);
 
         return url;
     }

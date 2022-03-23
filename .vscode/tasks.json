@@ -16,9 +16,9 @@
             "problemMatcher": []
         },
         {
-            "label": "build-and-deploy",
+            "label": "build",
             "type": "shell",
-            "command": "mvn clean validate compile package tomcat7:redeploy -f ${workspaceFolder}/pom.xml",
+            "command": "mvn clean validate compile package -DskipTests -Dmaven.test.skip=true -f ${workspaceFolder}/pom.xml",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
