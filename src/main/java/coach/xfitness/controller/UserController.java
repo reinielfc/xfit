@@ -1,6 +1,8 @@
 package coach.xfitness.controller;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,20 +14,21 @@ import javax.servlet.http.HttpSession;
 
 import coach.xfitness.business.User;
 import coach.xfitness.data.UserDB;
-//import coach.xfitness.util.PasswordUtil;
+import coach.xfitness.util.PasswordUtil;
 
-@WebServlet(name = "UserController", urlPatterns = {"/u/*"})
+@WebServlet(name = "UserController", urlPatterns = {"/signin", "/register", "/settings"})
 public class UserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         String url = "";
-        if (requestURI.endsWith("/signup")) {
-            url = signUp(request, response);
-        } else if (requestURI.endsWith("/login")) {
-            url = logIn(request, response);
-        
+        if (requestURI.endsWith("/register")) {
+            url = register(request, response);
+        } else if (requestURI.endsWith("/signin")) {
+            url = signIn(request, response);
+        } else if (requestURI.endsWith("/settings")) {
+            url = configure(request, response);
         //AUTOLOGIN
         } else if (requestURI.endsWith("/" /* TO BE DECIDED */)){
             url = autolog(request, response);
@@ -63,7 +66,7 @@ public class UserController extends HttpServlet {
         return url;
     }
 
-    private String signUp(HttpServletRequest request, HttpServletResponse response) {
+    private String register(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -82,7 +85,18 @@ public class UserController extends HttpServlet {
             request.setAttribute("message", message);
             url = "/"; // TODO: add URL
         } else {
-            UserDB.insert(user);
+            try {
+                String hashedPassword = PasswordUtil.generate(password);
+                user.setPassword(hashedPassword);
+                UserDB.insert(user);
+            } catch (NoSuchAlgorithmException e) {
+                System.out.println(e); // TODO: Add error message
+            } catch (InvalidKeySpecException e) {
+                System.out.println(e); // TODO: Add error message
+            } finally {
+                user.setPassword("");
+            }
+
             message = "";
             request.setAttribute("message", message);
             url = "/"; // EMAIL CONFIRMATION LINK
@@ -91,11 +105,11 @@ public class UserController extends HttpServlet {
         return url;
     }
 
-    private String logIn(HttpServletRequest request, HttpServletResponse response) {
+    private String signIn(HttpServletRequest request, HttpServletResponse response) {
         String url, message;
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        
+
         if(UserDB.hasUser(email)){
             User search = UserDB.selectUser(email);
             
@@ -118,4 +132,7 @@ public class UserController extends HttpServlet {
         return url;
     }
     
+    private String configure(HttpServletRequest request, HttpServletResponse response) {
+        return null;
+    }
 }

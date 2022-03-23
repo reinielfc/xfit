@@ -1,0 +1,6 @@
+[
+    {
+        "key": "alt+d",
+        "command": "editor.action.duplicateSelection"
+    }
+]
