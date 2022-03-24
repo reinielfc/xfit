@@ -23,16 +23,23 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
         String url = "";
+
         if (requestURI.endsWith("/register")) {
             url = register(request, response);
         } else if (requestURI.endsWith("/signin")) {
-            url = signIn(request, response);
+            try {
+                url = signIn(request, response);
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         } else if (requestURI.endsWith("/settings")) {
             url = configure(request, response);
-        //AUTOLOGIN
-        } else if (requestURI.endsWith("/" /* TO BE DECIDED */)){
-            url = autolog(request, response);
         }
+        //AUTOLOGIN
+      /*  else if (requestURI.endsWith("/")){
+            url = autolog(request, response);
+        } */
         getServletContext()
                 .getRequestDispatcher(url)
                 .forward(request, response);
@@ -78,34 +85,37 @@ public class UserController extends HttpServlet {
 
         request.setAttribute("user", user);
 
-        String url;
-        String message;
+        String url = "";
+        String message = "";
         if (UserDB.hasUser(email)) {
             message = "This email address is already in use.";
-            request.setAttribute("message", message);
-            url = "/"; // TODO: add URL
         } else {
             try {
                 String hashedPassword = PasswordUtil.generate(password);
                 user.setPassword(hashedPassword);
-                UserDB.insert(user);
-            } catch (NoSuchAlgorithmException e) {
-                System.out.println(e); // TODO: Add error message
-            } catch (InvalidKeySpecException e) {
-                System.out.println(e); // TODO: Add error message
+                HttpSession session = request.getSession();
+                session.setAttribute("newUser", user);
+                message = "";
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                System.out.println(e);
+                // url = "?"; // TODO: add error page
             } finally {
                 user.setPassword("");
             }
 
             message = "";
             request.setAttribute("message", message);
-            url = "/"; // EMAIL CONFIRMATION LINK
+            //before url is set to email validation, send an email to the user with a randomly generated code and store it in the session
+            EmailController.CodeEmail(request, response);
+            url = "/email-verification.jsp"; //Email confirmation link
         }
+
+        request.setAttribute("message", message);
 
         return url;
     }
 
-    private String signIn(HttpServletRequest request, HttpServletResponse response) {
+    private String signIn(HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String url, message;
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -113,7 +123,7 @@ public class UserController extends HttpServlet {
         if(UserDB.hasUser(email)){
             User search = UserDB.selectUser(email);
             
-            if(true/*PasswordUtil.validate(password, search.getPassword())*/){
+            if(PasswordUtil.validate(password, search.getPassword())){
                 url = "/"; //Direct to Todays workout page
                 Cookie log1 = new Cookie("loginCookie", search.getEmail());
                 log1.setMaxAge(60*60*24*3); //cookie max age is 2 days

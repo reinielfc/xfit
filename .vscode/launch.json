@@ -8,9 +8,7 @@
             "type": "java",
             "name": "Java",
             "request": "attach",
-            // devcontainer: web: Tomcat container
             "hostName": "web",
-            // decontainer: web: JPDA port
             "port": "8787"
         },
         {
@@ -18,19 +16,25 @@
             "name": "Firefox",
             "request": "launch",
             "reAttach": true,
-            "url": "http://localhost:8888/xfit"
+            "url": "http://localhost:8888/xfit",
+            "pathMappings": [
+                {
+                    "url": "http://localhost:8888/xfit/",
+                    "path": "${workspaceFolder}/src/main/webapp/"
+                }
+            ]
         },
         {
             "type": "chrome",
             "name": "Chrome",
             "request": "launch",
-            "url": "http://localhost:8888/xfit"  
+            "url": "http://localhost:8888/xfit"
         }
     ],
     "compounds": [
         {
             "name": "Launch In Firefox",
-            "preLaunchTask": "build-and-deploy",
+            "preLaunchTask": "build",
             "configurations": [
                 "Java",
                 "Firefox",
@@ -39,7 +43,7 @@
         },
         {
             "name": "Launch In Chrome",
-            "preLaunchTask": "build-and-deploy",
+            "preLaunchTask": "build",
             "configurations": [
                 "Java",
                 "Chrome",

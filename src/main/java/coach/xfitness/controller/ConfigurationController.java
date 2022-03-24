@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
 import coach.xfitness.business.User;
 import coach.xfitness.data.UserDB;
 
@@ -40,18 +38,7 @@ public class ConfigurationController extends HttpServlet {
                 user.setPassword(password);
 
             }
-            if (weight != null && !weight.isEmpty() && isDouble(weight)) {
-                double w = Double.parseDouble(weight);
-                if (w > 0 ) {
-                    user.setWeight(w);
-                }
-            }
-            if (height != null && !height.isEmpty() && isDouble(height)) {
-                double h = Double.parseDouble(height);
-                if (h > 0 ) {
-                    user.setHeight(h);
-                }
-            }
+
             if (experience != null && !experience.isEmpty()) {
                 user.setExperience(experience);
 
@@ -74,5 +61,4 @@ public class ConfigurationController extends HttpServlet {
         return false;
         }
     }
-
 }
