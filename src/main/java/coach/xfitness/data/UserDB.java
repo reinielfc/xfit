@@ -56,7 +56,7 @@ public class UserDB {
         entityManager.getTransaction().begin();
         try{
             User s = selectUser(email);
-            User u = entityManager.find(User.class, s.getUserID());
+            User u = entityManager.find(User.class, s.getId());
            entityManager.remove(u);
            entityManager.getTransaction().commit();
         }
