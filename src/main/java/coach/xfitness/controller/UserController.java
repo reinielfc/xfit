@@ -99,10 +99,7 @@ public class UserController extends HttpServlet {
             } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 System.out.println(e);
                 // url = "?"; // TODO: add error page
-            } finally {
-                user.setPassword("");
-            }
-
+            } 
             message = "";
             request.setAttribute("message", message);
             //before url is set to email validation, send an email to the user with a randomly generated code and store it in the session
