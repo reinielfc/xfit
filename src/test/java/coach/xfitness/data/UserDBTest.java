@@ -36,7 +36,7 @@ public class UserDBTest {
     //test that user is inputted into the data and exists in exists and deletes afterward
     public void testInsert() {
         User test = new User();
-        test.setUserID((long) 1);
+        test.setId((int) 1);
         test.setEmail("JHerdocia112@att.net");
         test.setName("JavierH");
         test.setPassword("pass");
@@ -60,12 +60,12 @@ public class UserDBTest {
     public void testInsertduplicateUserEmails(){
         String message = "Failed to add User.";
         User test1 = new User();
-        test1.setUserID((long) 10);
+        test1.setId((int) 10);
         test1.setEmail("JSmith001@gmail.com");
         test1.setName("JohnSmith");
         test1.setPassword("pass");
         User test2 = new User();
-        test2.setUserID((long) 11);
+        test2.setId((int) 11);
         test2.setEmail("JSmith001@gmail.com");
         test2.setName("JavierHerdocia");
         test2.setPassword("pass");
