@@ -109,8 +109,8 @@ public class UserTest {
 			String value = ""+list[i]; // convert to string
             if (value.contentEquals("public java.lang.Long coach.xfitness.business.User.getUserID()")){
 				User test = new User();
-                test.setUserID((long) 300);
-                if(test.getUserID() == 300){
+                test.setId((int) 300);
+                if(test.getId() == 300){
                     found = true;
                 }
             }
