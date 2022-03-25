@@ -12,19 +12,14 @@ import javax.servlet.http.HttpSession;
 import coach.xfitness.business.User;
 import coach.xfitness.data.UserDB;
 
-@WebServlet(name = "ConfigurationController", urlPatterns = {"/u/*"})
+@WebServlet(name = "ConfigurationController", urlPatterns = {"/c/*"})
 public class ConfigurationController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            String first = request.getParameter("first_name");
-            String last = request.getParameter("last_name");
-            String name = first + ' ' + last;
+            String name = request.getParameter("name");
             String email = request.getParameter("email");
             String password = request.getParameter("password");
-            String weight = request.getParameter("weight");
-            String height = request.getParameter("height");
-            String experience = request.getParameter("experience");
     
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
@@ -41,10 +36,6 @@ public class ConfigurationController extends HttpServlet {
 
             }
 
-            if (experience != null && !experience.isEmpty()) {
-                user.setExperience(experience);
-            }
-            
             boolean success = UserDB.updateUser( user);
             if (success) {
                 session.setAttribute("user", user);
@@ -61,5 +52,4 @@ public class ConfigurationController extends HttpServlet {
         return false;
         }
     }
-    
 }
