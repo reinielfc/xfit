@@ -1,10 +1,10 @@
 package coach.xfitness.data;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.NonUniqueResultException;
-import jakarta.persistence.TypedQuery;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
 
 import coach.xfitness.business.User;
 
