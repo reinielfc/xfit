@@ -2,5 +2,15 @@
     "singleQuote": false,
     "tabWidth": 4,
     "printWidth": 80,
-    "endOfLine": "crlf"
+    "endOfLine": "crlf",
+    "overrides": [
+        {
+            "files": ["**/*.jsp"],
+            "options": {
+                "printWidth": 120,
+                "tabWidth": 2
+            }
+        }
+    ]
+    
 }
