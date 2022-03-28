@@ -1,68 +1,61 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
+import jakarta.persistence.*;
 
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import java.util.Collection;
+import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "Muscle.findAll", query = "SELECT m FROM Muscle m")
-public class Muscle implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Muscle {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "id", nullable = false)
+    private int id;
+    @Basic
+    @Column(name = "name", nullable = false, length = 32)
+    private String name;
+    @OneToMany(mappedBy = "muscleByMuscleId")
+    private Collection<ExerciseMuscle> exerciseMusclesById;
 
-	@Id
-	@Column(name = "ID")
-	private int id;
+    public int getId() {
+        return id;
+    }
 
-	private String name;
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	@OneToMany(mappedBy = "muscle")
-	private List<ExerciseMuscle> exerciseMuscles;
+    public String getName() {
+        return name;
+    }
 
-	public Muscle() {
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+        Muscle muscle = (Muscle) o;
 
-	public String getName() {
-		return this.name;
-	}
+        if (id != muscle.id) return false;
+        return Objects.equals(name, muscle.name);
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
 
-	public List<ExerciseMuscle> getExerciseMuscles() {
-		return this.exerciseMuscles;
-	}
+    public Collection<ExerciseMuscle> getExerciseMusclesById() {
+        return exerciseMusclesById;
+    }
 
-	public void setExerciseMuscles(List<ExerciseMuscle> exerciseMuscles) {
-		this.exerciseMuscles = exerciseMuscles;
-	}
-
-	public ExerciseMuscle addExerciseMuscle(ExerciseMuscle exerciseMuscle) {
-		getExerciseMuscles().add(exerciseMuscle);
-		exerciseMuscle.setMuscle(this);
-
-		return exerciseMuscle;
-	}
-
-	public ExerciseMuscle removeExerciseMuscle(ExerciseMuscle exerciseMuscle) {
-		getExerciseMuscles().remove(exerciseMuscle);
-		exerciseMuscle.setMuscle(null);
-
-		return exerciseMuscle;
-	}
-
+    public void setExerciseMusclesById(Collection<ExerciseMuscle> exerciseMusclesById) {
+        this.exerciseMusclesById = exerciseMusclesById;
+    }
 }

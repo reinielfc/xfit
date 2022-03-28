@@ -1,108 +1,125 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
+import jakarta.persistence.*;
 
 import java.sql.Time;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
+import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "Plan.findAll", query = "SELECT p FROM Plan p")
-public class Plan implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Plan {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "id", nullable = false)
+    private int id;
+    @Basic
+    @Column(name = "dayOfWeek", nullable = false)
+    private int dayOfWeek;
+    @Basic
+    @Column(name = "sets")
+    private Short sets;
+    @Basic
+    @Column(name = "reps")
+    private Short reps;
+    @Basic
+    @Column(name = "weight")
+    private Short weight;
+    @Basic
+    @Column(name = "duration")
+    private Time duration;
+    @ManyToOne
+    @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
+    private User userByUserId;
+    @ManyToOne
+    @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
+    private Exercise exerciseByExerciseId;
 
-	@Id
-	@Column(name = "ID")
-	private int id;
+    public int getId() {
+        return id;
+    }
 
-	private int dayOfWeek;
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	private Time duration;
+    public int getDayOfWeek() {
+        return dayOfWeek;
+    }
 
-	private short reps;
+    public void setDayOfWeek(int dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
 
-	private short sets;
+    public Short getSets() {
+        return sets;
+    }
 
-	private short weight;
+    public void setSets(Short sets) {
+        this.sets = sets;
+    }
 
-	@ManyToOne
-	@JoinColumn(name = "userID")
-	private User user;
+    public Short getReps() {
+        return reps;
+    }
 
-	@ManyToOne
-	@JoinColumn(name = "exerciseID")
-	private Exercise exercise;
+    public void setReps(Short reps) {
+        this.reps = reps;
+    }
 
-	public Plan() {
-	}
+    public Short getWeight() {
+        return weight;
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    public void setWeight(Short weight) {
+        this.weight = weight;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public Time getDuration() {
+        return duration;
+    }
 
-	public int getDayOfWeek() {
-		return this.dayOfWeek;
-	}
+    public void setDuration(Time duration) {
+        this.duration = duration;
+    }
 
-	public void setDayOfWeek(int dayOfWeek) {
-		this.dayOfWeek = dayOfWeek;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	public Time getDuration() {
-		return this.duration;
-	}
+        Plan plan = (Plan) o;
 
-	public void setDuration(Time duration) {
-		this.duration = duration;
-	}
+        if (id != plan.id) return false;
+        if (dayOfWeek != plan.dayOfWeek) return false;
+        if (!Objects.equals(sets, plan.sets)) return false;
+        if (!Objects.equals(reps, plan.reps)) return false;
+        if (!Objects.equals(weight, plan.weight)) return false;
+        return Objects.equals(duration, plan.duration);
+    }
 
-	public short getReps() {
-		return this.reps;
-	}
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + dayOfWeek;
+        result = 31 * result + (sets != null ? sets.hashCode() : 0);
+        result = 31 * result + (reps != null ? reps.hashCode() : 0);
+        result = 31 * result + (weight != null ? weight.hashCode() : 0);
+        result = 31 * result + (duration != null ? duration.hashCode() : 0);
+        return result;
+    }
 
-	public void setReps(short reps) {
-		this.reps = reps;
-	}
+    public User getUserByUserId() {
+        return userByUserId;
+    }
 
-	public short getSets() {
-		return this.sets;
-	}
+    public void setUserByUserId(User userByUserId) {
+        this.userByUserId = userByUserId;
+    }
 
-	public void setSets(short sets) {
-		this.sets = sets;
-	}
+    public Exercise getExerciseByExerciseId() {
+        return exerciseByExerciseId;
+    }
 
-	public short getWeight() {
-		return this.weight;
-	}
-
-	public void setWeight(short weight) {
-		this.weight = weight;
-	}
-
-	public User getUser() {
-		return this.user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Exercise getExercise() {
-		return this.exercise;
-	}
-
-	public void setExercise(Exercise exercise) {
-		this.exercise = exercise;
-	}
-
+    public void setExerciseByExerciseId(Exercise exerciseByExerciseId) {
+        this.exerciseByExerciseId = exerciseByExerciseId;
+    }
 }

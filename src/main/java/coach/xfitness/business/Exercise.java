@@ -1,222 +1,172 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
+import jakarta.persistence.*;
 
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import java.util.Collection;
+import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "Exercise.findAll", query = "SELECT e FROM Exercise e")
-public class Exercise implements Serializable {
-	private static final long serialVersionUID = 1L;
+@NamedQuery(name = "Exercise.selectAll", query = "SELECT e FROM Exercise e")
+@NamedQuery(name = "Exercise.selectById", query = "SELECT e FROM Exercise e WHERE e.id = :id")
+public class Exercise {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "id", nullable = false)
+    private int id;
+    @Basic
+    @Column(name = "title", nullable = false, length = 256)
+    private String title;
+    @Basic
+    @Column(name = "primer", length = 512)
+    private String primer;
+    @Basic
+    @Column(name = "type", length = 32)
+    private String type;
+    @Basic
+    @Column(name = "steps", length = -1)
+    private String steps;
+    @Basic
+    @Column(name = "tips", length = -1)
+    private String tips;
+    @Basic
+    @Column(name = "links", length = -1)
+    private String links;
+    @ManyToMany
+    @JoinTable(
+        name = "ExerciseEquipment",
+        joinColumns = @JoinColumn(name = "exerciseId"),
+        inverseJoinColumns = @JoinColumn(name = "equipmentId"))
+    private Collection<Equipment> equipment;
+    @OneToMany(mappedBy = "exerciseByExerciseId")
+    private Collection<ExerciseImage> exerciseImagesById;
+    @OneToMany(mappedBy = "exerciseByExerciseId")
+    private Collection<ExerciseMuscle> exerciseMusclesById;
+    @ManyToMany(mappedBy = "favorites")
+    private Collection<User> favoritedBy;
+    @OneToMany(mappedBy = "exerciseByExerciseId")
+    private Collection<Plan> plansById;
 
-	@Id
-	@Column(name = "ID")
-	private int id;
+    public int getId() {
+        return id;
+    }
 
-	@Lob
-	private String links;
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	private String primer;
+    public String getTitle() {
+        return title;
+    }
 
-	@Lob
-	private String steps;
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	@Lob
-	private String tips;
+    public String getPrimer() {
+        return primer;
+    }
 
-	private String title;
+    public void setPrimer(String primer) {
+        this.primer = primer;
+    }
 
-	private String type;
+    public String getType() {
+        return type;
+    }
 
-	@OneToMany(mappedBy = "exercise")
-	private List<ExerciseEquipment> exerciseEquipments;
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	@OneToMany(mappedBy = "exercise")
-	private List<ExerciseImage> exerciseImages;
+    public String getSteps() {
+        return steps;
+    }
 
-	@OneToMany(mappedBy = "exercise")
-	private List<ExerciseMuscle> exerciseMuscles;
+    public void setSteps(String steps) {
+        this.steps = steps;
+    }
 
-	@OneToMany(mappedBy = "exercise")
-	private List<FavoriteExercise> favoriteExercises;
+    public String getTips() {
+        return tips;
+    }
 
-	@OneToMany(mappedBy = "exercise")
-	private List<Plan> plans;
+    public void setTips(String tips) {
+        this.tips = tips;
+    }
 
-	public Exercise() {
-	}
+    public String getLinks() {
+        return links;
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    public void setLinks(String links) {
+        this.links = links;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	public String getLinks() {
-		return this.links;
-	}
+        Exercise exercise = (Exercise) o;
 
-	public void setLinks(String links) {
-		this.links = links;
-	}
+        if (id != exercise.id) return false;
+        if (!Objects.equals(title, exercise.title)) return false;
+        if (!Objects.equals(primer, exercise.primer)) return false;
+        if (!Objects.equals(type, exercise.type)) return false;
+        if (!Objects.equals(steps, exercise.steps)) return false;
+        if (!Objects.equals(tips, exercise.tips)) return false;
+        return Objects.equals(links, exercise.links);
+    }
 
-	public String getPrimer() {
-		return this.primer;
-	}
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (primer != null ? primer.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (steps != null ? steps.hashCode() : 0);
+        result = 31 * result + (tips != null ? tips.hashCode() : 0);
+        result = 31 * result + (links != null ? links.hashCode() : 0);
+        return result;
+    }
 
-	public void setPrimer(String primer) {
-		this.primer = primer;
-	}
+    public Collection<Equipment> getEquipment() {
+        return equipment;
+    }
 
-	public String getSteps() {
-		return this.steps;
-	}
+    public void setEquipment(Collection<Equipment> exerciseEquipmentsById) {
+        this.equipment = exerciseEquipmentsById;
+    }
 
-	public void setSteps(String steps) {
-		this.steps = steps;
-	}
+    public Collection<ExerciseImage> getExerciseImagesById() {
+        return exerciseImagesById;
+    }
 
-	public String getTips() {
-		return this.tips;
-	}
+    public void setExerciseImagesById(Collection<ExerciseImage> exerciseImagesById) {
+        this.exerciseImagesById = exerciseImagesById;
+    }
 
-	public void setTips(String tips) {
-		this.tips = tips;
-	}
+    public Collection<ExerciseMuscle> getExerciseMusclesById() {
+        return exerciseMusclesById;
+    }
 
-	public String getTitle() {
-		return this.title;
-	}
+    public void setExerciseMusclesById(Collection<ExerciseMuscle> exerciseMusclesById) {
+        this.exerciseMusclesById = exerciseMusclesById;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public Collection<User> getFavoritedBy() {
+        return favoritedBy;
+    }
 
-	public String getType() {
-		return this.type;
-	}
+    public void setFavoritedBy(Collection<User> favoriteExercisesById) {
+        this.favoritedBy = favoriteExercisesById;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public Collection<Plan> getPlansById() {
+        return plansById;
+    }
 
-	public List<ExerciseEquipment> getExerciseEquipments() {
-		return this.exerciseEquipments;
-	}
-
-	public void setExerciseEquipments(List<ExerciseEquipment> exerciseEquipments) {
-		this.exerciseEquipments = exerciseEquipments;
-	}
-
-	public ExerciseEquipment addExerciseEquipment(ExerciseEquipment exerciseEquipment) {
-		getExerciseEquipments().add(exerciseEquipment);
-		exerciseEquipment.setExercise(this);
-
-		return exerciseEquipment;
-	}
-
-	public ExerciseEquipment removeExerciseEquipment(ExerciseEquipment exerciseEquipment) {
-		getExerciseEquipments().remove(exerciseEquipment);
-		exerciseEquipment.setExercise(null);
-
-		return exerciseEquipment;
-	}
-
-	public List<ExerciseImage> getExerciseImages() {
-		return this.exerciseImages;
-	}
-
-	public void setExerciseImages(List<ExerciseImage> exerciseImages) {
-		this.exerciseImages = exerciseImages;
-	}
-
-	public ExerciseImage addExerciseImage(ExerciseImage exerciseImage) {
-		getExerciseImages().add(exerciseImage);
-		exerciseImage.setExercise(this);
-
-		return exerciseImage;
-	}
-
-	public ExerciseImage removeExerciseImage(ExerciseImage exerciseImage) {
-		getExerciseImages().remove(exerciseImage);
-		exerciseImage.setExercise(null);
-
-		return exerciseImage;
-	}
-
-	public List<ExerciseMuscle> getExerciseMuscles() {
-		return this.exerciseMuscles;
-	}
-
-	public void setExerciseMuscles(List<ExerciseMuscle> exerciseMuscles) {
-		this.exerciseMuscles = exerciseMuscles;
-	}
-
-	public ExerciseMuscle addExerciseMuscle(ExerciseMuscle exerciseMuscle) {
-		getExerciseMuscles().add(exerciseMuscle);
-		exerciseMuscle.setExercise(this);
-
-		return exerciseMuscle;
-	}
-
-	public ExerciseMuscle removeExerciseMuscle(ExerciseMuscle exerciseMuscle) {
-		getExerciseMuscles().remove(exerciseMuscle);
-		exerciseMuscle.setExercise(null);
-
-		return exerciseMuscle;
-	}
-
-	public List<FavoriteExercise> getFavoriteExercises() {
-		return this.favoriteExercises;
-	}
-
-	public void setFavoriteExercises(List<FavoriteExercise> favoriteExercises) {
-		this.favoriteExercises = favoriteExercises;
-	}
-
-	public FavoriteExercise addFavoriteExercis(FavoriteExercise favoriteExercis) {
-		getFavoriteExercises().add(favoriteExercis);
-		favoriteExercis.setExercise(this);
-
-		return favoriteExercis;
-	}
-
-	public FavoriteExercise removeFavoriteExercis(FavoriteExercise favoriteExercis) {
-		getFavoriteExercises().remove(favoriteExercis);
-		favoriteExercis.setExercise(null);
-
-		return favoriteExercis;
-	}
-
-	public List<Plan> getPlans() {
-		return this.plans;
-	}
-
-	public void setPlans(List<Plan> plans) {
-		this.plans = plans;
-	}
-
-	public Plan addPlan(Plan plan) {
-		getPlans().add(plan);
-		plan.setExercise(this);
-
-		return plan;
-	}
-
-	public Plan removePlan(Plan plan) {
-		getPlans().remove(plan);
-		plan.setExercise(null);
-
-		return plan;
-	}
-
+    public void setPlansById(Collection<Plan> plansById) {
+        this.plansById = plansById;
+    }
 }

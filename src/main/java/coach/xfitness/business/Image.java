@@ -1,70 +1,61 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
+import jakarta.persistence.*;
 
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import java.util.Arrays;
+import java.util.Collection;
 
 @Entity
-@NamedQuery(name = "Image.findAll", query = "SELECT i FROM Image i")
-public class Image implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Image {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "id", nullable = false)
+    private int id;
+    @Basic
+    @Column(name = "image")
+    private byte[] image;
+    @OneToMany(mappedBy = "imageByImageId")
+    private Collection<ExerciseImage> exerciseImagesById;
 
-	@Id
-	@Column(name = "ID")
-	private int id;
+    public int getId() {
+        return id;
+    }
 
-	@Lob
-	private byte[] image;
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	@OneToMany(mappedBy = "image")
-	private List<ExerciseImage> exerciseImages;
+    public byte[] getImage() {
+        return image;
+    }
 
-	public Image() {
-	}
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+        Image image1 = (Image) o;
 
-	public byte[] getImage() {
-		return this.image;
-	}
+        if (id != image1.id) return false;
+        return Arrays.equals(image, image1.image);
+    }
 
-	public void setImage(byte[] image) {
-		this.image = image;
-	}
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + Arrays.hashCode(image);
+        return result;
+    }
 
-	public List<ExerciseImage> getExerciseImages() {
-		return this.exerciseImages;
-	}
+    public Collection<ExerciseImage> getExerciseImagesById() {
+        return exerciseImagesById;
+    }
 
-	public void setExerciseImages(List<ExerciseImage> exerciseImages) {
-		this.exerciseImages = exerciseImages;
-	}
-
-	public ExerciseImage addExerciseImage(ExerciseImage exerciseImage) {
-		getExerciseImages().add(exerciseImage);
-		exerciseImage.setImage(this);
-
-		return exerciseImage;
-	}
-
-	public ExerciseImage removeExerciseImage(ExerciseImage exerciseImage) {
-		getExerciseImages().remove(exerciseImage);
-		exerciseImage.setImage(null);
-
-		return exerciseImage;
-	}
-
+    public void setExerciseImagesById(Collection<ExerciseImage> exerciseImagesById) {
+        this.exerciseImagesById = exerciseImagesById;
+    }
 }

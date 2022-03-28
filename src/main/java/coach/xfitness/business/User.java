@@ -1,138 +1,120 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
+import jakarta.persistence.*;
 
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import java.util.Collection;
+import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
-public class User implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class User {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "id", nullable = false)
+    private int id;
 
-	@Id
-	@Column(name = "ID")
-	private int id;
+    @Basic
+    @Column(name = "name", nullable = false, length = 32)
+    private String name;
 
-	private String email;
+    @Basic
+    @Column(name = "email", nullable = false, length = 64)
+    private String email;
 
-	private String name;
+    @Basic
+    @Column(name = "password", nullable = false)
+    private String password;
 
-	private String password;
+    @ManyToMany
+    @JoinTable(name = "FavoriteExercise", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "exerciseId"))
+    private Collection<Exercise> favoriteExercises;
 
-	@OneToMany(mappedBy = "user")
-	private List<FavoriteExercise> favoriteExercises;
+    @OneToMany(mappedBy = "userByUserId")
+    private Collection<Plan> plansById;
 
-	@OneToMany(mappedBy = "user")
-	private List<Plan> plans;
+    @ManyToMany
+    @JoinTable(name = "UserEquipment", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "equipmentId"))
+    private Collection<Equipment> equipment;
 
-	@OneToMany(mappedBy = "user")
-	private List<UserEquipment> userEquipments;
+    public int getId() {
+        return id;
+    }
 
-	public User() {
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getEmail() {
-		return this.email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public String getPassword() {
-		return this.password;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+        User user = (User) o;
 
-	public List<FavoriteExercise> getFavoriteExercises() {
-		return this.favoriteExercises;
-	}
+        if (id != user.id)
+            return false;
+        if (!Objects.equals(name, user.name))
+            return false;
+        if (!Objects.equals(email, user.email))
+            return false;
+        return Objects.equals(password, user.password);
+    }
 
-	public void setFavoriteExercises(List<FavoriteExercise> favoriteExercises) {
-		this.favoriteExercises = favoriteExercises;
-	}
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        return result;
+    }
 
-	public FavoriteExercise addFavoriteExercis(FavoriteExercise favoriteExercis) {
-		getFavoriteExercises().add(favoriteExercis);
-		favoriteExercis.setUser(this);
+    public Collection<Exercise> getFavoriteExercises() {
+        return favoriteExercises;
+    }
 
-		return favoriteExercis;
-	}
+    public void setFavoriteExercises(Collection<Exercise> favoriteExercises) {
+        this.favoriteExercises = favoriteExercises;
+    }
 
-	public FavoriteExercise removeFavoriteExercis(FavoriteExercise favoriteExercis) {
-		getFavoriteExercises().remove(favoriteExercis);
-		favoriteExercis.setUser(null);
+    public Collection<Plan> getPlansById() {
+        return plansById;
+    }
 
-		return favoriteExercis;
-	}
+    public void setPlansById(Collection<Plan> plansById) {
+        this.plansById = plansById;
+    }
 
-	public List<Plan> getPlans() {
-		return this.plans;
-	}
+    public Collection<Equipment> getEquipment() {
+        return equipment;
+    }
 
-	public void setPlans(List<Plan> plans) {
-		this.plans = plans;
-	}
-
-	public Plan addPlan(Plan plan) {
-		getPlans().add(plan);
-		plan.setUser(this);
-
-		return plan;
-	}
-
-	public Plan removePlan(Plan plan) {
-		getPlans().remove(plan);
-		plan.setUser(null);
-
-		return plan;
-	}
-
-	public List<UserEquipment> getUserEquipments() {
-		return this.userEquipments;
-	}
-
-	public void setUserEquipments(List<UserEquipment> userEquipments) {
-		this.userEquipments = userEquipments;
-	}
-
-	public UserEquipment addUserEquipment(UserEquipment userEquipment) {
-		getUserEquipments().add(userEquipment);
-		userEquipment.setUser(this);
-
-		return userEquipment;
-	}
-
-	public UserEquipment removeUserEquipment(UserEquipment userEquipment) {
-		getUserEquipments().remove(userEquipment);
-		userEquipment.setUser(null);
-
-		return userEquipment;
-	}
-
+    public void setEquipment(Collection<Equipment> userEquipmentsById) {
+        this.equipment = userEquipmentsById;
+    }
 }
