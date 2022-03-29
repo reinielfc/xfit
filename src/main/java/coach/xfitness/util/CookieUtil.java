@@ -1,4 +1,4 @@
-package coach.xfitness.controller;  //Util; //INCLUDE INTO UTIL FOLDER
+package coach.xfitness.util;  //Util; //INCLUDE INTO UTIL FOLDER
 import javax.servlet.http.*;
 
 public class CookieUtil {
