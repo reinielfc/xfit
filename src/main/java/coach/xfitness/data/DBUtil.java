@@ -5,7 +5,7 @@ import javax.persistence.Persistence;
 
 public class DBUtil {
     private static final EntityManagerFactory entityManagerFactory = 
-        Persistence.createEntityManagerFactory("XFitPU");
+        Persistence.createEntityManagerFactory("default");
 
     public static EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
