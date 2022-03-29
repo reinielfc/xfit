@@ -6,8 +6,10 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "Exercise.selectAll", query = "SELECT e FROM Exercise e")
-@NamedQuery(name = "Exercise.selectById", query = "SELECT e FROM Exercise e WHERE e.id = :id")
+@NamedQueries({
+    @NamedQuery(name = "Exercise.selectAll", query = "SELECT e FROM Exercise e"),
+    @NamedQuery(name = "Exercise.selectById", query = "SELECT e FROM Exercise e WHERE e.id = :id")
+})
 public class Exercise {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

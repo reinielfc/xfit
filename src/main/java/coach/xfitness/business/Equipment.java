@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
+@NamedQuery(name = "Equipment.selectAll", query = "SELECT e FROM Equipment e")
 public class Equipment {
     
     @GeneratedValue(strategy = GenerationType.IDENTITY)
