@@ -6,25 +6,44 @@ import java.util.Objects;
 
 @Entity
 public class ExerciseImage {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
-    private int id;
+    @EmbeddedId
+    private ExerciseImageKey id;
+
     @Basic
     @Column(name = "exerciseState", nullable = false, length = 32)
     private String exerciseState;
+
     @ManyToOne
+    @MapsId("exerciseId")
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
+
     @ManyToOne
+    @MapsId("imageId")
     @JoinColumn(name = "imageId", referencedColumnName = "id", nullable = false)
     private Image imageByImageId;
 
-    public int getId() {
+    public ExerciseImage() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExerciseImage that = (ExerciseImage) o;
+        return Objects.equals(id, that.id) && Objects.equals(exerciseState, that.exerciseState) && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId) && Objects.equals(imageByImageId, that.imageByImageId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, exerciseState, exerciseByExerciseId, imageByImageId);
+    }
+
+    public ExerciseImageKey getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(ExerciseImageKey id) {
         this.id = id;
     }
 
@@ -34,24 +53,6 @@ public class ExerciseImage {
 
     public void setExerciseState(String exerciseState) {
         this.exerciseState = exerciseState;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ExerciseImage that = (ExerciseImage) o;
-
-        if (id != that.id) return false;
-        return Objects.equals(exerciseState, that.exerciseState);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (exerciseState != null ? exerciseState.hashCode() : 0);
-        return result;
     }
 
     public Exercise getExerciseByExerciseId() {

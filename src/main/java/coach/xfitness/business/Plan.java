@@ -7,46 +7,82 @@ import java.util.Objects;
 
 @Entity
 public class Plan {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
-    private int id;
+
+    @EmbeddedId
+    private UserExerciseKey id;
+
     @Basic
     @Column(name = "dayOfWeek", nullable = false)
-    private int dayOfWeek;
+    private byte dayOfWeek;
+
+    @Basic
+    @Column(name = "position", nullable = false)
+    private int position;
+
     @Basic
     @Column(name = "sets")
     private Short sets;
+
     @Basic
     @Column(name = "reps")
     private Short reps;
+
     @Basic
     @Column(name = "weight")
     private Short weight;
+
     @Basic
     @Column(name = "duration")
     private Time duration;
+
     @ManyToOne
+    @MapsId("userId")
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
     private User userByUserId;
+    
     @ManyToOne
+    @MapsId("exerciseId")
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
 
-    public int getId() {
+    public Plan() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Plan plan = (Plan) o;
+        return dayOfWeek == plan.dayOfWeek && position == plan.position && Objects.equals(id, plan.id) && Objects.equals(sets, plan.sets) && Objects.equals(reps, plan.reps) && Objects.equals(weight, plan.weight) && Objects.equals(duration, plan.duration) && Objects.equals(userByUserId, plan.userByUserId) && Objects.equals(exerciseByExerciseId, plan.exerciseByExerciseId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, dayOfWeek, position, sets, reps, weight, duration, userByUserId, exerciseByExerciseId);
+    }
+
+    public UserExerciseKey getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(UserExerciseKey id) {
         this.id = id;
     }
 
-    public int getDayOfWeek() {
+    public byte getDayOfWeek() {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(int dayOfWeek) {
+    public void setDayOfWeek(byte dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public Short getSets() {
@@ -79,32 +115,6 @@ public class Plan {
 
     public void setDuration(Time duration) {
         this.duration = duration;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Plan plan = (Plan) o;
-
-        if (id != plan.id) return false;
-        if (dayOfWeek != plan.dayOfWeek) return false;
-        if (!Objects.equals(sets, plan.sets)) return false;
-        if (!Objects.equals(reps, plan.reps)) return false;
-        if (!Objects.equals(weight, plan.weight)) return false;
-        return Objects.equals(duration, plan.duration);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + dayOfWeek;
-        result = 31 * result + (sets != null ? sets.hashCode() : 0);
-        result = 31 * result + (reps != null ? reps.hashCode() : 0);
-        result = 31 * result + (weight != null ? weight.hashCode() : 0);
-        result = 31 * result + (duration != null ? duration.hashCode() : 0);
-        return result;
     }
 
     public User getUserByUserId() {

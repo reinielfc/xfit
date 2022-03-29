@@ -6,25 +6,45 @@ import java.util.Objects;
 
 @Entity
 public class ExerciseMuscle {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id", nullable = false)
-    private int id;
+
+    @EmbeddedId
+    private ExerciseMuscleKey id;
+
     @Basic
     @Column(name = "isSecondary", nullable = false)
     private int isSecondary;
+
     @ManyToOne
+    @MapsId("exerciseId")
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
+
     @ManyToOne
+    @MapsId("muscleId")
     @JoinColumn(name = "muscleId", referencedColumnName = "id", nullable = false)
     private Muscle muscleByMuscleId;
 
-    public int getId() {
+    public ExerciseMuscle() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExerciseMuscle that = (ExerciseMuscle) o;
+        return isSecondary == that.isSecondary && Objects.equals(id, that.id) && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId) && Objects.equals(muscleByMuscleId, that.muscleByMuscleId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, isSecondary, exerciseByExerciseId, muscleByMuscleId);
+    }
+
+    public ExerciseMuscleKey getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(ExerciseMuscleKey id) {
         this.id = id;
     }
 
@@ -34,24 +54,6 @@ public class ExerciseMuscle {
 
     public void setIsSecondary(int isSecondary) {
         this.isSecondary = isSecondary;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ExerciseMuscle that = (ExerciseMuscle) o;
-
-        if (id != that.id) return false;
-        return isSecondary == that.isSecondary;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + isSecondary;
-        return result;
     }
 
     public Exercise getExerciseByExerciseId() {
