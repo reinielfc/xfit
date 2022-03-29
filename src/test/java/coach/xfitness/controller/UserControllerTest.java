@@ -27,7 +27,7 @@ public class UserControllerTest {
         user2.setEmail("JohnSmith@112.com");
         user2.setPassword("reinielisasleep");
 
-        if(UserDB.hasUser(user2.getEmail())){
+        if(UserDB.has(user2.getEmail())){
             message = "This email address is already in use.";
         }
         else{    
@@ -41,7 +41,7 @@ public class UserControllerTest {
         }
 
         assertEquals(message, error);
-        UserDB.deleteUser(user1.getEmail());
+        UserDB.delete(user1.getEmail());
     }
     @Test
     //test if method returns String value of '/'
