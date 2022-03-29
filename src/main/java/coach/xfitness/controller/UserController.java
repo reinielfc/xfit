@@ -51,7 +51,7 @@ public class UserController extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) request.getAttribute("user");
         if(user == null){
-            Cookie get[] = request.getCookies();
+            Cookie[] get = request.getCookies();
             email = CookieUtil.getCookieValue(get, "loginCookie");
             
             if(email.equals("") || email == null){
@@ -59,7 +59,7 @@ public class UserController extends HttpServlet {
                 return url;
             }
             else{
-                user = UserDB.selectUser(email);
+                user = UserDB.select(email);
 
                 if(user == null){
                     url = "/index.jsp";
@@ -87,7 +87,7 @@ public class UserController extends HttpServlet {
 
         String url = "";
         String message = "";
-        if (UserDB.hasUser(email)) {
+        if (UserDB.has(email)) {
             message = "This email address is already in use.";
         } else {
             try {
@@ -105,7 +105,7 @@ public class UserController extends HttpServlet {
 
             message = "";
             request.setAttribute("message", message);
-            //before url is set to email validation, send an email to the user with a randomly generated code and store it in the session
+            //before url is set to email validation, email the user with a randomly generated code and store it in the session
             EmailController.CodeEmail(request, response);
             url = "/email-verification.jsp"; //Email confirmation link
         }
@@ -120,11 +120,11 @@ public class UserController extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        if(UserDB.hasUser(email)){
-            User search = UserDB.selectUser(email);
+        if(UserDB.has(email)){
+            User search = UserDB.select(email);
             
             if(PasswordUtil.validate(password, search.getPassword())){
-                url = "/"; //Direct to Todays workout page
+                url = "/"; //Direct to Today's workout page
                 Cookie log1 = new Cookie("loginCookie", search.getEmail());
                 log1.setMaxAge(60*60*24*3); //cookie max age is 2 days
                 log1.setPath("/"); //path for cookie to be used by entire application

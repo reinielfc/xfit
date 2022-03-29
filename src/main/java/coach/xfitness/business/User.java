@@ -1,12 +1,13 @@
 package coach.xfitness.business;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.util.Collection;
 import java.util.Objects;
 
 @Entity
 public class User {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id", nullable = false)
@@ -34,6 +35,22 @@ public class User {
     @ManyToMany
     @JoinTable(name = "UserEquipment", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "equipmentId"))
     private Collection<Equipment> equipment;
+
+    public User() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(favoriteExercises, user.favoriteExercises) && Objects.equals(plansById, user.plansById) && Objects.equals(equipment, user.equipment);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email, password, favoriteExercises, plansById, equipment);
+    }
 
     public int getId() {
         return id;
@@ -67,33 +84,6 @@ public class User {
         this.password = password;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        User user = (User) o;
-
-        if (id != user.id)
-            return false;
-        if (!Objects.equals(name, user.name))
-            return false;
-        if (!Objects.equals(email, user.email))
-            return false;
-        return Objects.equals(password, user.password);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        return result;
-    }
-
     public Collection<Exercise> getFavoriteExercises() {
         return favoriteExercises;
     }
@@ -114,7 +104,7 @@ public class User {
         return equipment;
     }
 
-    public void setEquipment(Collection<Equipment> userEquipmentsById) {
-        this.equipment = userEquipmentsById;
+    public void setEquipment(Collection<Equipment> equipment) {
+        this.equipment = equipment;
     }
 }

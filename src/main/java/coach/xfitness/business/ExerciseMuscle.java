@@ -1,6 +1,8 @@
 package coach.xfitness.business;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+
+import java.util.Objects;
 
 @Entity
 public class ExerciseMuscle {

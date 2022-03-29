@@ -1,6 +1,6 @@
 package coach.xfitness.business;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.sql.Time;
 import java.util.Objects;

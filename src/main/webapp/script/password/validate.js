@@ -127,7 +127,7 @@ $(window).on("load", function () {
 
             $icon.removeClass("text-success text-danger");
 
-            if (passwordVal == "") {
+            if (passwordVal === "") {
                 $password.get(0).setCustomValidity("Please enter a password.")
             } else if (isValid) {
                 $icon.addClass("text-success");

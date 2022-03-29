@@ -1,10 +1,10 @@
 $(window).on("load", function () {
-    var strength = {
-        0: [ 25,    "Bad",      "danger"],
-        1: [ 25,    "Bad",      "danger"],
-        2: [ 50,    "Weak",     "warning"],
-        3: [ 75,    "Good",     "success"],
-        4: [100,    "Strong",   "primary"],
+    const strength = {
+        0: [25, "Bad", "danger"],
+        1: [25, "Bad", "danger"],
+        2: [50, "Weak", "warning"],
+        3: [75, "Good", "success"],
+        4: [100, "Strong", "primary"],
     };
 
     let $email      = $("#email");

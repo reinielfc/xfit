@@ -8,6 +8,8 @@ import javax.persistence.TypedQuery;
 
 import coach.xfitness.business.User;
 
+import javax.persistence.*;
+
 public class UserDB {
 
     public static void insert(User user) {

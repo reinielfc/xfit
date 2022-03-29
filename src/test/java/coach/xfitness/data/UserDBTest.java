@@ -36,20 +36,20 @@ public class UserDBTest {
     //test that user is inputted into the data and exists in exists and deletes afterward
     public void testInsert() {
         User test = new User();
-        test.setId((int) 1);
+        test.setId(1);
         test.setEmail("JHerdocia112@att.net");
         test.setName("JavierH");
         test.setPassword("pass");
         
         UserDB.insert(test);
-        assertTrue(UserDB.hasUser("JHerdocia112@att.net"));
-        UserDB.deleteUser(test.getEmail());
+        assertTrue(UserDB.has("JHerdocia112@att.net"));
+        UserDB.delete(test.getEmail());
     }
 
     @Test
     //test that selectUser will return a null value for invalid selection
     public void testSelectInvalidUser() {
-       User test = UserDB.selectUser("test@gmail.com");
+       User test = UserDB.select("test@gmail.com");
        if(test != null){
            fail("Must return a null value for invalid or non exsistent user");
        }
@@ -57,15 +57,15 @@ public class UserDBTest {
 
     @Test
     //test that duplicate insertion of emails will result in an error
-    public void testInsertduplicateUserEmails(){
+    public void testInsertDuplicateUserEmails(){
         String message = "Failed to add User.";
         User test1 = new User();
-        test1.setId((int) 10);
+        test1.setId(10);
         test1.setEmail("JSmith001@gmail.com");
         test1.setName("JohnSmith");
         test1.setPassword("pass");
         User test2 = new User();
-        test2.setId((int) 11);
+        test2.setId(11);
         test2.setEmail("JSmith001@gmail.com");
         test2.setName("JavierHerdocia");
         test2.setPassword("pass");
@@ -74,13 +74,13 @@ public class UserDBTest {
         UserDB.insert(test2);
         String output = out.toString();
         assertTrue(output.contains(message));
-        UserDB.deleteUser(test1.getEmail());
+        UserDB.delete(test1.getEmail());
     }
 
     @Test
     //test that hasUser will return false for invalid user selection
     public void testhasUser(){
-        assertFalse(UserDB.hasUser("test@gmail.com"));
+        assertFalse(UserDB.has("test@gmail.com"));
     }
 
     @Test
