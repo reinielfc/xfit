@@ -36,12 +36,12 @@ public class ConfigurationController extends HttpServlet {
 
             }
 
-            boolean success = UserDB.updateUser( user);
-            if (success) {
-                session.setAttribute("user", user);
-            } else {
-
-            }
+            //boolean success = UserDB.updateUser( user);
+            //if (success) {
+            //    session.setAttribute("user", user);
+            //} else {
+            //
+            //}
     } 
     private boolean isDouble(String d) {
         try {

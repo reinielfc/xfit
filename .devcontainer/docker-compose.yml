@@ -34,7 +34,7 @@ services:
       context: .
       dockerfile: ./web/Dockerfile
     ports:
-      - 8888:8080
+      - "8888:8080"
     volumes:
       - ../target/xfit:/usr/local/tomcat/webapps/xfit:rw
     environment:
@@ -51,7 +51,7 @@ services:
     image: phpmyadmin
     restart: always
     ports:
-      - 8686:80
+      - "8686:80"
     environment:
       - PMA_HOST=db
       - PMA_USER=root

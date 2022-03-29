@@ -1,66 +1,74 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
+import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "ExerciseMuscle.findAll", query = "SELECT e FROM ExerciseMuscle e")
-public class ExerciseMuscle implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class ExerciseMuscle {
 
-	@Id
-	@Column(name = "ID")
-	private int id;
+    @EmbeddedId
+    private ExerciseMuscleKey id;
 
-	private int isSecondary;
+    @Basic
+    @Column(name = "isSecondary", nullable = false)
+    private int isSecondary;
 
-	@ManyToOne
-	@JoinColumn(name = "exerciseID")
-	private Exercise exercise;
+    @ManyToOne
+    @MapsId("exerciseId")
+    @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
+    private Exercise exerciseByExerciseId;
 
-	@ManyToOne
-	@JoinColumn(name = "muscleID")
-	private Muscle muscle;
+    @ManyToOne
+    @MapsId("muscleId")
+    @JoinColumn(name = "muscleId", referencedColumnName = "id", nullable = false)
+    private Muscle muscleByMuscleId;
 
-	public ExerciseMuscle() {
-	}
+    public ExerciseMuscle() {
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExerciseMuscle that = (ExerciseMuscle) o;
+        return isSecondary == that.isSecondary && Objects.equals(id, that.id) && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId) && Objects.equals(muscleByMuscleId, that.muscleByMuscleId);
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, isSecondary, exerciseByExerciseId, muscleByMuscleId);
+    }
 
-	public int getIsSecondary() {
-		return this.isSecondary;
-	}
+    public ExerciseMuscleKey getId() {
+        return id;
+    }
 
-	public void setIsSecondary(int isSecondary) {
-		this.isSecondary = isSecondary;
-	}
+    public void setId(ExerciseMuscleKey id) {
+        this.id = id;
+    }
 
-	public Exercise getExercise() {
-		return this.exercise;
-	}
+    public int getIsSecondary() {
+        return isSecondary;
+    }
 
-	public void setExercise(Exercise exercise) {
-		this.exercise = exercise;
-	}
+    public void setIsSecondary(int isSecondary) {
+        this.isSecondary = isSecondary;
+    }
 
-	public Muscle getMuscle() {
-		return this.muscle;
-	}
+    public Exercise getExerciseByExerciseId() {
+        return exerciseByExerciseId;
+    }
 
-	public void setMuscle(Muscle muscle) {
-		this.muscle = muscle;
-	}
+    public void setExerciseByExerciseId(Exercise exerciseByExerciseId) {
+        this.exerciseByExerciseId = exerciseByExerciseId;
+    }
 
+    public Muscle getMuscleByMuscleId() {
+        return muscleByMuscleId;
+    }
+
+    public void setMuscleByMuscleId(Muscle muscleByMuscleId) {
+        this.muscleByMuscleId = muscleByMuscleId;
+    }
 }

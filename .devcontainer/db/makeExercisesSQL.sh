@@ -20,7 +20,7 @@ exerciseEquipmentInsertList=""
 # image
 imageInsertList=""
 exerciseImageInsertList=""
-imageID=0
+imageId=0
 
 # junction table inserts
 junctionTableInsert() {
@@ -30,8 +30,8 @@ junctionTableInsert() {
 	insertList=""
 
 	[[ ! -z "$ARRAY_PROPERTY" ]] && while IFS= read -r item; do
-		propertyTableID=`echo $PROPERTY_TABLE_JSON | jq 'map(. == "'"$item"'") | index(true)'`
-		printf "$INSERT_FORMAT" $((propertyTableID+1))
+		propertyTableId=`echo $PROPERTY_TABLE_JSON | jq 'map(. == "'"$item"'") | index(true)'`
+		printf "$INSERT_FORMAT" $((propertyTableId+1))
 	done <<< "$ARRAY_PROPERTY"
 }
 
@@ -39,7 +39,7 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 
 	# exercise
 	eval "`jq -r '@sh "
-		exerciseID=\(.id)
+		exerciseId=\(.id)
 		exerciseTitle=\(.title | @json)
 		exercisePrimer=\(.primer | @json)
 		exerciseType=\(.type | @json)
@@ -51,10 +51,10 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 		exerciseReferences=\(.references | join("\\\\n") | @json)
 		"' $exerciseJSON`"
 
-	exerciseID=`echo $exerciseID | sed "s/^0*//"`
+	exerciseId=`echo $exerciseId | sed "s/^0*//"`
 	exerciseInsert=`cat <<-END
 		\t(
-		\t\t$exerciseID,
+		\t\t$exerciseId,
 		\t\t$exerciseTitle,
 		\t\t$exercisePrimer,
 		\t\t$exerciseType,
@@ -67,24 +67,24 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 	exerciseInsertList="$exerciseInsertList""$exerciseInsert"
 
 	# muscle
-	exercisePrimaryMuscleInsert="$(junctionTableInsert "$exercisePrimaryMuscles" "$MUSCLES_JSON" "\t( $exerciseID, %u, 0 ),\\\n")"
-	exerciseSecondaryMuscleInsert="$(junctionTableInsert "$exerciseSecondaryMuscles" "$MUSCLES_JSON" "\t( $exerciseID, %u, 1 ),\\\n")"
+	exercisePrimaryMuscleInsert="$(junctionTableInsert "$exercisePrimaryMuscles" "$MUSCLES_JSON" "\t( $exerciseId, %u, 0 ),\\\n")"
+	exerciseSecondaryMuscleInsert="$(junctionTableInsert "$exerciseSecondaryMuscles" "$MUSCLES_JSON" "\t( $exerciseId, %u, 1 ),\\\n")"
 	exerciseMuscleInsertList="$exerciseMuscleInsertList""$exercisePrimaryMuscleInsert""$exerciseSecondaryMuscleInsert"
 
 	# equipment
-	exerciseEquipmentInsert="$(junctionTableInsert "$exerciseEquipment" "$EQUIPMENT_JSON" "\t( $exerciseID, %u ),\\\n" )"
+	exerciseEquipmentInsert="$(junctionTableInsert "$exerciseEquipment" "$EQUIPMENT_JSON" "\t( $exerciseId, %u ),\\\n" )"
 	exerciseEquipmentInsertList="$exerciseEquipmentInsertList""$exerciseEquipmentInsert"
 
 	# image
 	for image in `dirname $exerciseJSON`/images/*.png; do
-		imageID=$((imageID+1))
+		imageId=$((imageId+1))
 
 		imageInsert="\t( LOAD_FILE('$image') ),\n"
 		imageInsertList="$imageInsertList""$imageInsert"
 
 		# exercise image
 		exerciseImageState=`basename $image | cut -d'.' -f1`
-		exerciseImageInsert="\t( $exerciseID, $imageID, '$exerciseImageState' ),\n"
+		exerciseImageInsert="\t( $exerciseId, $imageId, '$exerciseImageState' ),\n"
 		exerciseImageInsertList="$exerciseImageInsertList""$exerciseImageInsert"
 	done
 
@@ -107,7 +107,7 @@ echo -e "
 -- INSERT ---------------------------------------------------------- EXERCISE --
 
 INSERT INTO
-	Exercise (ID, title, primer, type, steps, tips, links)
+	Exercise (id, title, primer, type, steps, tips, links)
 VALUES
 $exerciseInsertList;
 
@@ -119,7 +119,7 @@ VALUES
 $muscleInsertList;
 
 INSERT INTO
-	ExerciseMuscle (exerciseID, muscleID, isSecondary)
+	ExerciseMuscle (exerciseId, muscleId, isSecondary)
 VALUES
 $exerciseMuscleInsertList;
 
@@ -131,7 +131,7 @@ VALUES
 $equipmentInsertList;
 
 INSERT INTO
-	ExerciseEquipment (exerciseID, equipmentID)
+	ExerciseEquipment (exerciseId, equipmentId)
 VALUES
 $exerciseEquipmentInsertList;
 
@@ -143,6 +143,6 @@ VALUES
 $imageInsertList;
 
 INSERT INTO
-	ExerciseImage (exerciseID, imageID, exerciseState)
+	ExerciseImage (exerciseId, imageId, exerciseState)
 VALUES
 $exerciseImageInsertList;"

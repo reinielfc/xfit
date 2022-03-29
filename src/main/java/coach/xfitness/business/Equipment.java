@@ -1,92 +1,75 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
-import java.util.List;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import java.util.Collection;
+import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "Equipment.findAll", query = "SELECT e FROM Equipment e")
-public class Equipment implements Serializable {
-	private static final long serialVersionUID = 1L;
+@NamedQuery(name = "Equipment.selectAll", query = "SELECT e FROM Equipment e")
+public class Equipment {
+    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "id", nullable = false)
+    private int id;
 
-	@Id
-	@Column(name = "ID")
-	private int id;
+    @Basic
+    @Column(name = "name", nullable = false, length = 32)
+    private String name;
 
-	private String name;
+    @ManyToMany(mappedBy = "equipment")
+    private Collection<Exercise> exercises;
+    
+    @ManyToMany(mappedBy = "equipment")
+    private Collection<User> users;
 
-	@OneToMany(mappedBy = "equipment")
-	private List<ExerciseEquipment> exerciseEquipments;
+    public Equipment() {
+    }
 
-	@OneToMany(mappedBy = "equipment")
-	private List<UserEquipment> userEquipments;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Equipment equipment = (Equipment) o;
+        return id == equipment.id && Objects.equals(name, equipment.name) && Objects.equals(exercises, equipment.exercises) && Objects.equals(users, equipment.users);
+    }
 
-	public Equipment() {
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, exercises, users);
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public List<ExerciseEquipment> getExerciseEquipments() {
-		return this.exerciseEquipments;
-	}
+    public Collection<Exercise> getExercises() {
+        return exercises;
+    }
 
-	public void setExerciseEquipments(List<ExerciseEquipment> exerciseEquipments) {
-		this.exerciseEquipments = exerciseEquipments;
-	}
+    public void setExercises(Collection<Exercise> exercises) {
+        this.exercises = exercises;
+    }
 
-	public ExerciseEquipment addExerciseEquipment(ExerciseEquipment exerciseEquipment) {
-		getExerciseEquipments().add(exerciseEquipment);
-		exerciseEquipment.setEquipment(this);
+    public Collection<User> getUsers() {
+        return users;
+    }
 
-		return exerciseEquipment;
-	}
-
-	public ExerciseEquipment removeExerciseEquipment(ExerciseEquipment exerciseEquipment) {
-		getExerciseEquipments().remove(exerciseEquipment);
-		exerciseEquipment.setEquipment(null);
-
-		return exerciseEquipment;
-	}
-
-	public List<UserEquipment> getUserEquipments() {
-		return this.userEquipments;
-	}
-
-	public void setUserEquipments(List<UserEquipment> userEquipments) {
-		this.userEquipments = userEquipments;
-	}
-
-	public UserEquipment addUserEquipment(UserEquipment userEquipment) {
-		getUserEquipments().add(userEquipment);
-		userEquipment.setEquipment(this);
-
-		return userEquipment;
-	}
-
-	public UserEquipment removeUserEquipment(UserEquipment userEquipment) {
-		getUserEquipments().remove(userEquipment);
-		userEquipment.setEquipment(null);
-
-		return userEquipment;
-	}
+    public void setUsers(Collection<User> users) {
+        this.users = users;
+    }
 
 }

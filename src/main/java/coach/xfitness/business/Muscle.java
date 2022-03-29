@@ -1,68 +1,62 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
+import javax.persistence.*;
 
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import java.util.Collection;
+import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "Muscle.findAll", query = "SELECT m FROM Muscle m")
-public class Muscle implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Muscle {
 
-	@Id
-	@Column(name = "ID")
-	private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "id", nullable = false)
+    private int id;
 
-	private String name;
+    @Basic
+    @Column(name = "name", nullable = false, length = 32)
+    private String name;
 
-	@OneToMany(mappedBy = "muscle")
-	private List<ExerciseMuscle> exerciseMuscles;
+    @OneToMany(mappedBy = "muscleByMuscleId")
+    private Collection<ExerciseMuscle> exerciseMusclesById;
 
-	public Muscle() {
-	}
+    public Muscle() {
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Muscle muscle = (Muscle) o;
+        return id == muscle.id && Objects.equals(name, muscle.name) && Objects.equals(exerciseMusclesById, muscle.exerciseMusclesById);
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, exerciseMusclesById);
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public List<ExerciseMuscle> getExerciseMuscles() {
-		return this.exerciseMuscles;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setExerciseMuscles(List<ExerciseMuscle> exerciseMuscles) {
-		this.exerciseMuscles = exerciseMuscles;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public ExerciseMuscle addExerciseMuscle(ExerciseMuscle exerciseMuscle) {
-		getExerciseMuscles().add(exerciseMuscle);
-		exerciseMuscle.setMuscle(this);
+    public Collection<ExerciseMuscle> getExerciseMusclesById() {
+        return exerciseMusclesById;
+    }
 
-		return exerciseMuscle;
-	}
-
-	public ExerciseMuscle removeExerciseMuscle(ExerciseMuscle exerciseMuscle) {
-		getExerciseMuscles().remove(exerciseMuscle);
-		exerciseMuscle.setMuscle(null);
-
-		return exerciseMuscle;
-	}
-
+    public void setExerciseMusclesById(Collection<ExerciseMuscle> exerciseMusclesById) {
+        this.exerciseMusclesById = exerciseMusclesById;
+    }
 }

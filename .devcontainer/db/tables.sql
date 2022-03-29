@@ -8,19 +8,19 @@ USE xfit;
 
 CREATE TABLE
 	User (
-		ID			INT			NOT NULL AUTO_INCREMENT,
-		name		VARCHAR(32)	NOT NULL,
-		email		VARCHAR(64)	NOT NULL UNIQUE,
-		password	CHAR(255)	NOT NULL,
+		id			INT UNSIGNED	NOT NULL AUTO_INCREMENT,
+		name		VARCHAR(32)		NOT NULL,
+		email		VARCHAR(64)		NOT NULL UNIQUE,
+		password	CHAR(255)		NOT NULL,
 		
-		PRIMARY KEY(ID)
-);
+		PRIMARY KEY(id)
+	) ENGINE=InnoDB;
 
 -- EXERCISE -------------------------------------------------------- EXERCISE --
 
 CREATE TABLE
 	Exercise (
-		ID			INT				NOT NULL AUTO_INCREMENT,
+		id			INT UNSIGNED	NOT NULL AUTO_INCREMENT,
 		title		VARCHAR(256)	NOT NULL,
 		primer		VARCHAR(512),
 		type		VARCHAR(32),
@@ -28,110 +28,105 @@ CREATE TABLE
 		tips		TEXT,
 		links		TEXT,
 
-		PRIMARY KEY(ID)
-	);
+		PRIMARY KEY(id)
+	) ENGINE=InnoDB;
 
 CREATE TABLE
 	FavoriteExercise (
-		ID			INT	NOT NULL AUTO_INCREMENT,
-		userID		INT	NOT NULL,
-		exerciseID	INT	NOT NULL,
+		userId		INT UNSIGNED	NOT NULL,
+		exerciseId	INT UNSIGNED	NOT NULL,
 
-		PRIMARY KEY(ID),
-		FOREIGN KEY(userID)		REFERENCES User(ID),
-		FOREIGN KEY(exerciseID)	REFERENCES Exercise(ID)
-	);
+		PRIMARY KEY(userId, exerciseId), INDEX(exerciseId, userId),
+		FOREIGN KEY(userId)		REFERENCES User(id)		ON DELETE CASCADE,
+		FOREIGN KEY(exerciseId)	REFERENCES Exercise(id) ON DELETE CASCADE
+	) ENGINE=InnoDB;
 
 -- MUSCLE ------------------------------------------------------------ MUSCLE --
 
 CREATE TABLE
 	Muscle (
-		ID		INT			NOT NULL AUTO_INCREMENT,
-		name	VARCHAR(32)	NOT NULL,
+		id		INT UNSIGNED	NOT NULL AUTO_INCREMENT,
+		name	VARCHAR(32)		NOT NULL,
 
-		PRIMARY KEY(ID)
-	);
+		PRIMARY KEY(id)
+	) ENGINE=InnoDB;
 
 CREATE TABLE
 	ExerciseMuscle (
-		ID					INT	NOT NULL AUTO_INCREMENT,
-		exerciseID			INT	NOT NULL,
-		muscleID			INT	NOT NULL,
-		isSecondary			INT	NOT NULL DEFAULT 0,
+		exerciseId			INT UNSIGNED	NOT NULL,
+		muscleId			INT UNSIGNED	NOT NULL,
+		isSecondary			INT UNSIGNED	NOT NULL DEFAULT 0,
 
-		PRIMARY KEY(ID),
-		FOREIGN KEY(exerciseID)	REFERENCES Exercise(ID),
-		FOREIGN KEY(muscleID)	REFERENCES Muscle(ID)
-	);
+		PRIMARY KEY(exerciseId, muscleId), INDEX(muscleId, exerciseId),
+		FOREIGN KEY(exerciseId)	REFERENCES Exercise(id)	ON DELETE CASCADE,
+		FOREIGN KEY(muscleId)	REFERENCES Muscle(id)	ON DELETE CASCADE
+	) ENGINE=InnoDB;
 
 -- EQUIPMENT ------------------------------------------------------ EQUIPMENT --
 
 CREATE TABLE
 	Equipment (
-		ID		INT			NOT NULL AUTO_INCREMENT,
+		id		INT UNSIGNED			NOT NULL AUTO_INCREMENT,
 		name	VARCHAR(32)	NOT NULL,
 
-		PRIMARY KEY(ID)
-	);
+		PRIMARY KEY(id)
+	) ENGINE=InnoDB;
 
 CREATE TABLE
 	ExerciseEquipment (
-		ID			INT	NOT NULL AUTO_INCREMENT,
-		exerciseID	INT	NOT NULL,
-		equipmentID	INT	NOT NULL,
+		exerciseId	INT UNSIGNED	NOT NULL,
+		equipmentId	INT UNSIGNED	NOT NULL,
 
-		PRIMARY KEY(ID),
-		FOREIGN KEY(exerciseID)		REFERENCES Exercise(ID),
-		FOREIGN KEY(equipmentID)	REFERENCES Equipment(ID)
-	);
+		PRIMARY KEY(exerciseId, equipmentId), INDEX(equipmentId, exerciseId),
+		FOREIGN KEY(exerciseId)		REFERENCES Exercise(id)		ON DELETE CASCADE,
+		FOREIGN KEY(equipmentId)	REFERENCES Equipment(id)	ON DELETE CASCADE
+	) ENGINE=InnoDB;
 
 CREATE TABLE
 	UserEquipment (
-		ID			INT	NOT NULL AUTO_INCREMENT,
-		userID		INT	NOT NULL,
-		equipmentID	INT	NOT NULL,
+		userId		INT UNSIGNED	NOT NULL,
+		equipmentId	INT UNSIGNED	NOT NULL,
 
-		PRIMARY KEY(ID),
-		FOREIGN KEY(userID)			REFERENCES User(ID),
-		FOREIGN KEY(equipmentID)	REFERENCES Equipment(ID)
-	);
+		PRIMARY KEY(userId, equipmentId), INDEX(equipmentId, userId),
+		FOREIGN KEY(userId)			REFERENCES User(id)			ON DELETE CASCADE,
+		FOREIGN KEY(equipmentId)	REFERENCES Equipment(id)	ON DELETE CASCADE
+	) ENGINE=InnoDB;
 
 -- IMAGE -------------------------------------------------------------- IMAGE --
 
 CREATE TABLE
 	Image (
-		ID		INT			NOT NULL AUTO_INCREMENT,
+		id		INT UNSIGNED			NOT NULL AUTO_INCREMENT,
 		image	MEDIUMBLOB,
 
-		PRIMARY KEY(ID)
-	);
+		PRIMARY KEY(id)
+	) ENGINE=InnoDB;
 
 CREATE TABLE
 	ExerciseImage (
-		ID				INT			NOT NULL AUTO_INCREMENT,
-		exerciseID		INT			NOT NULL,
-		imageID			INT			NOT NULL,
-		exerciseState	VARCHAR(32)	NOT NULL,
+		exerciseId		INT UNSIGNED	NOT NULL,
+		imageId			INT UNSIGNED	NOT NULL,
+		exerciseState	VARCHAR(32)		NOT NULL,
 		
-		PRIMARY KEY(ID),
-		FOREIGN KEY(exerciseID)	REFERENCES Exercise(ID),
-		FOREIGN KEY(imageID) 	REFERENCES Image(ID)
-	);
+		PRIMARY KEY(exerciseId, imageId), INDEX(imageId, exerciseId),
+		FOREIGN KEY(exerciseId)	REFERENCES Exercise(id)	ON DELETE CASCADE,
+		FOREIGN KEY(imageId) 	REFERENCES Image(id)	ON DELETE CASCADE
+	) ENGINE=InnoDB;
 
 -- PLAN ---------------------------------------------------------------- PLAN --
 
 CREATE TABLE
 	Plan (
-		ID			INT	NOT NULL AUTO_INCREMENT,
-		userID		INT	NOT NULL,
-		exerciseID	INT	NOT NULL,
-		dayOfWeek	INT	NOT	NULL,
-		sets		SMALLINT,
-		reps		SMALLINT,
-		weight		SMALLINT,
+		userId		INT UNSIGNED		NOT NULL,
+		exerciseId	INT UNSIGNED		NOT NULL,
+		dayOfWeek	TINYINT UNSIGNED	NOT	NULL,
+		position	INT UNSIGNED		NOT NULL,
+		sets		SMALLINT UNSIGNED,
+		reps		SMALLINT UNSIGNED,
+		weight		SMALLINT UNSIGNED,
 		duration	TIME,
 
-		PRIMARY KEY(ID),
-		FOREIGN KEY(userID)		REFERENCES User(ID),
-		FOREIGN KEY(exerciseID)	REFERENCES Exercise(ID)
-	);
+		PRIMARY KEY(userId, exerciseId), INDEX(exerciseId, userId),
+		FOREIGN KEY(userId)		REFERENCES User(id)		ON DELETE CASCADE,
+		FOREIGN KEY(exerciseId)	REFERENCES Exercise(id)	ON DELETE CASCADE
+	) ENGINE=InnoDB;

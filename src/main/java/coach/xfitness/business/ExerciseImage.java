@@ -1,66 +1,73 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
+import java.util.Objects;
 
 @Entity
-@NamedQuery(name = "ExerciseImage.findAll", query = "SELECT e FROM ExerciseImage e")
-public class ExerciseImage implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class ExerciseImage {
+    @EmbeddedId
+    private ExerciseImageKey id;
 
-	@Id
-	@Column(name = "ID")
-	private int id;
+    @Basic
+    @Column(name = "exerciseState", nullable = false, length = 32)
+    private String exerciseState;
 
-	private String exerciseState;
+    @ManyToOne
+    @MapsId("exerciseId")
+    @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
+    private Exercise exerciseByExerciseId;
 
-	@ManyToOne
-	@JoinColumn(name = "exerciseID")
-	private Exercise exercise;
+    @ManyToOne
+    @MapsId("imageId")
+    @JoinColumn(name = "imageId", referencedColumnName = "id", nullable = false)
+    private Image imageByImageId;
 
-	@ManyToOne
-	@JoinColumn(name = "imageID")
-	private Image image;
+    public ExerciseImage() {
+    }
 
-	public ExerciseImage() {
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExerciseImage that = (ExerciseImage) o;
+        return Objects.equals(id, that.id) && Objects.equals(exerciseState, that.exerciseState) && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId) && Objects.equals(imageByImageId, that.imageByImageId);
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, exerciseState, exerciseByExerciseId, imageByImageId);
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public ExerciseImageKey getId() {
+        return id;
+    }
 
-	public String getExerciseState() {
-		return this.exerciseState;
-	}
+    public void setId(ExerciseImageKey id) {
+        this.id = id;
+    }
 
-	public void setExerciseState(String exerciseState) {
-		this.exerciseState = exerciseState;
-	}
+    public String getExerciseState() {
+        return exerciseState;
+    }
 
-	public Exercise getExercise() {
-		return this.exercise;
-	}
+    public void setExerciseState(String exerciseState) {
+        this.exerciseState = exerciseState;
+    }
 
-	public void setExercise(Exercise exercise) {
-		this.exercise = exercise;
-	}
+    public Exercise getExerciseByExerciseId() {
+        return exerciseByExerciseId;
+    }
 
-	public Image getImage() {
-		return this.image;
-	}
+    public void setExerciseByExerciseId(Exercise exerciseByExerciseId) {
+        this.exerciseByExerciseId = exerciseByExerciseId;
+    }
 
-	public void setImage(Image image) {
-		this.image = image;
-	}
+    public Image getImageByImageId() {
+        return imageByImageId;
+    }
 
+    public void setImageByImageId(Image imageByImageId) {
+        this.imageByImageId = imageByImageId;
+    }
 }

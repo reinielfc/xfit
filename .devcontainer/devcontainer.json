@@ -25,7 +25,7 @@
 		// editor
 		"akamud.vscode-theme-onedark",				// dark theme
 		"esbenp.prettier-vscode",					// code formatter
-		"yzhang.markdown-all-in-one",				// markdown language support
+		"yzhang.markdown-all-in-one",				// Markdown language support
 		"redhat.vscode-yaml",						// yaml language support
 		"redhat.vscode-xml",						// xml language support
 		
