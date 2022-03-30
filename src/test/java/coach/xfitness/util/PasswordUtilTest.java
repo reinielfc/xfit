@@ -13,22 +13,23 @@ public class PasswordUtilTest {
     @Test
     //test that the password will generate a random assortment of characters
     public void generatePasswordTest() {
-        String regex = "[a-z0-9]{128}";
+        String regex = "[0-9]+[a-z0-9]{22}:{a-z0-9]{128}";
 
         String password = "password";
         
-        String thePassword = "5bJkhkh";
+        String thePassword = "";
         try {
-            thePassword = PasswordUtil.generate(password);
+            thePassword = PasswordUtil.generate(regex);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         System.out.println(thePassword);
-        //assertTrue(thePassword.matches(regex));
+        
     }
 
     @Test
+    //Test that the generated password is not null
     public void generatePassword_NotNull() {
 
         String password = "password";
@@ -45,9 +46,10 @@ public class PasswordUtilTest {
     }
 
     @Test
-    public void generatePassword_NotEmptyString() {
+    //Test if the generated password accepts empty string
+    public void generatePassword_EmptyString() {
 
-        String password = "password";
+        String password = "";
         
         String thePassword = "";
         try {
@@ -57,12 +59,30 @@ public class PasswordUtilTest {
             e.printStackTrace();
         }
 
-        assert(!thePassword.isEmpty());
+        thePassword.isEmpty();
     }
 
     @Test
-    //will test the validation should the password be an empty string
-    public void generatePassword_EmptyString() {
+    //Test if it validates a hashed password
+    public void validatePasswordTest() {
+        String password = "Password2";
+
+        String hash;
+
+        boolean actual = false;
+        try {
+            hash = PasswordUtil.generate(password);
+            actual = PasswordUtil.validate(password, hash);
+        }catch (NoSuchAlgorithmException | InvalidKeySpecException e){
+            e.printStackTrace();
+        }
+
+        assertTrue(actual);
+    }
+
+    @Test
+    //Tests if it validates a hash generated from an empty string
+    public void validatePassword_EmptyString() {
         String password = "";
 
         String hash;
@@ -78,57 +98,4 @@ public class PasswordUtilTest {
 
         assertTrue(actual);
     }
-
-
-/*
-    @Test
-    //will test the validation should the password be missing a number
-    public void validatePassword_Missing_OneNumber() {
-        String password = "Abcdefg#";
-
-        boolean actual = PasswordUtil.validate(password, actual);
-
-        assertFalse(actual);
-    }
-
-    @Test
-    //will test the validation should the password be missing an uppercase letter
-    public void validatePassword_Missing_OneUpperCase() {
-        String password = "abcdefg#4";
-        
-        boolean actual = PasswordUtil.validate(password, actual);
-
-        assertFalse(actual);
-    }
-
-    @Test
-    //will test the validation should the password be missing a lowercase letter
-    public void validatePassword_Missing_OneLowerCase() {
-        String password = "ABCDEFG#4";
-
-        boolean actual = PasswordUtil.validate(password, actual);
-
-        assertFalse(actual);
-    }
-
-    @Test
-    //will test the validation should the password be too short
-    public void validatePassword_LengthTooShort() {
-        String password = "Ab#4df";
-
-        boolean actual = PasswordUtil.validate(password, actual);
-
-        assertFalse(actual);
-    }
-
-    @Test
-    //will test the validation should the password meet all the rules set
-    public void validatePassword_AllRulesMet() {
-        String password = "Abcdefg#4";
-
-        boolean actual = PasswordUtil.validate(password, actual);
-
-        assertTrue(actual);
-    }
-    */
 }
