@@ -36,8 +36,20 @@
           </a>
         </li>
       </ul>
+      <c:choose>
+        <c:when test="${true}">
+          <!-- test="${not empty signedInUser}"> -->
+          <c:import url="/include/form/signin-dropdown.jsp" charEncoding="UTF-8" />
+        </c:when>
+        <c:otherwise>
+          <c:import url="/include/profile-dropdown.jsp" charEncoding="UTF-8" />
+        </c:otherwise>
+      </c:choose>
     </div>
   </div>
 </nav>
 
-<c:import url="/include/registration-modal.jsp" charEncoding="UTF-8" />
+<c:if test="${true}">
+  <!-- test="${empty signedInUser}"> -->
+  <c:import url="/include/form/registration-modal.jsp" charEncoding="UTF-8" />
+</c:if>
