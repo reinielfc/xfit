@@ -16,7 +16,8 @@
 		"telemetry.telemetryLevel": "off",							// disable telemetry
 		"workbench.colorTheme": "Atom One Dark",					// enable dark theme
 		"editor.bracketPairColorization.enabled": true,				// enable bracket pair {} colorization
-		"java.configuration.updateBuildConfiguration": "automatic" 	// update Java classpath automatically
+		"java.configuration.updateBuildConfiguration": "automatic",	// update Java classpath automatically
+		"editor.defaultFormatter": "esbenp.prettier-vscode"			// set prettier as default formatter
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
@@ -24,7 +25,7 @@
 		// editor
 		"akamud.vscode-theme-onedark",				// dark theme
 		"esbenp.prettier-vscode",					// code formatter
-		"yzhang.markdown-all-in-one",				// markdown language support
+		"yzhang.markdown-all-in-one",				// Markdown language support
 		"redhat.vscode-yaml",						// yaml language support
 		"redhat.vscode-xml",						// xml language support
 		

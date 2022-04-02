@@ -34,7 +34,9 @@ services:
       context: .
       dockerfile: ./web/Dockerfile
     ports:
-      - 8888:8080
+      - "8888:8080"
+    volumes:
+      - ../target/xfit:/usr/local/tomcat/webapps/xfit:rw
     environment:
       - JPDA_OPTS="-agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8787,server=y,suspend=n"
     command: ["catalina.sh", "jpda", "run"]
@@ -49,7 +51,7 @@ services:
     image: phpmyadmin
     restart: always
     ports:
-      - 8686:80
+      - "8686:80"
     environment:
       - PMA_HOST=db
       - PMA_USER=root

@@ -1,56 +1,55 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-    <style>
-        body::before {
-        display: block;
-        content: "";
-        height: 72px;
-      }
-    </style>
-    
-    <!-- navbar -->
-    <nav class="navbar navbar-expand-md bg-dark navbar-dark py-3 fixed-top">
-      <div class="container">
-        <a href="#" class="navbar-brand"><b>XFit</b></a>
+<!-- navbar -->
+<style>
+  body::before {
+    display: block;
+    content: "";
+    height: 72px;
+  }
+</style>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navmenu"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+<nav class="navbar navbar-expand-md bg-dark navbar-dark py-3 fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#"><b>XFit</b></a>
+    <button
+      class="navbar-toggler"
+      data-bs-target="#navmenu"
+      data-bs-toggle="collapse"
+      type="button"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="navmenu" class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">
+            <i class="fas fa-home"></i>
+            Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="fas fa-person-running"></i>
+            Exercises
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="fas fa-calendar-alt"></i>
+            Routine
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="fas fa-stopwatch"></i>
+            <span class="d-md-none d-lg-inline">Today's </span>Workout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
-        <div class="collapse navbar-collapse" id="navmenu">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <a href="#" class="nav-link active">
-                <i class="fas fa-home"></i>
-                Home
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="fas fa-dumbbell"></i>
-                Exercises
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="fas fa-calendar-alt"></i>
-                Schedule
-              </a>
-            </li>
-          </ul>
-          <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#signup-modal" type="button">
-            <i class="fas fa-user-circle"></i>
-            Sign Up
-          </button>
-        </div>
-      </div>
-    </nav>
-
-  <c:import url="/form/signup.jsp" />
-  
+<c:import url="/include/registration-modal.jsp" charEncoding="UTF-8" />
