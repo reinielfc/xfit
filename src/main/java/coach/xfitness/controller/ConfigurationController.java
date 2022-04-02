@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import coach.xfitness.business.User;
-import coach.xfitness.data.UserDB;
 
 @WebServlet(name = "ConfigurationController", urlPatterns = {"/c/*"})
 public class ConfigurationController extends HttpServlet {

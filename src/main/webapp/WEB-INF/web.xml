@@ -2,7 +2,9 @@
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
-   version="5.0">
+    version="5.0">
+
+    <!-- JSP CONFIGURATION -->
     <jsp-config>
         <jsp-property-group>
            <url-pattern>*.jsp</url-pattern>
@@ -10,6 +12,7 @@
         </jsp-property-group>
     </jsp-config>
 
+    <!-- CONTEXT PARAMETERS -->
     <context-param>
         <param-name>host</param-name>
         <param-value>smtp.gmail.com</param-value>
@@ -29,7 +32,8 @@
         <param-name>pass</param-name>
         <param-value>c5']flGzQlEfM(Y,</param-value>
     </context-param>
-
+    
+    <!-- SESSION CONFIGURATION -->
     <session-config>
         <session-timeout>
             30
