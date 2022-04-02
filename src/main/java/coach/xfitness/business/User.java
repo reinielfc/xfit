@@ -1,9 +1,19 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
-
 import java.util.Collection;
 import java.util.Objects;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 @Entity
 @NamedQuery(name = "User.selectByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
@@ -45,7 +55,13 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(favoriteExercises, user.favoriteExercises) && Objects.equals(plansById, user.plansById) && Objects.equals(equipment, user.equipment);
+        return id == user.id
+                && Objects.equals(name, user.name)
+                && Objects.equals(email, user.email)
+                && Objects.equals(password, user.password)
+                && Objects.equals(favoriteExercises, user.favoriteExercises)
+                && Objects.equals(plansById, user.plansById)
+                && Objects.equals(equipment, user.equipment);
     }
 
     @Override

@@ -1,10 +1,10 @@
 package coach.xfitness.business;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import java.io.Serializable;
 import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 @Embeddable
 public class ExerciseMuscleKey implements Serializable {

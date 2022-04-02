@@ -1,9 +1,16 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
-
 import java.util.Collection;
 import java.util.Objects;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQuery(name = "Equipment.selectAll", query = "SELECT e FROM Equipment e")
@@ -32,7 +39,10 @@ public class Equipment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Equipment equipment = (Equipment) o;
-        return id == equipment.id && Objects.equals(name, equipment.name) && Objects.equals(exercises, equipment.exercises) && Objects.equals(users, equipment.users);
+        return id == equipment.id
+                && Objects.equals(name, equipment.name)
+                && Objects.equals(exercises, equipment.exercises)
+                && Objects.equals(users, equipment.users);
     }
 
     @Override

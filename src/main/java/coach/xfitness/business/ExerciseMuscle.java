@@ -1,8 +1,14 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
-
 import java.util.Objects;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 
 @Entity
 public class ExerciseMuscle {
@@ -32,7 +38,10 @@ public class ExerciseMuscle {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ExerciseMuscle that = (ExerciseMuscle) o;
-        return isSecondary == that.isSecondary && Objects.equals(id, that.id) && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId) && Objects.equals(muscleByMuscleId, that.muscleByMuscleId);
+        return isSecondary == that.isSecondary
+                && Objects.equals(id, that.id)
+                && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId)
+                && Objects.equals(muscleByMuscleId, that.muscleByMuscleId);
     }
 
     @Override

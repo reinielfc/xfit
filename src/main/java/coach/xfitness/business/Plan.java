@@ -1,9 +1,15 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
-
 import java.sql.Time;
 import java.util.Objects;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 
 @Entity
 public class Plan {
@@ -53,7 +59,15 @@ public class Plan {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Plan plan = (Plan) o;
-        return dayOfWeek == plan.dayOfWeek && position == plan.position && Objects.equals(id, plan.id) && Objects.equals(sets, plan.sets) && Objects.equals(reps, plan.reps) && Objects.equals(weight, plan.weight) && Objects.equals(duration, plan.duration) && Objects.equals(userByUserId, plan.userByUserId) && Objects.equals(exerciseByExerciseId, plan.exerciseByExerciseId);
+        return dayOfWeek == plan.dayOfWeek
+                && position == plan.position
+                && Objects.equals(id, plan.id)
+                && Objects.equals(sets, plan.sets)
+                && Objects.equals(reps, plan.reps)
+                && Objects.equals(weight, plan.weight)
+                && Objects.equals(duration, plan.duration)
+                && Objects.equals(userByUserId, plan.userByUserId)
+                && Objects.equals(exerciseByExerciseId, plan.exerciseByExerciseId);
     }
 
     @Override

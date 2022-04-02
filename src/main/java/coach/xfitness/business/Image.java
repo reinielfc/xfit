@@ -1,10 +1,16 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Image {
@@ -29,7 +35,9 @@ public class Image {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Image image1 = (Image) o;
-        return id == image1.id && Arrays.equals(image, image1.image) && Objects.equals(exerciseImagesById, image1.exerciseImagesById);
+        return id == image1.id
+                && Arrays.equals(image, image1.image)
+                && Objects.equals(exerciseImagesById, image1.exerciseImagesById);
     }
 
     @Override

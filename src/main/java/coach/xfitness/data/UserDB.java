@@ -1,51 +1,14 @@
 package coach.xfitness.data;
 
-import coach.xfitness.business.Exercise;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
+
 import coach.xfitness.business.User;
-
-import javax.persistence.*;
-
 public class UserDB {
-    // TODO: This method is for tesing purposes only, DELETE IT
-    public static void main(String[] args) {
-        User user = new User();
-        user.setName("jsmith");
-        user.setEmail("jsmith@example.net");
-        user.setPassword("sesame");
-
-        UserDB.insert(user);
-
-        System.out.println(
-            UserDB.select(user.getEmail()).getEmail()
-        );;
-
-        user.setName("john");
-        UserDB.update(user);
-
-        System.out.println(
-            UserDB.select(user.getEmail()).getEmail()
-        );
-
-        user = UserDB.select(user.getEmail());
-        user.setEmail("jsmith@email.com");
-        UserDB.update(user);
-
-        System.out.println(
-            UserDB.select(user.getEmail()).getEmail()
-        );
-
-        user.getFavoriteExercises().add(ExerciseDB.select(22));
-        user.getFavoriteExercises().add(ExerciseDB.select(32));
-        user.getFavoriteExercises().stream().forEach(fe -> {
-            fe.getExerciseMusclesById().forEach(em -> System.out.println(fe.getTitle() + ": " + em.getMuscleByMuscleId().getName()));
-        });
-
-        UserDB.delete(user.getEmail());
-
-        System.out.println(
-            UserDB.select(user.getEmail()).getEmail()
-        );
-    }
 
     public static User select(String email) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
