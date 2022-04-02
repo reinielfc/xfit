@@ -1,135 +1,79 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
+import java.io.Serializable;
 
-import java.sql.Time;
-import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
-public class Plan {
-
-    @EmbeddedId
-    private UserExerciseKey id;
-
-    @Basic
-    @Column(name = "dayOfWeek", nullable = false)
-    private byte dayOfWeek;
-
-    @Basic
-    @Column(name = "position", nullable = false)
-    private int position;
-
-    @Basic
-    @Column(name = "sets")
-    private Short sets;
-
-    @Basic
-    @Column(name = "reps")
-    private Short reps;
-
-    @Basic
-    @Column(name = "weight")
-    private Short weight;
-
-    @Basic
-    @Column(name = "duration")
-    private Time duration;
-
-    @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
-    private User userByUserId;
-    
-    @ManyToOne
-    @MapsId("exerciseId")
-    @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
-    private Exercise exerciseByExerciseId;
+public class Plan implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long planID;
+    private long userID;
+    private long exerciseID;
+    private String dayOfWeek;
+    private int sets;
+    private int reps;
+    private int time;
 
     public Plan() {
+        //remember missing fields experienceID and categoryID in the constructor.
+        this.dayOfWeek= "";
+        this.sets = 0;
+        this.reps = 0;
+        this.time = 0;
+    }
+    public long getPlanID() {
+        return planID;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Plan plan = (Plan) o;
-        return dayOfWeek == plan.dayOfWeek && position == plan.position && Objects.equals(id, plan.id) && Objects.equals(sets, plan.sets) && Objects.equals(reps, plan.reps) && Objects.equals(weight, plan.weight) && Objects.equals(duration, plan.duration) && Objects.equals(userByUserId, plan.userByUserId) && Objects.equals(exerciseByExerciseId, plan.exerciseByExerciseId);
+    public void setPlanID(long planID) {
+        this.planID = planID;
+    }
+    public long getUserID() {
+        return userID;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, dayOfWeek, position, sets, reps, weight, duration, userByUserId, exerciseByExerciseId);
+    public void setUserID(long userID) {
+        this.userID = userID;
+
+    }public long getExerciseID() {
+        return exerciseID;
     }
 
-    public UserExerciseKey getId() {
-        return id;
+    public void setExerciseID(long exerciseID) {
+        this.exerciseID = exerciseID;
     }
-
-    public void setId(UserExerciseKey id) {
-        this.id = id;
-    }
-
-    public byte getDayOfWeek() {
+    public String getDayOfWeek() {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(byte dayOfWeek) {
+    public void setDayOfWeek(String dayOfWeek){
         this.dayOfWeek = dayOfWeek;
     }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-    public Short getSets() {
+    public int getSets() {
         return sets;
     }
 
-    public void setSets(Short sets) {
+    public void setSets(int sets){
         this.sets = sets;
     }
-
-    public Short getReps() {
+    public int getReps() {
         return reps;
     }
 
-    public void setReps(Short reps) {
+    public void setReps(int reps){
         this.reps = reps;
     }
-
-    public Short getWeight() {
-        return weight;
+    public int getTime() {
+        return time;
     }
 
-    public void setWeight(Short weight) {
-        this.weight = weight;
+    public void setTime(int time){
+        this.time = time;
     }
-
-    public Time getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Time duration) {
-        this.duration = duration;
-    }
-
-    public User getUserByUserId() {
-        return userByUserId;
-    }
-
-    public void setUserByUserId(User userByUserId) {
-        this.userByUserId = userByUserId;
-    }
-
-    public Exercise getExerciseByExerciseId() {
-        return exerciseByExerciseId;
-    }
-
-    public void setExerciseByExerciseId(Exercise exerciseByExerciseId) {
-        this.exerciseByExerciseId = exerciseByExerciseId;
-    }
+    
 }
