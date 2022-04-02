@@ -11,13 +11,10 @@
 
 <nav class="navbar navbar-expand-md bg-dark navbar-dark py-3 fixed-top">
   <div class="container">
-    <a class="navbar-brand" href="#"><b>XFit</b></a>
-    <button
-      class="navbar-toggler"
-      data-bs-target="#navmenu"
-      data-bs-toggle="collapse"
-      type="button"
-    >
+    <a class="navbar-brand p-0" href="#">
+      <img class="d-inline-block align-text-top" src="<c:url value='/image/logo.svg'/>" width="64" height="64"></img>
+    </a>
+    <button class="navbar-toggler" data-bs-target="#navmenu" data-bs-toggle="collapse" type="button">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div id="navmenu" class="collapse navbar-collapse">
