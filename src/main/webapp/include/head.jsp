@@ -27,9 +27,9 @@
       integrity="sha512-NZ19NrT58XPK5sXqXnnvtf9T5kLXSzGQlVZL9taZWeTBtXoN3xIfTdxbkQh6QSoJfJgpojRqMfhyqBAAEeiXcA=="
       crossorigin="anonymous"
     />
-    <link href="<c:url value='/style/main.css' />" rel="stylesheet" />
-    
-    <!-- scripts -->
+    <!-- TODO: remove randomizer-->
+    <link href='<c:url value="/style/main.css"/>?<%= (int) (Math.random() * 64) + 1 %>' rel="stylesheet" />
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"
       integrity="sha512-yFjZbTYRCJodnuyGlsKamNE/LlEaEAxSUDe5+u61mV8zzqJVFOH7TnULE2/PP/l5vKWpUNnF4VGVkXh3MjgLsg=="
