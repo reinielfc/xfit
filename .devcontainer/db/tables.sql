@@ -21,6 +21,7 @@ CREATE TABLE
 CREATE TABLE
 	Exercise (
 		id			INT UNSIGNED	NOT NULL AUTO_INCREMENT,
+		name		VARCHAR(256)	NOT NULL,
 		title		VARCHAR(256)	NOT NULL,
 		primer		VARCHAR(512),
 		type		VARCHAR(32),
@@ -28,7 +29,7 @@ CREATE TABLE
 		tips		TEXT,
 		links		TEXT,
 
-		PRIMARY KEY(id)
+		PRIMARY KEY(id), INDEX(name)
 	) ENGINE=InnoDB;
 
 CREATE TABLE

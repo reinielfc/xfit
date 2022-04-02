@@ -1,7 +1,5 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
-
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -30,6 +28,10 @@ public class Exercise {
     @Id
     @Column(name = "id", nullable = false)
     private int id;
+
+    @Basic
+    @Column(name = "name", nullable = false, length = 256)
+    private String name;
 
     @Basic
     @Column(name = "title", nullable = false, length = 256)
@@ -81,9 +83,14 @@ public class Exercise {
         if (o == null || getClass() != o.getClass())
             return false;
         Exercise exercise = (Exercise) o;
-        return id == exercise.id && Objects.equals(title, exercise.title) && Objects.equals(primer, exercise.primer)
-                && Objects.equals(type, exercise.type) && Objects.equals(steps, exercise.steps)
-                && Objects.equals(tips, exercise.tips) && Objects.equals(links, exercise.links)
+        return id == exercise.id
+                && Objects.equals(name, exercise.name)
+                && Objects.equals(title, exercise.title)
+                && Objects.equals(primer, exercise.primer)
+                && Objects.equals(type, exercise.type)
+                && Objects.equals(steps, exercise.steps)
+                && Objects.equals(tips, exercise.tips)
+                && Objects.equals(links, exercise.links)
                 && Objects.equals(equipment, exercise.equipment)
                 && Objects.equals(exerciseImagesById, exercise.exerciseImagesById)
                 && Objects.equals(exerciseMusclesById, exercise.exerciseMusclesById)
@@ -92,7 +99,7 @@ public class Exercise {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, primer, type, steps, tips, links, equipment, exerciseImagesById,
+        return Objects.hash(id, name, title, primer, type, steps, tips, links, equipment, exerciseImagesById,
                 exerciseMusclesById, favoritedBy, plansById);
     }
 
@@ -102,6 +109,14 @@ public class Exercise {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getTitle() {

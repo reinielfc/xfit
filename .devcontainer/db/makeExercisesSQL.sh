@@ -40,6 +40,7 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 	# exercise
 	eval "`jq -r '@sh "
 		exerciseId=\(.id)
+		exerciseName=\(.name | @json)
 		exerciseTitle=\(.title | @json)
 		exercisePrimer=\(.primer | @json)
 		exerciseType=\(.type | @json)
@@ -55,6 +56,7 @@ for exerciseJSON in $EXERCISE_JSON_FILES; do
 	exerciseInsert=`cat <<-END
 		\t(
 		\t\t$exerciseId,
+		\t\t$exerciseName,
 		\t\t$exerciseTitle,
 		\t\t$exercisePrimer,
 		\t\t$exerciseType,
@@ -107,7 +109,7 @@ echo -e "
 -- INSERT ---------------------------------------------------------- EXERCISE --
 
 INSERT INTO
-	Exercise (id, title, primer, type, steps, tips, links)
+	Exercise (id, name, title, primer, type, steps, tips, links)
 VALUES
 $exerciseInsertList;
 
