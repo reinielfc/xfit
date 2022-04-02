@@ -19,8 +19,9 @@ import javax.persistence.OneToMany;
 
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "Exercise.selectAll", query = "SELECT e FROM Exercise e"),
-    @NamedQuery(name = "Exercise.selectById", query = "SELECT e FROM Exercise e WHERE e.id = :id")
+        @NamedQuery(name = "Exercise.selectAll", query = "SELECT e FROM Exercise e"),
+        @NamedQuery(name = "Exercise.selectByName", query = "SELECT e FROM Exercise e WHERE e.name = :name"),
+        @NamedQuery(name = "Exercise.selectDistinctTypes", query = "SELECT DISTINCT e.type FROM Exercise e")
 })
 public class Exercise {
 
@@ -94,7 +95,8 @@ public class Exercise {
                 && Objects.equals(equipment, exercise.equipment)
                 && Objects.equals(exerciseImagesById, exercise.exerciseImagesById)
                 && Objects.equals(exerciseMusclesById, exercise.exerciseMusclesById)
-                && Objects.equals(favoritedBy, exercise.favoritedBy) && Objects.equals(plansById, exercise.plansById);
+                && Objects.equals(favoritedBy, exercise.favoritedBy)
+                && Objects.equals(plansById, exercise.plansById);
     }
 
     @Override
@@ -206,4 +208,29 @@ public class Exercise {
     public void setPlansById(Collection<Plan> plansById) {
         this.plansById = plansById;
     }
+
+    private Collection<Muscle> getMuscles(boolean isSecondary) {
+        return this.exerciseMusclesById
+                .stream()
+                .filter(em -> em.getIsSecondary() == (isSecondary ? 1 : 0))
+                .map(ExerciseMuscle::getMuscleByMuscleId)
+                .collect(Collectors.toList());
+    }
+
+    public Collection<Muscle> getPrimaryMuscles() {
+        return getMuscles(false);
+    }
+
+    public Collection<Muscle> getSecondaryMuscles() {
+        return getMuscles(true);
+    }
+
+    public Collection<String> getStepsList() {
+        return this.steps.lines().collect(Collectors.toList());
+    }
+
+    public Collection<String> getTipsList() {
+        return this.tips.lines().collect(Collectors.toList());
+    }
+
 }
