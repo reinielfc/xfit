@@ -19,26 +19,26 @@
     </button>
     <div id="navmenu" class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link active" href="#">
+        <li class="nav-item d-md-none d-lg-block">
+          <a class="nav-link${pageContext.request.requestURI.endsWith('/') ? ' active' : ''}" href='<c:url value="/" />'>
             <i class="fas fa-home"></i>
             Home
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <a class="nav-link${activePage.equals('exercises') ? ' active' : ''}" href='<c:url value="/exercise" />'>
             <i class="fas fa-person-running"></i>
             Exercises
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <a class="nav-link${activePage.equals('planner') ? ' active' : ''}" href="#">
             <i class="fas fa-calendar-alt"></i>
-            Routine
+            <span class="d-md-none d-lg-inline">Routine</span> Planner
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">
+          <a class="nav-link${activePage.equals('workout') ? ' active' : ''}" href="#">
             <i class="fas fa-stopwatch"></i>
             <span class="d-md-none d-lg-inline">Today's </span>Workout
           </a>
