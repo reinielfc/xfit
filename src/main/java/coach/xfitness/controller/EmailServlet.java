@@ -15,7 +15,7 @@ import coach.xfitness.business.User;
 import coach.xfitness.data.UserDB;
 import coach.xfitness.util.EmailUtil;
 @WebServlet(name = "EmailController", urlPatterns = {"/validate"})
-public class EmailController extends HttpServlet {
+public class EmailServlet extends HttpServlet {
 
     private static String host;
     private static String port;

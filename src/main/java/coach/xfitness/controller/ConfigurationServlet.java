@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import coach.xfitness.business.User;
 
 @WebServlet(name = "ConfigurationController", urlPatterns = {"/c/*"})
-public class ConfigurationController extends HttpServlet {
+public class ConfigurationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
