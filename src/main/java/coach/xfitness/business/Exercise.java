@@ -2,6 +2,7 @@ package coach.xfitness.business;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -11,9 +12,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "Exercise.selectAll", query = "SELECT e FROM Exercise e"),
+        @NamedQuery(name = "Exercise.selectByName", query = "SELECT e FROM Exercise e WHERE e.name = :name"),
+        @NamedQuery(name = "Exercise.selectDistinctTypes", query = "SELECT DISTINCT e.type FROM Exercise e")
+})
 public class Exercise {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)

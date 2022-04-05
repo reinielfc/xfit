@@ -9,9 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 @Entity
+@NamedQuery(name = "Muscle.selectAll", query = "SELECT m FROM Muscle m")
 public class Muscle {
     
     @GeneratedValue(strategy = GenerationType.IDENTITY)
