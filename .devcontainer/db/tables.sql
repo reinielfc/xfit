@@ -127,7 +127,7 @@ CREATE TABLE
 		sets		SMALLINT UNSIGNED,
 		reps		SMALLINT UNSIGNED,
 		weight		SMALLINT UNSIGNED,
-		duration	TIME,
+		isDone		TINYINT UNSIGNED DEFAULT 0,
 
 		PRIMARY KEY(userId, exerciseId), INDEX(exerciseId, userId),
 		FOREIGN KEY(userId)		REFERENCES User(id)		ON DELETE CASCADE,
