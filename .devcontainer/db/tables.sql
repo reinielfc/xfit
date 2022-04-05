@@ -116,6 +116,16 @@ CREATE TABLE
 		FOREIGN KEY(imageId) 	REFERENCES Image(id)	ON DELETE CASCADE
 	) ENGINE=InnoDB;
 
+CREATE TABLE
+	EquipmentImage (
+		equipmentId		INT UNSIGNED	NOT NULL,
+		imageId			INT UNSIGNED	NOT NULL,
+		
+		PRIMARY KEY(equipmentId, imageId), INDEX(imageId, equipmentId),
+		FOREIGN KEY(equipmentId)	REFERENCES Equipment(id)	ON DELETE CASCADE,
+		FOREIGN KEY(imageId) 		REFERENCES Image(id)		ON DELETE CASCADE
+	) ENGINE=InnoDB;
+
 -- PLAN ---------------------------------------------------------------- PLAN --
 
 CREATE TABLE
