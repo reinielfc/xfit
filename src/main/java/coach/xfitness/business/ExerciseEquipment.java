@@ -1,8 +1,5 @@
 package coach.xfitness.business;
 
-import java.util.Objects;
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,8 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-@IdClass(ExerciseImagePK.class)
-public class ExerciseImage {
+@IdClass(ExerciseEquipmentPK.class)
+public class ExerciseEquipment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "exerciseId", nullable = false)
@@ -22,20 +19,16 @@ public class ExerciseImage {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "imageId", nullable = false)
-    private int imageId;
-
-    @Basic
-    @Column(name = "exerciseState", nullable = false, length = 32)
-    private String exerciseState;
+    @Column(name = "equipmentId", nullable = false)
+    private int equipmentId;
 
     @ManyToOne
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
     
     @ManyToOne
-    @JoinColumn(name = "imageId", referencedColumnName = "id", nullable = false)
-    private Image imageByImageId;
+    @JoinColumn(name = "equipmentId", referencedColumnName = "id", nullable = false)
+    private Equipment equipmentByEquipmentId;
 
     public int getExerciseId() {
         return exerciseId;
@@ -45,20 +38,12 @@ public class ExerciseImage {
         this.exerciseId = exerciseId;
     }
 
-    public int getImageId() {
-        return imageId;
+    public int getEquipmentId() {
+        return equipmentId;
     }
 
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
-    }
-
-    public String getExerciseState() {
-        return exerciseState;
-    }
-
-    public void setExerciseState(String exerciseState) {
-        this.exerciseState = exerciseState;
+    public void setEquipmentId(int equipmentId) {
+        this.equipmentId = equipmentId;
     }
 
     @Override
@@ -66,18 +51,16 @@ public class ExerciseImage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ExerciseImage that = (ExerciseImage) o;
+        ExerciseEquipment that = (ExerciseEquipment) o;
 
         if (exerciseId != that.exerciseId) return false;
-        if (imageId != that.imageId) return false;
-        return Objects.equals(exerciseState, that.exerciseState);
+        return equipmentId == that.equipmentId;
     }
 
     @Override
     public int hashCode() {
         int result = exerciseId;
-        result = 31 * result + imageId;
-        result = 31 * result + (exerciseState != null ? exerciseState.hashCode() : 0);
+        result = 31 * result + equipmentId;
         return result;
     }
 
@@ -89,11 +72,11 @@ public class ExerciseImage {
         this.exerciseByExerciseId = exerciseByExerciseId;
     }
 
-    public Image getImageByImageId() {
-        return imageByImageId;
+    public Equipment getEquipmentByEquipmentId() {
+        return equipmentByEquipmentId;
     }
 
-    public void setImageByImageId(Image imageByImageId) {
-        this.imageByImageId = imageByImageId;
+    public void setEquipmentByEquipmentId(Equipment equipmentByEquipmentId) {
+        this.equipmentByEquipmentId = equipmentByEquipmentId;
     }
 }

@@ -1,21 +1,29 @@
 package coach.xfitness.business;
 
-import java.sql.Time;
 import java.util.Objects;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 
 @Entity
+@IdClass(PlanPK.class)
 public class Plan {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "userId", nullable = false)
+    private int userId;
 
-    @EmbeddedId
-    private UserExerciseKey id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "exerciseId", nullable = false)
+    private int exerciseId;
 
     @Basic
     @Column(name = "dayOfWeek", nullable = false)
@@ -38,49 +46,31 @@ public class Plan {
     private Short weight;
 
     @Basic
-    @Column(name = "duration")
-    private Time duration;
+    @Column(name = "isDone")
+    private Byte isDone;
 
     @ManyToOne
-    @MapsId("userId")
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
     private User userByUserId;
     
     @ManyToOne
-    @MapsId("exerciseId")
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
 
-    public Plan() {
+    public int getUserId() {
+        return userId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Plan plan = (Plan) o;
-        return dayOfWeek == plan.dayOfWeek
-                && position == plan.position
-                && Objects.equals(id, plan.id)
-                && Objects.equals(sets, plan.sets)
-                && Objects.equals(reps, plan.reps)
-                && Objects.equals(weight, plan.weight)
-                && Objects.equals(duration, plan.duration)
-                && Objects.equals(userByUserId, plan.userByUserId)
-                && Objects.equals(exerciseByExerciseId, plan.exerciseByExerciseId);
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, dayOfWeek, position, sets, reps, weight, duration, userByUserId, exerciseByExerciseId);
+    public int getExerciseId() {
+        return exerciseId;
     }
 
-    public UserExerciseKey getId() {
-        return id;
-    }
-
-    public void setId(UserExerciseKey id) {
-        this.id = id;
+    public void setExerciseId(int exerciseId) {
+        this.exerciseId = exerciseId;
     }
 
     public byte getDayOfWeek() {
@@ -123,12 +113,42 @@ public class Plan {
         this.weight = weight;
     }
 
-    public Time getDuration() {
-        return duration;
+    public Byte getIsDone() {
+        return isDone;
     }
 
-    public void setDuration(Time duration) {
-        this.duration = duration;
+    public void setIsDone(Byte isDone) {
+        this.isDone = isDone;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Plan plan = (Plan) o;
+
+        if (userId != plan.userId) return false;
+        if (exerciseId != plan.exerciseId) return false;
+        if (dayOfWeek != plan.dayOfWeek) return false;
+        if (position != plan.position) return false;
+        if (!Objects.equals(sets, plan.sets)) return false;
+        if (!Objects.equals(reps, plan.reps)) return false;
+        if (!Objects.equals(weight, plan.weight)) return false;
+        return Objects.equals(isDone, plan.isDone);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userId;
+        result = 31 * result + exerciseId;
+        result = 31 * result + (int) dayOfWeek;
+        result = 31 * result + position;
+        result = 31 * result + (sets != null ? sets.hashCode() : 0);
+        result = 31 * result + (reps != null ? reps.hashCode() : 0);
+        result = 31 * result + (weight != null ? weight.hashCode() : 0);
+        result = 31 * result + (isDone != null ? isDone.hashCode() : 0);
+        return result;
     }
 
     public User getUserByUserId() {

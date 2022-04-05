@@ -2,7 +2,6 @@ package coach.xfitness.business;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -11,24 +10,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
-@NamedQueries({
-        @NamedQuery(name = "Exercise.selectAll", query = "SELECT e FROM Exercise e"),
-        @NamedQuery(name = "Exercise.selectByName", query = "SELECT e FROM Exercise e WHERE e.name = :name"),
-        @NamedQuery(name = "Exercise.selectDistinctTypes", query = "SELECT DISTINCT e.type FROM Exercise e")
-})
 public class Exercise {
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id", nullable = false)
     private int id;
+
+    @Basic
+    @Column(name = "userId")
+    private Integer userId;
 
     @Basic
     @Column(name = "name", nullable = false, length = 256)
@@ -58,9 +52,12 @@ public class Exercise {
     @Column(name = "links", length = -1)
     private String links;
 
-    @ManyToMany
-    @JoinTable(name = "ExerciseEquipment", joinColumns = @JoinColumn(name = "exerciseId"), inverseJoinColumns = @JoinColumn(name = "equipmentId"))
-    private Collection<Equipment> equipment;
+    @ManyToOne
+    @JoinColumn(name = "userId", referencedColumnName = "id")
+    private User userByUserId;
+
+    @OneToMany(mappedBy = "exerciseByExerciseId")
+    private Collection<ExerciseEquipment> exerciseEquipmentsById;
 
     @OneToMany(mappedBy = "exerciseByExerciseId")
     private Collection<ExerciseImage> exerciseImagesById;
@@ -68,42 +65,11 @@ public class Exercise {
     @OneToMany(mappedBy = "exerciseByExerciseId")
     private Collection<ExerciseMuscle> exerciseMusclesById;
 
-    @ManyToMany(mappedBy = "favoriteExercises")
-    private Collection<User> favoritedBy;
-
+    @OneToMany(mappedBy = "exerciseByExerciseId")
+    private Collection<FavoriteExercise> favoriteExercisesById;
+    
     @OneToMany(mappedBy = "exerciseByExerciseId")
     private Collection<Plan> plansById;
-
-    public Exercise() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Exercise exercise = (Exercise) o;
-        return id == exercise.id
-                && Objects.equals(name, exercise.name)
-                && Objects.equals(title, exercise.title)
-                && Objects.equals(primer, exercise.primer)
-                && Objects.equals(type, exercise.type)
-                && Objects.equals(steps, exercise.steps)
-                && Objects.equals(tips, exercise.tips)
-                && Objects.equals(links, exercise.links)
-                && Objects.equals(equipment, exercise.equipment)
-                && Objects.equals(exerciseImagesById, exercise.exerciseImagesById)
-                && Objects.equals(exerciseMusclesById, exercise.exerciseMusclesById)
-                && Objects.equals(favoritedBy, exercise.favoritedBy)
-                && Objects.equals(plansById, exercise.plansById);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, title, primer, type, steps, tips, links, equipment, exerciseImagesById,
-                exerciseMusclesById, favoritedBy, plansById);
-    }
 
     public int getId() {
         return id;
@@ -111,6 +77,14 @@ public class Exercise {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -169,12 +143,52 @@ public class Exercise {
         this.links = links;
     }
 
-    public Collection<Equipment> getEquipment() {
-        return equipment;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Exercise exercise = (Exercise) o;
+
+        if (id != exercise.id) return false;
+        if (!Objects.equals(userId, exercise.userId)) return false;
+        if (!Objects.equals(name, exercise.name)) return false;
+        if (!Objects.equals(title, exercise.title)) return false;
+        if (!Objects.equals(primer, exercise.primer)) return false;
+        if (!Objects.equals(type, exercise.type)) return false;
+        if (!Objects.equals(steps, exercise.steps)) return false;
+        if (!Objects.equals(tips, exercise.tips)) return false;
+        return Objects.equals(links, exercise.links);
     }
 
-    public void setEquipment(Collection<Equipment> equipment) {
-        this.equipment = equipment;
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (primer != null ? primer.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (steps != null ? steps.hashCode() : 0);
+        result = 31 * result + (tips != null ? tips.hashCode() : 0);
+        result = 31 * result + (links != null ? links.hashCode() : 0);
+        return result;
+    }
+
+    public User getUserByUserId() {
+        return userByUserId;
+    }
+
+    public void setUserByUserId(User userByUserId) {
+        this.userByUserId = userByUserId;
+    }
+
+    public Collection<ExerciseEquipment> getExerciseEquipmentsById() {
+        return exerciseEquipmentsById;
+    }
+
+    public void setExerciseEquipmentsById(Collection<ExerciseEquipment> exerciseEquipmentsById) {
+        this.exerciseEquipmentsById = exerciseEquipmentsById;
     }
 
     public Collection<ExerciseImage> getExerciseImagesById() {
@@ -193,12 +207,12 @@ public class Exercise {
         this.exerciseMusclesById = exerciseMusclesById;
     }
 
-    public Collection<User> getFavoritedBy() {
-        return favoritedBy;
+    public Collection<FavoriteExercise> getFavoriteExercisesById() {
+        return favoriteExercisesById;
     }
 
-    public void setFavoritedBy(Collection<User> favoritedBy) {
-        this.favoritedBy = favoritedBy;
+    public void setFavoriteExercisesById(Collection<FavoriteExercise> favoriteExercisesById) {
+        this.favoriteExercisesById = favoriteExercisesById;
     }
 
     public Collection<Plan> getPlansById() {
@@ -208,29 +222,4 @@ public class Exercise {
     public void setPlansById(Collection<Plan> plansById) {
         this.plansById = plansById;
     }
-
-    private Collection<Muscle> getMuscles(boolean isSecondary) {
-        return this.exerciseMusclesById
-                .stream()
-                .filter(em -> em.getIsSecondary() == (isSecondary ? 1 : 0))
-                .map(ExerciseMuscle::getMuscleByMuscleId)
-                .collect(Collectors.toList());
-    }
-
-    public Collection<Muscle> getPrimaryMuscles() {
-        return getMuscles(false);
-    }
-
-    public Collection<Muscle> getSecondaryMuscles() {
-        return getMuscles(true);
-    }
-
-    public Collection<String> getStepsList() {
-        return this.steps.lines().collect(Collectors.toList());
-    }
-
-    public Collection<String> getTipsList() {
-        return this.tips.lines().collect(Collectors.toList());
-    }
-
 }

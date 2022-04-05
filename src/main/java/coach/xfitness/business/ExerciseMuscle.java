@@ -1,60 +1,54 @@
 package coach.xfitness.business;
 
-import java.util.Objects;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 
 @Entity
+@IdClass(ExerciseMusclePK.class)
 public class ExerciseMuscle {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "exerciseId", nullable = false)
+    private int exerciseId;
 
-    @EmbeddedId
-    private ExerciseMuscleKey id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "muscleId", nullable = false)
+    private int muscleId;
 
     @Basic
     @Column(name = "isSecondary", nullable = false)
     private int isSecondary;
 
     @ManyToOne
-    @MapsId("exerciseId")
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
-
+    
     @ManyToOne
-    @MapsId("muscleId")
     @JoinColumn(name = "muscleId", referencedColumnName = "id", nullable = false)
     private Muscle muscleByMuscleId;
 
-    public ExerciseMuscle() {
+    public int getExerciseId() {
+        return exerciseId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ExerciseMuscle that = (ExerciseMuscle) o;
-        return isSecondary == that.isSecondary
-                && Objects.equals(id, that.id)
-                && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId)
-                && Objects.equals(muscleByMuscleId, that.muscleByMuscleId);
+    public void setExerciseId(int exerciseId) {
+        this.exerciseId = exerciseId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, isSecondary, exerciseByExerciseId, muscleByMuscleId);
+    public int getMuscleId() {
+        return muscleId;
     }
 
-    public ExerciseMuscleKey getId() {
-        return id;
-    }
-
-    public void setId(ExerciseMuscleKey id) {
-        this.id = id;
+    public void setMuscleId(int muscleId) {
+        this.muscleId = muscleId;
     }
 
     public int getIsSecondary() {
@@ -63,6 +57,26 @@ public class ExerciseMuscle {
 
     public void setIsSecondary(int isSecondary) {
         this.isSecondary = isSecondary;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ExerciseMuscle that = (ExerciseMuscle) o;
+
+        if (exerciseId != that.exerciseId) return false;
+        if (muscleId != that.muscleId) return false;
+        return isSecondary == that.isSecondary;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = exerciseId;
+        result = 31 * result + muscleId;
+        result = 31 * result + isSecondary;
+        return result;
     }
 
     public Exercise getExerciseByExerciseId() {

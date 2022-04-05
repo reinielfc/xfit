@@ -9,16 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 @Entity
-@NamedQuery(name = "User.selectByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
 public class User {
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id", nullable = false)
@@ -36,38 +30,21 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @ManyToMany
-    @JoinTable(name = "FavoriteExercise", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "exerciseId"))
-    private Collection<Exercise> favoriteExercises;
+    @Basic
+    @Column(name = "accessToken")
+    private String accessToken;
+
+    @OneToMany(mappedBy = "userByUserId")
+    private Collection<Exercise> exercisesById;
+
+    @OneToMany(mappedBy = "userByUserId")
+    private Collection<FavoriteExercise> favoriteExercisesById;
 
     @OneToMany(mappedBy = "userByUserId")
     private Collection<Plan> plansById;
-
-    @ManyToMany
-    @JoinTable(name = "UserEquipment", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "equipmentId"))
-    private Collection<Equipment> equipment;
-
-    public User() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id
-                && Objects.equals(name, user.name)
-                && Objects.equals(email, user.email)
-                && Objects.equals(password, user.password)
-                && Objects.equals(favoriteExercises, user.favoriteExercises)
-                && Objects.equals(plansById, user.plansById)
-                && Objects.equals(equipment, user.equipment);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, email, password, favoriteExercises, plansById, equipment);
-    }
+    
+    @OneToMany(mappedBy = "userByUserId")
+    private Collection<UserEquipment> userEquipmentsById;
 
     public int getId() {
         return id;
@@ -101,12 +78,52 @@ public class User {
         this.password = password;
     }
 
-    public Collection<Exercise> getFavoriteExercises() {
-        return favoriteExercises;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setFavoriteExercises(Collection<Exercise> favoriteExercises) {
-        this.favoriteExercises = favoriteExercises;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (id != user.id) return false;
+        if (!Objects.equals(name, user.name)) return false;
+        if (!Objects.equals(email, user.email)) return false;
+        if (!Objects.equals(password, user.password)) return false;
+        return Objects.equals(accessToken, user.accessToken);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (accessToken != null ? accessToken.hashCode() : 0);
+        return result;
+    }
+
+    public Collection<Exercise> getExercisesById() {
+        return exercisesById;
+    }
+
+    public void setExercisesById(Collection<Exercise> exercisesById) {
+        this.exercisesById = exercisesById;
+    }
+
+    public Collection<FavoriteExercise> getFavoriteExercisesById() {
+        return favoriteExercisesById;
+    }
+
+    public void setFavoriteExercisesById(Collection<FavoriteExercise> favoriteExercisesById) {
+        this.favoriteExercisesById = favoriteExercisesById;
     }
 
     public Collection<Plan> getPlansById() {
@@ -117,11 +134,11 @@ public class User {
         this.plansById = plansById;
     }
 
-    public Collection<Equipment> getEquipment() {
-        return equipment;
+    public Collection<UserEquipment> getUserEquipmentsById() {
+        return userEquipmentsById;
     }
 
-    public void setEquipment(Collection<Equipment> equipment) {
-        this.equipment = equipment;
+    public void setUserEquipmentsById(Collection<UserEquipment> userEquipmentsById) {
+        this.userEquipmentsById = userEquipmentsById;
     }
 }

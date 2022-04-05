@@ -9,13 +9,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 @Entity
 @NamedQuery(name = "Equipment.selectAll", query = "SELECT e FROM Equipment e")
 public class Equipment {
-    
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id", nullable = false)
@@ -25,30 +25,14 @@ public class Equipment {
     @Column(name = "name", nullable = false, length = 32)
     private String name;
 
-    @ManyToMany(mappedBy = "equipment")
-    private Collection<Exercise> exercises;
-    
-    @ManyToMany(mappedBy = "equipment")
-    private Collection<User> users;
+    @OneToMany(mappedBy = "equipmentByEquipmentId")
+    private Collection<EquipmentImage> equipmentImagesById;
 
-    public Equipment() {
-    }
+    @OneToMany(mappedBy = "equipmentByEquipmentId")
+    private Collection<ExerciseEquipment> exerciseEquipmentsById;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Equipment equipment = (Equipment) o;
-        return id == equipment.id
-                && Objects.equals(name, equipment.name)
-                && Objects.equals(exercises, equipment.exercises)
-                && Objects.equals(users, equipment.users);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, exercises, users);
-    }
+    @OneToMany(mappedBy = "equipmentByEquipmentId")
+    private Collection<UserEquipment> userEquipmentsById;
 
     public int getId() {
         return id;
@@ -66,20 +50,48 @@ public class Equipment {
         this.name = name;
     }
 
-    public Collection<Exercise> getExercises() {
-        return exercises;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Equipment equipment = (Equipment) o;
+
+        if (id != equipment.id)
+            return false;
+        return Objects.equals(name, equipment.name);
     }
 
-    public void setExercises(Collection<Exercise> exercises) {
-        this.exercises = exercises;
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 
-    public Collection<User> getUsers() {
-        return users;
+    public Collection<EquipmentImage> getEquipmentImagesById() {
+        return equipmentImagesById;
     }
 
-    public void setUsers(Collection<User> users) {
-        this.users = users;
+    public void setEquipmentImagesById(Collection<EquipmentImage> equipmentImagesById) {
+        this.equipmentImagesById = equipmentImagesById;
     }
 
+    public Collection<ExerciseEquipment> getExerciseEquipmentsById() {
+        return exerciseEquipmentsById;
+    }
+
+    public void setExerciseEquipmentsById(Collection<ExerciseEquipment> exerciseEquipmentsById) {
+        this.exerciseEquipmentsById = exerciseEquipmentsById;
+    }
+
+    public Collection<UserEquipment> getUserEquipmentsById() {
+        return userEquipmentsById;
+    }
+
+    public void setUserEquipmentsById(Collection<UserEquipment> userEquipmentsById) {
+        this.userEquipmentsById = userEquipmentsById;
+    }
 }
