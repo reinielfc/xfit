@@ -245,4 +245,30 @@ public class Exercise {
     }
 
     // #endregion boilerplate
+
+    private Collection<Muscle> getMuscles(boolean isSecondary) {
+        int isSecondaryInt = isSecondary ? 1 : 0;
+        return exerciseMusclesById
+                .stream()
+                .filter(em -> em.getIsSecondary() == isSecondaryInt)
+                .map(ExerciseMuscle::getMuscleByMuscleId)
+                .collect(Collectors.toList());
+    }
+
+    public Collection<Muscle> getPrimaryMuscles() {
+        return getMuscles(false);
+    }
+
+    public Collection<Muscle> getSecondaryMuscles() {
+        return getMuscles(true);
+    }
+
+    public Collection<String> getStepsList() {
+        return steps.lines().collect(Collectors.toList());
+    }
+
+    public Collection<String> getTipsList() {
+        return tips.lines().collect(Collectors.toList());
+    }
+
 }
