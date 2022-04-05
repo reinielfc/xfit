@@ -12,6 +12,7 @@ CREATE TABLE
 		name		VARCHAR(32)		NOT NULL,
 		email		VARCHAR(64)		NOT NULL UNIQUE,
 		password	CHAR(255)		NOT NULL,
+		accessToken CHAR(255),
 		
 		PRIMARY KEY(id)
 	) ENGINE=InnoDB;
