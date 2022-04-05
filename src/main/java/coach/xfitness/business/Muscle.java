@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Muscle {
+    
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id", nullable = false)
@@ -21,9 +22,11 @@ public class Muscle {
     @Basic
     @Column(name = "name", nullable = false, length = 32)
     private String name;
-    
+
     @OneToMany(mappedBy = "muscleByMuscleId")
     private Collection<ExerciseMuscle> exerciseMusclesById;
+
+    // #region boilerplate
 
     public int getId() {
         return id;
@@ -43,12 +46,15 @@ public class Muscle {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         Muscle muscle = (Muscle) o;
 
-        if (id != muscle.id) return false;
+        if (id != muscle.id)
+            return false;
         return Objects.equals(name, muscle.name);
     }
 
@@ -66,4 +72,6 @@ public class Muscle {
     public void setExerciseMusclesById(Collection<ExerciseMuscle> exerciseMusclesById) {
         this.exerciseMusclesById = exerciseMusclesById;
     }
+
+    // #endregion boilerplate
 }

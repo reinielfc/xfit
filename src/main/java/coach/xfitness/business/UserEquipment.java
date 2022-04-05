@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @IdClass(UserEquipmentPK.class)
 public class UserEquipment {
+    
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "userId", nullable = false)
@@ -25,10 +26,12 @@ public class UserEquipment {
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
     private User userByUserId;
-    
+
     @ManyToOne
     @JoinColumn(name = "equipmentId", referencedColumnName = "id", nullable = false)
     private Equipment equipmentByEquipmentId;
+
+    // #region boilerplate
 
     public int getUserId() {
         return userId;
@@ -48,12 +51,15 @@ public class UserEquipment {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         UserEquipment that = (UserEquipment) o;
 
-        if (userId != that.userId) return false;
+        if (userId != that.userId)
+            return false;
         return equipmentId == that.equipmentId;
     }
 
@@ -79,4 +85,6 @@ public class UserEquipment {
     public void setEquipmentByEquipmentId(Equipment equipmentByEquipmentId) {
         this.equipmentByEquipmentId = equipmentByEquipmentId;
     }
+
+    // #endregion boilerplate
 }

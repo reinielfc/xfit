@@ -34,6 +34,8 @@ public class Equipment {
     @OneToMany(mappedBy = "equipmentByEquipmentId")
     private Collection<UserEquipment> userEquipmentsById;
 
+    // #region boilerplate
+
     public int getId() {
         return id;
     }
@@ -94,4 +96,6 @@ public class Equipment {
     public void setUserEquipmentsById(Collection<UserEquipment> userEquipmentsById) {
         this.userEquipmentsById = userEquipmentsById;
     }
+
+    // #endregion boilerplate
 }

@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @IdClass(FavoriteExercisePK.class)
 public class FavoriteExercise {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "userId", nullable = false)
@@ -25,10 +26,12 @@ public class FavoriteExercise {
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
     private User userByUserId;
-    
+
     @ManyToOne
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
+
+    // #region boilerplate
 
     public int getUserId() {
         return userId;
@@ -48,12 +51,15 @@ public class FavoriteExercise {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         FavoriteExercise that = (FavoriteExercise) o;
 
-        if (userId != that.userId) return false;
+        if (userId != that.userId)
+            return false;
         return exerciseId == that.exerciseId;
     }
 
@@ -79,4 +85,6 @@ public class FavoriteExercise {
     public void setExerciseByExerciseId(Exercise exerciseByExerciseId) {
         this.exerciseByExerciseId = exerciseByExerciseId;
     }
+
+    // #endregion boilerplate
 }

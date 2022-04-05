@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @IdClass(EquipmentImagePK.class)
 public class EquipmentImage {
-    
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "equipmentId", nullable = false)
@@ -26,10 +26,12 @@ public class EquipmentImage {
     @ManyToOne
     @JoinColumn(name = "equipmentId", referencedColumnName = "id", nullable = false)
     private Equipment equipmentByEquipmentId;
-    
+
     @ManyToOne
     @JoinColumn(name = "imageId", referencedColumnName = "id", nullable = false)
     private Image imageByImageId;
+
+    // #region boilerplate
 
     public int getEquipmentId() {
         return equipmentId;
@@ -49,12 +51,15 @@ public class EquipmentImage {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         EquipmentImage that = (EquipmentImage) o;
 
-        if (equipmentId != that.equipmentId) return false;
+        if (equipmentId != that.equipmentId)
+            return false;
         return imageId == that.imageId;
     }
 
@@ -80,4 +85,6 @@ public class EquipmentImage {
     public void setImageByImageId(Image imageByImageId) {
         this.imageByImageId = imageByImageId;
     }
+
+    // #endregion boilerplate
 }

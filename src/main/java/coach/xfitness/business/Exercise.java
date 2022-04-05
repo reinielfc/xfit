@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Exercise {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id", nullable = false)
@@ -67,9 +68,11 @@ public class Exercise {
 
     @OneToMany(mappedBy = "exerciseByExerciseId")
     private Collection<FavoriteExercise> favoriteExercisesById;
-    
+
     @OneToMany(mappedBy = "exerciseByExerciseId")
     private Collection<Plan> plansById;
+
+    // #region boilerplate
 
     public int getId() {
         return id;
@@ -145,19 +148,29 @@ public class Exercise {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         Exercise exercise = (Exercise) o;
 
-        if (id != exercise.id) return false;
-        if (!Objects.equals(userId, exercise.userId)) return false;
-        if (!Objects.equals(name, exercise.name)) return false;
-        if (!Objects.equals(title, exercise.title)) return false;
-        if (!Objects.equals(primer, exercise.primer)) return false;
-        if (!Objects.equals(type, exercise.type)) return false;
-        if (!Objects.equals(steps, exercise.steps)) return false;
-        if (!Objects.equals(tips, exercise.tips)) return false;
+        if (id != exercise.id)
+            return false;
+        if (!Objects.equals(userId, exercise.userId))
+            return false;
+        if (!Objects.equals(name, exercise.name))
+            return false;
+        if (!Objects.equals(title, exercise.title))
+            return false;
+        if (!Objects.equals(primer, exercise.primer))
+            return false;
+        if (!Objects.equals(type, exercise.type))
+            return false;
+        if (!Objects.equals(steps, exercise.steps))
+            return false;
+        if (!Objects.equals(tips, exercise.tips))
+            return false;
         return Objects.equals(links, exercise.links);
     }
 
@@ -222,4 +235,6 @@ public class Exercise {
     public void setPlansById(Collection<Plan> plansById) {
         this.plansById = plansById;
     }
+
+    // #endregion boilerplate
 }

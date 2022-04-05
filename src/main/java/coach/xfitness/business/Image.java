@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Image {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id", nullable = false)
@@ -24,9 +25,11 @@ public class Image {
 
     @OneToMany(mappedBy = "imageByImageId")
     private Collection<EquipmentImage> equipmentImagesById;
-    
+
     @OneToMany(mappedBy = "imageByImageId")
     private Collection<ExerciseImage> exerciseImagesById;
+
+    // #region boilerplate
 
     public int getId() {
         return id;
@@ -46,12 +49,15 @@ public class Image {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         Image image1 = (Image) o;
 
-        if (id != image1.id) return false;
+        if (id != image1.id)
+            return false;
         return Arrays.equals(image, image1.image);
     }
 
@@ -77,4 +83,6 @@ public class Image {
     public void setExerciseImagesById(Collection<ExerciseImage> exerciseImagesById) {
         this.exerciseImagesById = exerciseImagesById;
     }
+
+    // #endregion boilerplate
 }

@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @IdClass(PlanPK.class)
 public class Plan {
+    
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "userId", nullable = false)
@@ -52,10 +53,12 @@ public class Plan {
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
     private User userByUserId;
-    
+
     @ManyToOne
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
+
+    // #region boilerplate
 
     public int getUserId() {
         return userId;
@@ -123,18 +126,27 @@ public class Plan {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         Plan plan = (Plan) o;
 
-        if (userId != plan.userId) return false;
-        if (exerciseId != plan.exerciseId) return false;
-        if (dayOfWeek != plan.dayOfWeek) return false;
-        if (position != plan.position) return false;
-        if (!Objects.equals(sets, plan.sets)) return false;
-        if (!Objects.equals(reps, plan.reps)) return false;
-        if (!Objects.equals(weight, plan.weight)) return false;
+        if (userId != plan.userId)
+            return false;
+        if (exerciseId != plan.exerciseId)
+            return false;
+        if (dayOfWeek != plan.dayOfWeek)
+            return false;
+        if (position != plan.position)
+            return false;
+        if (!Objects.equals(sets, plan.sets))
+            return false;
+        if (!Objects.equals(reps, plan.reps))
+            return false;
+        if (!Objects.equals(weight, plan.weight))
+            return false;
         return Objects.equals(isDone, plan.isDone);
     }
 
@@ -166,4 +178,6 @@ public class Plan {
     public void setExerciseByExerciseId(Exercise exerciseByExerciseId) {
         this.exerciseByExerciseId = exerciseByExerciseId;
     }
+
+    // #endregion boilerplate
 }

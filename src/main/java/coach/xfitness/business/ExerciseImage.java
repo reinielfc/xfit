@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @IdClass(ExerciseImagePK.class)
 public class ExerciseImage {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "exerciseId", nullable = false)
@@ -32,10 +33,12 @@ public class ExerciseImage {
     @ManyToOne
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
-    
+
     @ManyToOne
     @JoinColumn(name = "imageId", referencedColumnName = "id", nullable = false)
     private Image imageByImageId;
+
+    // #region boilerplate
 
     public int getExerciseId() {
         return exerciseId;
@@ -63,13 +66,17 @@ public class ExerciseImage {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         ExerciseImage that = (ExerciseImage) o;
 
-        if (exerciseId != that.exerciseId) return false;
-        if (imageId != that.imageId) return false;
+        if (exerciseId != that.exerciseId)
+            return false;
+        if (imageId != that.imageId)
+            return false;
         return Objects.equals(exerciseState, that.exerciseState);
     }
 
@@ -96,4 +103,6 @@ public class ExerciseImage {
     public void setImageByImageId(Image imageByImageId) {
         this.imageByImageId = imageByImageId;
     }
+
+    // #endregion boilerplate
 }

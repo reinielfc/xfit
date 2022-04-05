@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class User {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id", nullable = false)
@@ -42,9 +43,11 @@ public class User {
 
     @OneToMany(mappedBy = "userByUserId")
     private Collection<Plan> plansById;
-    
+
     @OneToMany(mappedBy = "userByUserId")
     private Collection<UserEquipment> userEquipmentsById;
+
+    // #region boilerplate
 
     public int getId() {
         return id;
@@ -88,15 +91,21 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         User user = (User) o;
 
-        if (id != user.id) return false;
-        if (!Objects.equals(name, user.name)) return false;
-        if (!Objects.equals(email, user.email)) return false;
-        if (!Objects.equals(password, user.password)) return false;
+        if (id != user.id)
+            return false;
+        if (!Objects.equals(name, user.name))
+            return false;
+        if (!Objects.equals(email, user.email))
+            return false;
+        if (!Objects.equals(password, user.password))
+            return false;
         return Objects.equals(accessToken, user.accessToken);
     }
 
@@ -141,4 +150,6 @@ public class User {
     public void setUserEquipmentsById(Collection<UserEquipment> userEquipmentsById) {
         this.userEquipmentsById = userEquipmentsById;
     }
+
+    // #endregion boilerplate
 }

@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @IdClass(ExerciseMusclePK.class)
 public class ExerciseMuscle {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "exerciseId", nullable = false)
@@ -30,10 +31,12 @@ public class ExerciseMuscle {
     @ManyToOne
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
-    
+
     @ManyToOne
     @JoinColumn(name = "muscleId", referencedColumnName = "id", nullable = false)
     private Muscle muscleByMuscleId;
+
+    // #region boilerplate
 
     public int getExerciseId() {
         return exerciseId;
@@ -61,13 +64,17 @@ public class ExerciseMuscle {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         ExerciseMuscle that = (ExerciseMuscle) o;
 
-        if (exerciseId != that.exerciseId) return false;
-        if (muscleId != that.muscleId) return false;
+        if (exerciseId != that.exerciseId)
+            return false;
+        if (muscleId != that.muscleId)
+            return false;
         return isSecondary == that.isSecondary;
     }
 
@@ -94,4 +101,6 @@ public class ExerciseMuscle {
     public void setMuscleByMuscleId(Muscle muscleByMuscleId) {
         this.muscleByMuscleId = muscleByMuscleId;
     }
+
+    // #endregion boilerplate
 }

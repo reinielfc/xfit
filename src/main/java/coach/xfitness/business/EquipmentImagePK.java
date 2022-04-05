@@ -8,16 +8,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 public class EquipmentImagePK implements Serializable {
-    
+
     @Column(name = "equipmentId", nullable = false)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int equipmentId;
-    
+
     @Column(name = "imageId", nullable = false)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int imageId;
+
+    // #region boilerplate
 
     public int getEquipmentId() {
         return equipmentId;
@@ -37,12 +39,15 @@ public class EquipmentImagePK implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         EquipmentImagePK that = (EquipmentImagePK) o;
 
-        if (equipmentId != that.equipmentId) return false;
+        if (equipmentId != that.equipmentId)
+            return false;
         return imageId == that.imageId;
     }
 
@@ -52,4 +57,6 @@ public class EquipmentImagePK implements Serializable {
         result = 31 * result + imageId;
         return result;
     }
+
+    // #endregion boilerplate
 }
