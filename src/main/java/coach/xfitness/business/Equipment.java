@@ -98,4 +98,10 @@ public class Equipment {
     }
 
     // #endregion boilerplate
+
+    public boolean isUsedBy(User user) {
+        return getUserEquipmentsById()
+                .stream()
+                .anyMatch(ue -> ue.getUserByUserId().equals(user));
+    }
 }

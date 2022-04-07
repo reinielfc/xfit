@@ -46,7 +46,7 @@ public class User {
     @OneToMany(mappedBy = "userByUserId")
     private Collection<Plan> plansById;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
     private Collection<UserEquipment> userEquipmentsById;
 
     // #region boilerplate
@@ -150,4 +150,8 @@ public class User {
     }
 
     // #endregion boilerplate
+
+    public void setUserEquipmentsByEquipments(Collection<Equipment> equipments) {
+        this.userEquipmentsById = equipments.stream().map(e -> new UserEquipment(this, e)).toList();
+    }
 }
