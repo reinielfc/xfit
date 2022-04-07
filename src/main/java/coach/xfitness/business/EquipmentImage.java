@@ -1,73 +1,54 @@
 package coach.xfitness.business;
 
-import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import java.util.Objects;
 
 @Entity
-@IdClass(EquipmentImagePK.class)
 public class EquipmentImage {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "equipmentId", nullable = false)
-    private int equipmentId;
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "imageId", nullable = false)
-    private int imageId;
+    @EmbeddedId
+    private EquipmentImagePK id;
 
     @ManyToOne
+    @MapsId("equipmentId")
     @JoinColumn(name = "equipmentId", referencedColumnName = "id", nullable = false)
     private Equipment equipmentByEquipmentId;
 
     @ManyToOne
+    @MapsId("imageId")
     @JoinColumn(name = "imageId", referencedColumnName = "id", nullable = false)
     private Image imageByImageId;
 
     // #region boilerplate
-
-    public int getEquipmentId() {
-        return equipmentId;
+    public EquipmentImage() {
     }
 
-    public void setEquipmentId(int equipmentId) {
-        this.equipmentId = equipmentId;
+    public EquipmentImagePK getId() {
+        return id;
     }
 
-    public int getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
+    public void setId(EquipmentImagePK id) {
+        this.id = id;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof EquipmentImage))
             return false;
-
         EquipmentImage that = (EquipmentImage) o;
-
-        if (equipmentId != that.equipmentId)
-            return false;
-        return imageId == that.imageId;
+        return Objects.equals(id, that.id)
+                && Objects.equals(equipmentByEquipmentId, that.equipmentByEquipmentId)
+                && Objects.equals(imageByImageId, that.imageByImageId);
     }
 
     @Override
     public int hashCode() {
-        int result = equipmentId;
-        result = 31 * result + imageId;
-        return result;
+        return Objects.hash(id, equipmentByEquipmentId, imageByImageId);
     }
 
     public Equipment getEquipmentByEquipmentId() {

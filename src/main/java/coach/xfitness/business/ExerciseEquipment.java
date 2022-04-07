@@ -1,73 +1,55 @@
 package coach.xfitness.business;
 
-import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import java.util.Objects;
 
 @Entity
-@IdClass(ExerciseEquipmentPK.class)
 public class ExerciseEquipment {
-    
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "exerciseId", nullable = false)
-    private int exerciseId;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "equipmentId", nullable = false)
-    private int equipmentId;
+    @EmbeddedId
+    private ExerciseEquipmentPK id;
 
     @ManyToOne
+    @MapsId("exerciseId")
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
 
     @ManyToOne
+    @MapsId("equipmentId")
     @JoinColumn(name = "equipmentId", referencedColumnName = "id", nullable = false)
     private Equipment equipmentByEquipmentId;
 
     // #region boilerplate
-
-    public int getExerciseId() {
-        return exerciseId;
+    public ExerciseEquipment() {
     }
 
-    public void setExerciseId(int exerciseId) {
-        this.exerciseId = exerciseId;
+    public ExerciseEquipmentPK getId() {
+        return id;
     }
 
-    public int getEquipmentId() {
-        return equipmentId;
-    }
-
-    public void setEquipmentId(int equipmentId) {
-        this.equipmentId = equipmentId;
+    public void setId(ExerciseEquipmentPK id) {
+        this.id = id;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof ExerciseEquipment))
             return false;
-
         ExerciseEquipment that = (ExerciseEquipment) o;
-
-        if (exerciseId != that.exerciseId)
-            return false;
-        return equipmentId == that.equipmentId;
+        return Objects.equals(id, that.id)
+                && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId)
+                && Objects.equals(equipmentByEquipmentId, that.equipmentByEquipmentId);
     }
 
     @Override
     public int hashCode() {
-        int result = exerciseId;
-        result = 31 * result + equipmentId;
-        return result;
+        return Objects.hash(id, exerciseByExerciseId, equipmentByEquipmentId);
     }
 
     public Exercise getExerciseByExerciseId() {

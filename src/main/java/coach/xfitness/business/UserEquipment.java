@@ -1,73 +1,62 @@
 package coach.xfitness.business;
 
-import javax.persistence.Column;
+import java.util.Objects;
+
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 
 @Entity
-@IdClass(UserEquipmentPK.class)
 public class UserEquipment {
-    
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "userId", nullable = false)
-    private int userId;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "equipmentId", nullable = false)
-    private int equipmentId;
+    @EmbeddedId
+    private UserEquipmentPK id;
 
     @ManyToOne
+    @MapsId("userId")
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
     private User userByUserId;
 
     @ManyToOne
+    @MapsId("equipmentId")
     @JoinColumn(name = "equipmentId", referencedColumnName = "id", nullable = false)
     private Equipment equipmentByEquipmentId;
 
+    public UserEquipment(User userByUserId, Equipment equipmentByEquipmentId) {
+        this.id = new UserEquipmentPK(userByUserId.getId(), equipmentByEquipmentId.getId());
+        this.userByUserId = userByUserId;
+        this.equipmentByEquipmentId = equipmentByEquipmentId;
+    }
+
     // #region boilerplate
-
-    public int getUserId() {
-        return userId;
+    public UserEquipment() {
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public UserEquipmentPK getId() {
+        return id;
     }
 
-    public int getEquipmentId() {
-        return equipmentId;
-    }
-
-    public void setEquipmentId(int equipmentId) {
-        this.equipmentId = equipmentId;
+    public void setId(UserEquipmentPK id) {
+        this.id = id;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof UserEquipment))
             return false;
-
         UserEquipment that = (UserEquipment) o;
-
-        if (userId != that.userId)
-            return false;
-        return equipmentId == that.equipmentId;
+        return Objects.equals(id, that.id)
+                && Objects.equals(userByUserId, that.userByUserId)
+                && Objects.equals(equipmentByEquipmentId, that.equipmentByEquipmentId);
     }
 
     @Override
     public int hashCode() {
-        int result = userId;
-        result = 31 * result + equipmentId;
-        return result;
+        return Objects.hash(id, userByUserId, equipmentByEquipmentId);
     }
 
     public User getUserByUserId() {

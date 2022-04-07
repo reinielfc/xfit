@@ -1,25 +1,28 @@
 package coach.xfitness.business;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
+@Embeddable
 public class ExerciseEquipmentPK implements Serializable {
 
     @Column(name = "exerciseId", nullable = false)
-    @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int exerciseId;
 
     @Column(name = "equipmentId", nullable = false)
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int equipmentId;
 
     // #region boilerplate
+    public ExerciseEquipmentPK() {
+    }
 
     public int getExerciseId() {
         return exerciseId;
@@ -41,21 +44,16 @@ public class ExerciseEquipmentPK implements Serializable {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof ExerciseEquipmentPK))
             return false;
-
         ExerciseEquipmentPK that = (ExerciseEquipmentPK) o;
-
-        if (exerciseId != that.exerciseId)
-            return false;
-        return equipmentId == that.equipmentId;
+        return exerciseId == that.exerciseId
+                && equipmentId == that.equipmentId;
     }
 
     @Override
     public int hashCode() {
-        int result = exerciseId;
-        result = 31 * result + equipmentId;
-        return result;
+        return Objects.hash(exerciseId, equipmentId);
     }
 
     // #endregion boilerplate

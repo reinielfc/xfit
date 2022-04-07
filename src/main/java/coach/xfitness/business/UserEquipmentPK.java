@@ -1,25 +1,32 @@
 package coach.xfitness.business;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
+@Embeddable
 public class UserEquipmentPK implements Serializable {
-    
+
     @Column(name = "userId", nullable = false)
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
     @Column(name = "equipmentId", nullable = false)
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int equipmentId;
 
+    public UserEquipmentPK(int userId, int equipmentId) {
+        this.userId = userId;
+        this.equipmentId = equipmentId;
+    }
+
     // #region boilerplate
+    public UserEquipmentPK() {
+    }
 
     public int getUserId() {
         return userId;
@@ -41,21 +48,16 @@ public class UserEquipmentPK implements Serializable {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof UserEquipmentPK))
             return false;
-
         UserEquipmentPK that = (UserEquipmentPK) o;
-
-        if (userId != that.userId)
-            return false;
-        return equipmentId == that.equipmentId;
+        return userId == that.userId
+                && equipmentId == that.equipmentId;
     }
 
     @Override
     public int hashCode() {
-        int result = userId;
-        result = 31 * result + equipmentId;
-        return result;
+        return Objects.hash(userId, equipmentId);
     }
 
     // #endregion boilerplate
