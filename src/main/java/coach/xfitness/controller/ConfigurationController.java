@@ -61,7 +61,7 @@ public class ConfigurationController extends HttpServlet {
             boolean success = UserDB.updateUser( user);
             if (success) {
                 session.setAttribute("user", user);
-            } else {
+            } else {//find out how to respond 
 
             }
     } 

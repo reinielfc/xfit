@@ -69,7 +69,7 @@ public class UserDB {
     }
 
     public static boolean updateUser( User user) {
-        return true;
+        return true; // does this need to retur true
     }
 
 }
