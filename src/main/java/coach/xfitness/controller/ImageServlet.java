@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import coach.xfitness.data.EquipmentDB;
 import coach.xfitness.data.ExerciseDB;
 
 @WebServlet(name = "ImageServlet", urlPatterns = { "/img/*" })
@@ -15,30 +16,47 @@ public class ImageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String imageName = request.getPathInfo().substring(1);
-        String exerciseName = request.getParameter("exercise");
+        String imageType = request.getParameter("of");
+        
+        if (!(imageType == null || imageType.isEmpty())) {
+            byte[] content = new byte[0];
+            
+            if (imageType.equals("exercise")) {
+                content = getExerciseImageContent(request, response);
+            } else if (imageType.equals("equipment")) {
+                content = getEquipmentImageContent(request, response);
+            }
 
-        byte[] content = new byte[0];
+            String imageName = request.getPathInfo().substring(1);
 
-        if (!(exerciseName == null || exerciseName.isEmpty())) {
-            content = getExerciseImageContent(exerciseName, request, response);
+            response.setContentType(getServletContext().getMimeType(imageName));
+            response.setContentLength(content.length);
+            response.getOutputStream().write(content);
         }
-
-        response.setContentType(getServletContext().getMimeType(imageName));
-        response.setContentLength(content.length);
-        response.getOutputStream().write(content);
     }
 
-    private byte[] getExerciseImageContent(String exerciseName, HttpServletRequest request, HttpServletResponse response) {
+    private byte[] getExerciseImageContent(HttpServletRequest request, HttpServletResponse response) {
+        String exerciseName = request.getParameter("name");
         String exerciseImageState = request.getParameter("state");
 
-        return ExerciseDB.select(exerciseName).getExerciseImagesById()
-            .stream()
-            .filter(ei -> ei.getExerciseState().equals(exerciseImageState))
-            .findFirst()
-            .get()
-            .getImageByImageId()
-            .getImage();
+        return ExerciseDB.selectByName(exerciseName).getExerciseImagesById()
+                .stream()
+                .filter(ei -> ei.getExerciseState().equals(exerciseImageState))
+                .findFirst()
+                .get()
+                .getImageByImageId()
+                .getImage();
+    }
+
+    private byte[] getEquipmentImageContent(HttpServletRequest request, HttpServletResponse response) {
+        int equipmentId = Integer.valueOf(request.getParameter("id"));
+
+        return EquipmentDB.selectById(equipmentId).getEquipmentImagesById()
+                .stream()
+                .findFirst()
+                .get()
+                .getImageByImageId()
+                .getImage();
     }
 
 }
