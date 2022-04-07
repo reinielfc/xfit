@@ -1,19 +1,20 @@
-package coach.xfitness.util;  //Util; //INCLUDE INTO UTIL FOLDER
-import javax.servlet.http.*;
+package coach.xfitness.util;
+
+import javax.servlet.http.Cookie;
 
 public class CookieUtil {
 
-    public static String getCookieValue(
-            Cookie[] cookies, String cookieName) {
-
+    public static String find(Cookie[] cookies, String cookieName) {
         String cookieValue = "";
+
         if (cookies != null) {
-            for (Cookie cookie: cookies) {
+            for (Cookie cookie : cookies) {
                 if (cookieName.equals(cookie.getName())) {
                     cookieValue = cookie.getValue();
                 }
             }
         }
+
         return cookieValue;
     }
 }
