@@ -8,8 +8,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import coach.xfitness.business.Exercise;
+import coach.xfitness.business.User;
 import coach.xfitness.data.EquipmentDB;
 import coach.xfitness.data.ExerciseDB;
 import coach.xfitness.data.MuscleDB;
@@ -55,6 +57,74 @@ public class ExerciseController extends HttpServlet {
 
         request.setAttribute("activePage", "exercises");
         return "/exercise/details.jsp";
+    }
+
+    private String addCustomExercise(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        Long userID = user.getUserID();
+        String title = request.getParameter("title");
+        String steps = request.getParameter("steps");
+        String [] tags = request.getParameterValues("tags");
+
+        Exercise exercise = new Exercise();
+        
+        if (userID != null ) {
+            exercise.setUserID(userID);
+        }
+    
+        // title
+        if (title != null && !title.isEmpty()) {
+            
+            exercise.setName(title);
+        }
+        // steps
+        if (steps != null && !steps.isEmpty()) {
+            exercise.setDescription(steps);
+        }
+        //tags
+        if (tags != null && tags.length != 0) {
+        
+            exercise.setTags(tags);
+        } 
+        
+        ExerciseDB.insert(exercise);//find out how to respond , how does it return, what is response
+        return title;
+    }
+
+    private String updateCustomExercise(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        Long userID = user.getUserID();
+        String title = request.getParameter("title");
+        String steps = request.getParameter("steps");
+        String [] tags = request.getParameterValues("tags");
+
+        Exercise exercise = new Exercise();
+        
+        if (userID != null ) {
+            exercise.setUserID(userID);
+        }
+    
+        // title
+        if (title != null && !title.isEmpty()) {
+            
+            exercise.setName(title);
+        }
+        // steps
+        if (steps != null && !steps.isEmpty()) {
+            exercise.setDescription(steps);
+        }
+        //tags
+        if (tags != null && tags.length != 0) {
+        
+            exercise.setTags(tags);
+        } 
+        
+        ExerciseDB.updateExercise(exercise);//find out how to respond , how does it return, what is response
+        return title;
     }
 
 }

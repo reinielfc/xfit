@@ -10,7 +10,6 @@ import javax.persistence.TypedQuery;
 import coach.xfitness.business.Exercise;
 
 public class ExerciseDB {
-
     // TODO: change to selectAvailable(String user) when custom exercises are
     // integrated
     // TODO: also make a selectAvailable() that selects exercises available to
@@ -26,6 +25,21 @@ public class ExerciseDB {
             System.err.println(e);
         }
         return resultsList;
+    }
+
+    public static void insert(Exercise exercise) {
+        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        entityTransaction.begin();
+        try {
+            entityManager.persist(exercise);
+            entityTransaction.commit();
+        } catch (Exception e) {
+            entityTransaction.rollback();
+            System.out.println("Failed to add Exercise.");
+        } finally {
+            entityManager.close();
+        }
     }
 
     public static Exercise select(String name) {
@@ -59,3 +73,49 @@ public class ExerciseDB {
     }
 
 }
+
+    public static boolean hasExercise(String exercise) {
+        boolean success = false;
+        Exercise myExercise = selectExercise(exercise);
+        if(myExercise != null) 
+        success = true;
+
+        return success;
+    }  
+
+    public static void deleteExercise(String exercise){
+        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+        entityManager.getTransaction().begin();
+        try{
+            Exercise s = selectExercise(exercise);
+            Exercise u = entityManager.find(Exercise.class, s.getExerciseID());
+           entityManager.remove(u);
+           entityManager.getTransaction().commit();
+        }
+        catch(Exception e){
+            System.out.println("Couldn't delete Exercise");
+        }
+        finally{
+            entityManager.close();
+        }
+    }
+
+    public static boolean updateExercise( Exercise exercise) {
+        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+        entityTransaction.begin();
+        try {
+                entityManager.merge(exercise);
+                entityTransaction.commit();
+
+        } catch (Exception e) {
+            System.out.println("Failed to update Exercise.");
+        } finally {
+            entityManager.close();
+        }
+        return true; // does this need to return true
+
+    }
+
+    
+}// 
