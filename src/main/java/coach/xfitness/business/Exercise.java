@@ -2,7 +2,6 @@ package coach.xfitness.business;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -241,7 +240,7 @@ public class Exercise {
                 .stream()
                 .filter(em -> em.getIsSecondary() == isSecondaryInt)
                 .map(ExerciseMuscle::getMuscleByMuscleId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Collection<Muscle> getPrimaryMuscles() {
@@ -253,11 +252,11 @@ public class Exercise {
     }
 
     public Collection<String> getStepsList() {
-        return steps.lines().collect(Collectors.toList());
+        return steps.lines().toList();
     }
 
     public Collection<String> getTipsList() {
-        return tips.lines().collect(Collectors.toList());
+        return tips.lines().toList();
     }
 
 }
