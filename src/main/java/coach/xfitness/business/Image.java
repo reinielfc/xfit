@@ -2,6 +2,7 @@ package coach.xfitness.business;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -51,19 +52,18 @@ public class Image {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof Image))
             return false;
-
         Image image1 = (Image) o;
-
-        if (id != image1.id)
-            return false;
-        return Arrays.equals(image, image1.image);
+        return id == image1.id
+                && Arrays.equals(image, image1.image)
+                && Objects.equals(equipmentImagesById, image1.equipmentImagesById)
+                && Objects.equals(exerciseImagesById, image1.exerciseImagesById);
     }
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = Objects.hash(id, equipmentImagesById, exerciseImagesById);
         result = 31 * result + Arrays.hashCode(image);
         return result;
     }

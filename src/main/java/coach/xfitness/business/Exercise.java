@@ -158,42 +158,29 @@ public class Exercise {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof Exercise))
             return false;
-
         Exercise exercise = (Exercise) o;
-
-        if (id != exercise.id)
-            return false;
-        if (!Objects.equals(userId, exercise.userId))
-            return false;
-        if (!Objects.equals(name, exercise.name))
-            return false;
-        if (!Objects.equals(title, exercise.title))
-            return false;
-        if (!Objects.equals(primer, exercise.primer))
-            return false;
-        if (!Objects.equals(type, exercise.type))
-            return false;
-        if (!Objects.equals(steps, exercise.steps))
-            return false;
-        if (!Objects.equals(tips, exercise.tips))
-            return false;
-        return Objects.equals(links, exercise.links);
+        return id == exercise.id
+                && Objects.equals(name, exercise.name)
+                && Objects.equals(title, exercise.title)
+                && Objects.equals(primer, exercise.primer)
+                && Objects.equals(type, exercise.type)
+                && Objects.equals(steps, exercise.steps)
+                && Objects.equals(tips, exercise.tips)
+                && Objects.equals(links, exercise.links)
+                && Objects.equals(userByUserId, exercise.userByUserId)
+                && Objects.equals(exerciseEquipmentsById, exercise.exerciseEquipmentsById)
+                && Objects.equals(exerciseImagesById, exercise.exerciseImagesById)
+                && Objects.equals(exerciseMusclesById, exercise.exerciseMusclesById)
+                && Objects.equals(favoriteExercisesById, exercise.favoriteExercisesById)
+                && Objects.equals(plansById, exercise.plansById);
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (primer != null ? primer.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (steps != null ? steps.hashCode() : 0);
-        result = 31 * result + (tips != null ? tips.hashCode() : 0);
-        result = 31 * result + (links != null ? links.hashCode() : 0);
-        return result;
+        return Objects.hash(id, name, title, primer, type, steps, tips, links, userByUserId,
+                exerciseEquipmentsById, exerciseImagesById, exerciseMusclesById, favoriteExercisesById, plansById);
     }
 
     public User getUserByUserId() {

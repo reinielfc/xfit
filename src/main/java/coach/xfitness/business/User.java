@@ -95,30 +95,24 @@ public class User {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof User))
             return false;
-
         User user = (User) o;
-
-        if (id != user.id)
-            return false;
-        if (!Objects.equals(name, user.name))
-            return false;
-        if (!Objects.equals(email, user.email))
-            return false;
-        if (!Objects.equals(password, user.password))
-            return false;
-        return Objects.equals(accessToken, user.accessToken);
+        return id == user.id
+                && Objects.equals(name, user.name)
+                && Objects.equals(email, user.email)
+                && Objects.equals(password, user.password)
+                && Objects.equals(accessToken, user.accessToken)
+                && Objects.equals(exercisesById, user.exercisesById)
+                && Objects.equals(favoriteExercisesById, user.favoriteExercisesById)
+                && Objects.equals(plansById, user.plansById)
+                && Objects.equals(userEquipmentsById, user.userEquipmentsById);
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (accessToken != null ? accessToken.hashCode() : 0);
-        return result;
+        return Objects.hash(id, name, email, password, accessToken, exercisesById, favoriteExercisesById, plansById,
+                userEquipmentsById);
     }
 
     public Collection<Exercise> getExercisesById() {
