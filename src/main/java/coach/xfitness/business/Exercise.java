@@ -29,10 +29,6 @@ public class Exercise {
     private int id;
 
     @Basic
-    @Column(name = "userId")
-    private Integer userId;
-
-    @Basic
     @Column(name = "name", nullable = false, length = 256)
     private String name;
 
@@ -89,14 +85,6 @@ public class Exercise {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public String getName() {
