@@ -81,6 +81,8 @@ public class Exercise {
     private Collection<Plan> plansById;
 
     // #region boilerplate
+    public Exercise() {
+    }
 
     public int getId() {
         return id;

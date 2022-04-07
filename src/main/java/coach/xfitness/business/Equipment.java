@@ -35,6 +35,8 @@ public class Equipment {
     private Collection<UserEquipment> userEquipmentsById;
 
     // #region boilerplate
+    public Equipment() {
+    }
 
     public int getId() {
         return id;

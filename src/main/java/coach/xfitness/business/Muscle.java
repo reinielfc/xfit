@@ -29,6 +29,8 @@ public class Muscle {
     private Collection<ExerciseMuscle> exerciseMusclesById;
 
     // #region boilerplate
+    public Muscle() {
+    }
 
     public int getId() {
         return id;

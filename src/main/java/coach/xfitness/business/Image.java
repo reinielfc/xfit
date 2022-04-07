@@ -31,6 +31,8 @@ public class Image {
     private Collection<ExerciseImage> exerciseImagesById;
 
     // #region boilerplate
+    public Image() {
+    }
 
     public int getId() {
         return id;
