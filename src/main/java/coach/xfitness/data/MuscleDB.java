@@ -1,7 +1,6 @@
 package coach.xfitness.data;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -19,8 +18,8 @@ public class MuscleDB {
 
     public static List<String> fetchNamesList() {
         return MuscleDB.selectAll().stream()
-            .map(Muscle::getName)
-            .collect(Collectors.toList());
+                .map(Muscle::getName)
+                .toList();
     }
 
 }
