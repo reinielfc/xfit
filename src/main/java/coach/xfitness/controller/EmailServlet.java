@@ -1,8 +1,8 @@
 package coach.xfitness.controller;
 
 import java.io.IOException;
-import java.util.Random;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,98 +12,68 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import coach.xfitness.business.User;
-import coach.xfitness.data.UserDB;
 import coach.xfitness.util.EmailUtil;
-@WebServlet(name = "EmailController", urlPatterns = {"/validate"})
+
+@WebServlet(name = "EmailController", urlPatterns = { "/email" })
 public class EmailServlet extends HttpServlet {
 
-    private static String host;
-    private static String port;
-    private static String user;
-    private static String pass;
+    private static String smtpHost;
+    private static String smtpPort;
+    private static String smtpUsername;
+    private static String smtpPassword;
 
-    public void init(){
-        //SMTP server from web.xml file
+    public void init() {
+        // SMTP server from web.xml file
         ServletContext context = getServletContext();
-        host = context.getInitParameter("host");
-        port = context.getInitParameter("port");
-        user = context.getInitParameter("user");
-        pass = context.getInitParameter("pass");
+        smtpHost = context.getInitParameter("SMTP_HOST");
+        smtpPort = context.getInitParameter("SMTP_PORT");
+        smtpUsername = context.getInitParameter("SMTP_USERNAME");
+        smtpPassword = context.getInitParameter("SMTP_PASSWORD");
     }
-
-    //static method to be called when email code must be sent to user
-    public static String CodeEmail(HttpServletRequest request, HttpServletResponse response){
-        Random emailcode = new Random();
-        HttpSession session = request.getSession();
-        //returns user object stored in session from register
-        User recip = (User) request.getAttribute("newUser");
-        String subject = "XFit Email-Verification";
-        String to = recip.getEmail();
-        String code = Integer.toString(emailcode.nextInt(999999- 100000) + 100000);
-        //store code in the session
-        session.setAttribute("EmailCode", code);
-        String message = "";
-
-        try{
-            //send email to user
-            EmailUtil.sendMessage(host, port, user, pass, to, subject, code);
-            message = "Email was sent to" + recip.getEmail() + ".\nPlease check email to enter code for email verification";
-        } catch (Exception ex) {
-            message = "Email failed to send properly.  Retry to send the message.";
-        }
-        return message;
-    }
-
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            doPost(request, response);
+        String action = request.getParameter("action");
+
+        if (action.equals("verify")) {
+            sendCode(request);
+        }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
-        throws ServletException, IOException{
+    private void sendCode(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        String message = "";
-        String url = "";
-        String action = request.getParameter("action");
-        User newUser = (User) session.getAttribute("newUser");
-        switch(action){
-            //case that user wants to submit code they received as an email
-            case "code":
-                //get code stored in session
-                String code = (String) session.getAttribute("EmailCode");
-                //get code from what user submitted
-                String compare = request.getParameter("code");
-                if(code.equals(compare)){
-                    message = "";
-                    UserDB.insert(newUser);
-                    url = "/"; //TO IMPLEMENT, direct to equipment selection
-                }
-                else{
-                    message = "Code does not match.";
-                    url = "/email-verification.jsp";
-                }
-                break;
-            //case that user wants to resend a new code to their email
-            case "send":
-                CodeEmail(request, response);
-                message = "A new code has been sent to " + newUser.getEmail();
-                url = "/email-verification.jsp";
-                break;
-            //case that user wants to retype a new email to receieve a code
-            case "email":
-                String newemail = request.getParameter("email");
-                newUser.setEmail(newemail);
-                session.setAttribute("newUser",newUser);
-                CodeEmail(request, response);
-                message ="A new code has been sent to " + newUser.getEmail();
-                url = "/email-verification.jsp";
-                break;
+
+        // get user stored in session
+        User recipient = (User) session.getAttribute("recipient");
+
+        // get code stored in session
+        String code = (String) session.getAttribute("emailVerificationCode");
+
+        // prepare email
+        String toAddress = recipient.getEmail();
+        String subject = "XFit: Email Verification";
+        String body = buildCodeEmailBody(code, recipient.getName());
+
+        // send email
+        try {
+            EmailUtil.send(
+                    smtpHost, smtpPort, smtpUsername, smtpPassword,
+                    toAddress, subject, body);
+        } catch (MessagingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        
-        request.setAttribute("message", message);
-        getServletContext().getRequestDispatcher(url).forward(request, response);
+
     }
+
+    private String buildCodeEmailBody(String code, String recipientName) {
+        return new StringBuilder()
+                .append("<h1><strong>XFit:</strong> Email Verification</h1>")
+                .append("<p>Hi ").append(recipientName).append("!</p>")
+                .append("<p>Enter the following code in the email verification page:</p>")
+                .append("<h3 style=\"text-align: center\">").append(code).append("</h3>")
+                .toString();
+    }
+
 }
