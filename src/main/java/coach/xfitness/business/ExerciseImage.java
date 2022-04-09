@@ -1,13 +1,19 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
-
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import java.util.Objects;
 
 @Entity
 public class ExerciseImage {
+
     @EmbeddedId
-    private ExerciseImageKey id;
+    private ExerciseImagePK id;
 
     @Basic
     @Column(name = "exerciseState", nullable = false, length = 32)
@@ -23,27 +29,15 @@ public class ExerciseImage {
     @JoinColumn(name = "imageId", referencedColumnName = "id", nullable = false)
     private Image imageByImageId;
 
+    // #region boilerplate
     public ExerciseImage() {
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ExerciseImage that = (ExerciseImage) o;
-        return Objects.equals(id, that.id) && Objects.equals(exerciseState, that.exerciseState) && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId) && Objects.equals(imageByImageId, that.imageByImageId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, exerciseState, exerciseByExerciseId, imageByImageId);
-    }
-
-    public ExerciseImageKey getId() {
+    public ExerciseImagePK getId() {
         return id;
     }
 
-    public void setId(ExerciseImageKey id) {
+    public void setId(ExerciseImagePK id) {
         this.id = id;
     }
 
@@ -53,6 +47,24 @@ public class ExerciseImage {
 
     public void setExerciseState(String exerciseState) {
         this.exerciseState = exerciseState;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof ExerciseImage))
+            return false;
+        ExerciseImage that = (ExerciseImage) o;
+        return Objects.equals(id, that.id)
+                && Objects.equals(exerciseState, that.exerciseState)
+                && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId)
+                && Objects.equals(imageByImageId, that.imageByImageId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, exerciseState, exerciseByExerciseId, imageByImageId);
     }
 
     public Exercise getExerciseByExerciseId() {
@@ -70,4 +82,6 @@ public class ExerciseImage {
     public void setImageByImageId(Image imageByImageId) {
         this.imageByImageId = imageByImageId;
     }
+
+    // #endregion boilerplate
 }

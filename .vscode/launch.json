@@ -42,6 +42,15 @@
             "stopAll": false
         },
         {
+            "name": "Deploy and launch In Firefox",
+            "preLaunchTask": "deploy",
+            "configurations": [
+                "Java",
+                "Firefox",
+            ],
+            "stopAll": false
+        },
+        {
             "name": "Launch In Chrome",
             "preLaunchTask": "build",
             "configurations": [

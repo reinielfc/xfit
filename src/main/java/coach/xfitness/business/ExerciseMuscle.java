@@ -1,14 +1,19 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
-
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import java.util.Objects;
 
 @Entity
 public class ExerciseMuscle {
 
     @EmbeddedId
-    private ExerciseMuscleKey id;
+    private ExerciseMusclePK id;
 
     @Basic
     @Column(name = "isSecondary", nullable = false)
@@ -24,27 +29,15 @@ public class ExerciseMuscle {
     @JoinColumn(name = "muscleId", referencedColumnName = "id", nullable = false)
     private Muscle muscleByMuscleId;
 
+    // #region boilerplate
     public ExerciseMuscle() {
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ExerciseMuscle that = (ExerciseMuscle) o;
-        return isSecondary == that.isSecondary && Objects.equals(id, that.id) && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId) && Objects.equals(muscleByMuscleId, that.muscleByMuscleId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, isSecondary, exerciseByExerciseId, muscleByMuscleId);
-    }
-
-    public ExerciseMuscleKey getId() {
+    public ExerciseMusclePK getId() {
         return id;
     }
 
-    public void setId(ExerciseMuscleKey id) {
+    public void setId(ExerciseMusclePK id) {
         this.id = id;
     }
 
@@ -54,6 +47,24 @@ public class ExerciseMuscle {
 
     public void setIsSecondary(int isSecondary) {
         this.isSecondary = isSecondary;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof ExerciseMuscle))
+            return false;
+        ExerciseMuscle that = (ExerciseMuscle) o;
+        return isSecondary == that.isSecondary
+                && Objects.equals(id, that.id)
+                && Objects.equals(exerciseByExerciseId, that.exerciseByExerciseId)
+                && Objects.equals(muscleByMuscleId, that.muscleByMuscleId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, isSecondary, exerciseByExerciseId, muscleByMuscleId);
     }
 
     public Exercise getExerciseByExerciseId() {
@@ -71,4 +82,6 @@ public class ExerciseMuscle {
     public void setMuscleByMuscleId(Muscle muscleByMuscleId) {
         this.muscleByMuscleId = muscleByMuscleId;
     }
+
+    // #endregion boilerplate
 }

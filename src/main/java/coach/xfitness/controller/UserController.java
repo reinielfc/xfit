@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import coach.xfitness.business.User;
 import coach.xfitness.data.UserDB;
+import coach.xfitness.util.CookieUtil;
 import coach.xfitness.util.PasswordUtil;
 
 @WebServlet(name = "UserController", urlPatterns = {"/signin", "/register", "/settings"})

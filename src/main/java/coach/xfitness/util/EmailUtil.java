@@ -1,4 +1,5 @@
 package coach.xfitness.util;
+
 import java.util.Date;
 import java.util.Properties;
 
@@ -13,37 +14,40 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class EmailUtil{
+public class EmailUtil {
 
-    public static void sendMessage(String host, String port, final String username,
-     final String password, String toAddr, String subject, String message) throws AddressException, MessagingException{
+    public static void send(
+            final String SMTP_HOST, final String SMTP_PORT,
+            final String SMTP_USERNAME, final String SMTP_PASSWORD,
+            String toAddress, String subject, String body)
+            throws AddressException, MessagingException {
 
-        //local SMTP server properties
-        Properties serverProp = new Properties();
-        serverProp.put("mail.smtp.host", host);
-        serverProp.put("mail.smtp.port", port);
-        serverProp.put("mail.smtp.auth", "true");
-        serverProp.put("mail.smtp.starttls.enable", "true");
+        // local SMTP server properties
+        Properties serverProperties = new Properties();
+        serverProperties.put("mail.smtp.host", SMTP_HOST);
+        serverProperties.put("mail.smtp.port", SMTP_PORT);
+        serverProperties.put("mail.smtp.auth", "true");
+        serverProperties.put("mail.smtp.starttls.enable", "true");
 
-        Authenticator auth = new Authenticator(){
-            public PasswordAuthentication getPasswordAuthentication(){
-                return new PasswordAuthentication(username, password);
+        Authenticator authenticator = new Authenticator() {
+            public PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
             }
         };
 
-        Session session = Session.getInstance(serverProp, auth);
-        
-        Message msg = new MimeMessage(session);
+        Session session = Session.getInstance(serverProperties, authenticator);
 
-        msg.setFrom(new InternetAddress(username));
-        InternetAddress[] toAddress = {new InternetAddress(toAddr)};
+        Message message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(SMTP_USERNAME));
 
-        //set up message details
-        msg.setRecipients(Message.RecipientType.TO, toAddress);
-        msg.setSubject(subject);
-        msg.setSentDate(new Date());
-        msg.setText(message);
+        InternetAddress[] toInternetAddress = { new InternetAddress(toAddress) };
 
-        Transport.send(msg);
-     }
+        // set up message details
+        message.setRecipients(Message.RecipientType.TO, toInternetAddress);
+        message.setSubject(subject);
+        message.setSentDate(new Date());
+        message.setContent(body, "text/html");
+
+        Transport.send(message);
+    }
 }
