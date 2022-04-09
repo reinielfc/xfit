@@ -1,5 +1,4 @@
 package coach.xfitness.controller;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
