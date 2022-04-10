@@ -1,10 +1,16 @@
 package coach.xfitness.business;
 
-import javax.persistence.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Image {
@@ -17,26 +23,15 @@ public class Image {
     @Basic
     @Column(name = "image")
     private byte[] image;
-    
+
+    @OneToMany(mappedBy = "imageByImageId")
+    private Collection<EquipmentImage> equipmentImagesById;
+
     @OneToMany(mappedBy = "imageByImageId")
     private Collection<ExerciseImage> exerciseImagesById;
 
+    // #region boilerplate
     public Image() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Image image1 = (Image) o;
-        return id == image1.id && Arrays.equals(image, image1.image) && Objects.equals(exerciseImagesById, image1.exerciseImagesById);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(id, exerciseImagesById);
-        result = 31 * result + Arrays.hashCode(image);
-        return result;
     }
 
     public int getId() {
@@ -55,6 +50,34 @@ public class Image {
         this.image = image;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Image))
+            return false;
+        Image image1 = (Image) o;
+        return id == image1.id
+                && Arrays.equals(image, image1.image)
+                && Objects.equals(equipmentImagesById, image1.equipmentImagesById)
+                && Objects.equals(exerciseImagesById, image1.exerciseImagesById);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(id, equipmentImagesById, exerciseImagesById);
+        result = 31 * result + Arrays.hashCode(image);
+        return result;
+    }
+
+    public Collection<EquipmentImage> getEquipmentImagesById() {
+        return equipmentImagesById;
+    }
+
+    public void setEquipmentImagesById(Collection<EquipmentImage> equipmentImagesById) {
+        this.equipmentImagesById = equipmentImagesById;
+    }
+
     public Collection<ExerciseImage> getExerciseImagesById() {
         return exerciseImagesById;
     }
@@ -62,4 +85,6 @@ public class Image {
     public void setExerciseImagesById(Collection<ExerciseImage> exerciseImagesById) {
         this.exerciseImagesById = exerciseImagesById;
     }
+
+    // #endregion boilerplate
 }

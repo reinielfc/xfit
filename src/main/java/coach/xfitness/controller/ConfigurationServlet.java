@@ -1,4 +1,5 @@
 package coach.xfitness.controller;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -9,25 +10,21 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import coach.xfitness.business.User;
-import coach.xfitness.data.UserDB;
 
 @WebServlet(name = "ConfigurationController", urlPatterns = {"/c/*"})
-public class ConfigurationController extends HttpServlet {
+public class ConfigurationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-            String username = request.getParameter("username");
+            String name = request.getParameter("name");
             String email = request.getParameter("email");
             String password = request.getParameter("password");
-            String weight = request.getParameter("weight");
-            String height = request.getParameter("height");
-            String experience = request.getParameter("experience");
     
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
 
-            if (username != null && !username.isEmpty()) {
-                user.setName(username);
+            if (name != null && !name.isEmpty()) {
+                user.setName(name);
 
             }
             if (email != null && !email.isEmpty() && email.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")) {
@@ -38,18 +35,12 @@ public class ConfigurationController extends HttpServlet {
 
             }
 
-            if (experience != null && !experience.isEmpty()) {
-                user.setExperience(experience);
-
-            }
-            
-
-            boolean success = UserDB.updateUser( user);
-            if (success) {
-                session.setAttribute("user", user);
-            } else {
-
-            }
+            //boolean success = UserDB.updateUser( user);
+            //if (success) {
+            //    session.setAttribute("user", user);
+            //} else {
+            //
+            //}
     } 
     private boolean isDouble(String d) {
         try {

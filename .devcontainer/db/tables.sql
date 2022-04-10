@@ -12,6 +12,7 @@ CREATE TABLE
 		name		VARCHAR(32)		NOT NULL,
 		email		VARCHAR(64)		NOT NULL UNIQUE,
 		password	CHAR(255)		NOT NULL,
+		accessToken CHAR(255),
 		
 		PRIMARY KEY(id)
 	) ENGINE=InnoDB;
@@ -21,6 +22,8 @@ CREATE TABLE
 CREATE TABLE
 	Exercise (
 		id			INT UNSIGNED	NOT NULL AUTO_INCREMENT,
+		userId		INT UNSIGNED	DEFAULT NULL,
+		name		VARCHAR(256)	UNIQUE NOT NULL,
 		title		VARCHAR(256)	NOT NULL,
 		primer		VARCHAR(512),
 		type		VARCHAR(32),
@@ -28,7 +31,8 @@ CREATE TABLE
 		tips		TEXT,
 		links		TEXT,
 
-		PRIMARY KEY(id)
+		PRIMARY KEY(id), INDEX(name),
+		FOREIGN KEY(userId) REFERENCES User(id)
 	) ENGINE=InnoDB;
 
 CREATE TABLE
@@ -113,6 +117,16 @@ CREATE TABLE
 		FOREIGN KEY(imageId) 	REFERENCES Image(id)	ON DELETE CASCADE
 	) ENGINE=InnoDB;
 
+CREATE TABLE
+	EquipmentImage (
+		equipmentId		INT UNSIGNED	NOT NULL,
+		imageId			INT UNSIGNED	NOT NULL,
+		
+		PRIMARY KEY(equipmentId, imageId), INDEX(imageId, equipmentId),
+		FOREIGN KEY(equipmentId)	REFERENCES Equipment(id)	ON DELETE CASCADE,
+		FOREIGN KEY(imageId) 		REFERENCES Image(id)		ON DELETE CASCADE
+	) ENGINE=InnoDB;
+
 -- PLAN ---------------------------------------------------------------- PLAN --
 
 CREATE TABLE
@@ -124,7 +138,7 @@ CREATE TABLE
 		sets		SMALLINT UNSIGNED,
 		reps		SMALLINT UNSIGNED,
 		weight		SMALLINT UNSIGNED,
-		duration	TIME,
+		isDone		TINYINT UNSIGNED DEFAULT 0,
 
 		PRIMARY KEY(userId, exerciseId), INDEX(exerciseId, userId),
 		FOREIGN KEY(userId)		REFERENCES User(id)		ON DELETE CASCADE,

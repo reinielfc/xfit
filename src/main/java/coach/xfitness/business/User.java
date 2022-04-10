@@ -1,45 +1,64 @@
 package coach.xfitness.business;
 
-import java.io.Serializable;
+import java.util.Collection;
+import java.util.Objects;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import javax.persistence.*;
 
-/**
- * User
- */
 @Entity
-public class User implements Serializable {
+@NamedQuery(name = "User.selectByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
+public class User {
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userID;
+    @Column(name = "id", nullable = false)
+    private int id;
+
+    @Basic
+    @Column(name = "name", nullable = false, length = 32)
     private String name;
+
+    @Basic
+    @Column(name = "email", nullable = false, length = 64)
     private String email;
+
+    @Basic
+    @Column(name = "password", nullable = false)
     private String password;
-    private String experience;
 
+    @Basic
+    @Column(name = "accessToken")
+    private String accessToken;
+
+    @OneToMany(mappedBy = "userByUserId")
+    private Collection<Exercise> exercisesById;
+
+    @OneToMany(mappedBy = "userByUserId")
+    private Collection<FavoriteExercise> favoriteExercisesById;
+
+    @OneToMany(mappedBy = "userByUserId")
+    private Collection<Plan> plansById;
+
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
+    private Collection<UserEquipment> userEquipmentsById;
+
+    // #region boilerplate
     public User() {
-        this.name = "";
-        this.email = "";
-        this.password = "";
-        this.experience = "";
     }
 
-    public Long getUserID() {
-        return userID;
+    public int getId() {
+        return id;
     }
 
-    public void setUserID(Long userID) {
-        this.userID = userID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -58,12 +77,74 @@ public class User implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    public void setExperience(String experience) {
-        this.experience = experience;
+
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public String getExperience() {
-        return experience;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof User))
+            return false;
+        User user = (User) o;
+        return id == user.id
+                && Objects.equals(name, user.name)
+                && Objects.equals(email, user.email)
+                && Objects.equals(password, user.password)
+                && Objects.equals(accessToken, user.accessToken)
+                && Objects.equals(exercisesById, user.exercisesById)
+                && Objects.equals(favoriteExercisesById, user.favoriteExercisesById)
+                && Objects.equals(plansById, user.plansById)
+                && Objects.equals(userEquipmentsById, user.userEquipmentsById);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email, password, accessToken, exercisesById, favoriteExercisesById, plansById,
+                userEquipmentsById);
+    }
+
+    public Collection<Exercise> getExercisesById() {
+        return exercisesById;
+    }
+
+    public void setExercisesById(Collection<Exercise> exercisesById) {
+        this.exercisesById = exercisesById;
+    }
+
+    public Collection<FavoriteExercise> getFavoriteExercisesById() {
+        return favoriteExercisesById;
+    }
+
+    public void setFavoriteExercisesById(Collection<FavoriteExercise> favoriteExercisesById) {
+        this.favoriteExercisesById = favoriteExercisesById;
+    }
+
+    public Collection<Plan> getPlansById() {
+        return plansById;
+    }
+
+    public void setPlansById(Collection<Plan> plansById) {
+        this.plansById = plansById;
+    }
+
+    public Collection<UserEquipment> getUserEquipmentsById() {
+        return userEquipmentsById;
+    }
+
+    public void setUserEquipmentsById(Collection<UserEquipment> userEquipmentsById) {
+        this.userEquipmentsById = userEquipmentsById;
+    }
+
+    // #endregion boilerplate
+
+    public void setUserEquipmentsByEquipments(Collection<Equipment> equipments) {
+        this.userEquipmentsById = equipments.stream().map(e -> new UserEquipment(this, e)).toList();
     }
 }
