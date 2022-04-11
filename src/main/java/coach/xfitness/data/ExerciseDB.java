@@ -28,20 +28,6 @@ public class ExerciseDB {
         return resultsList;
     }
 
-    public static void insert(Exercise exercise) {
-        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction entityTransaction = entityManager.getTransaction();
-
-        entityTransaction.begin();
-        try {
-            entityManager.persist(exercise);
-            entityTransaction.commit();
-        } catch (Exception e) {
-            entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
     public static List<Exercise> selectAllAvailableTo(User user) {
         EntityManager entityManager = null;
         List<Exercise> resultsList = null;
@@ -90,7 +76,19 @@ public class ExerciseDB {
         return resultsList;
     }
 
+    public static void insert(Exercise exercise) {
+        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
 
+        entityTransaction.begin();
+        try {
+            entityManager.persist(exercise);
+            entityTransaction.commit();
+        } catch (Exception e) {
+            entityTransaction.rollback();
+            e.printStackTrace();
+        }
+    }
 
     public static void deleteByName(String name) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
