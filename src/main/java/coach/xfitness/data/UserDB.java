@@ -52,9 +52,11 @@ public class UserDB {
 
     public static void update(User user) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
 
+        entityTransaction.begin();
         entityManager.merge(user);
-        entityManager.getTransaction().commit();
+        entityTransaction.commit();
     }
 
     public static void deleteByEmail(String email) {
