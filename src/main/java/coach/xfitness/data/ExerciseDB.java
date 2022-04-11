@@ -20,7 +20,7 @@ public class ExerciseDB {
             Query query = entityManager.createNamedQuery("Exercise.selectAll");
             resultsList = DBUtil.castList(Exercise.class, query.getResultList());
         } catch (NoResultException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
 
         return resultsList;
@@ -36,13 +36,11 @@ public class ExerciseDB {
             entityTransaction.commit();
         } catch (Exception e) {
             entityTransaction.rollback();
-            System.out.println("Failed to add Exercise.");
-        } finally {
-            entityManager.close();
+            e.printStackTrace();
         }
     }
 
-    public static Exercise select(String name) {
+    public static Exercise selectByName(String name) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         TypedQuery<Exercise> typedQuery = entityManager.createNamedQuery("Exercise.selectByName", Exercise.class);
         typedQuery.setParameter("name", name);
@@ -50,10 +48,8 @@ public class ExerciseDB {
 
         try {
             result = typedQuery.getSingleResult();
-            System.out.println();
         } catch (NoResultException e) {
-            System.err.println("Exercise Not Found");
-            System.err.println(e);
+            e.printStackTrace();
         }
 
         return result;
@@ -67,7 +63,7 @@ public class ExerciseDB {
             Query query = entityManager.createNamedQuery("Exercise.selectDistinctTypes");
             resultsList = DBUtil.castList(String.class, query.getResultList());
         } catch (NoResultException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
         return resultsList;
     }
