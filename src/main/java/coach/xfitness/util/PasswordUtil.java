@@ -27,6 +27,11 @@ public class PasswordUtil {
 
         return true;
     }
+
+    public static String generateCode() {
+        int code = new Random().nextInt(999999);
+        return String.format("%06d", code);
+    }
     public static String generate(String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         char[] chars = password.toCharArray();
