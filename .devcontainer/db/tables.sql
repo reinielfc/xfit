@@ -21,15 +21,15 @@ CREATE TABLE
 
 CREATE TABLE
 	Exercise (
-		id			INT UNSIGNED	NOT NULL AUTO_INCREMENT,
-		userId		INT UNSIGNED	DEFAULT NULL,
-		name		VARCHAR(256)	UNIQUE NOT NULL,
-		title		VARCHAR(256)	NOT NULL,
-		primer		VARCHAR(512),
-		type		VARCHAR(32),
-		steps		TEXT,
-		tips		TEXT,
-		links		TEXT,
+		id		INT UNSIGNED	NOT NULL AUTO_INCREMENT,
+		userId	INT UNSIGNED	DEFAULT NULL,
+		name	VARCHAR(256)	UNIQUE NOT NULL,
+		title	VARCHAR(256)	NOT NULL,
+		primer	VARCHAR(512),
+		type	VARCHAR(32),
+		steps	TEXT,
+		tips	TEXT,
+		links	TEXT,
 
 		PRIMARY KEY(id), INDEX(name),
 		FOREIGN KEY(userId) REFERENCES User(id)
@@ -45,6 +45,22 @@ CREATE TABLE
 		FOREIGN KEY(exerciseId)	REFERENCES Exercise(id) ON DELETE CASCADE
 	) ENGINE=InnoDB;
 
+CREATE TABLE
+	Plan (
+		userId		INT UNSIGNED		NOT NULL,
+		exerciseId	INT UNSIGNED		NOT NULL,
+		dayOfWeek	TINYINT UNSIGNED	NOT	NULL,
+		position	INT UNSIGNED		NOT NULL,
+		sets		SMALLINT UNSIGNED,
+		reps		SMALLINT UNSIGNED,
+		weight		SMALLINT UNSIGNED,
+		isDone		TINYINT UNSIGNED	DEFAULT 0,
+
+		PRIMARY KEY(userId, exerciseId), INDEX(exerciseId, userId),
+		FOREIGN KEY(userId)		REFERENCES User(id)		ON DELETE CASCADE,
+		FOREIGN KEY(exerciseId)	REFERENCES Exercise(id)	ON DELETE CASCADE
+	) ENGINE=InnoDB;
+
 -- MUSCLE ------------------------------------------------------------ MUSCLE --
 
 CREATE TABLE
@@ -57,9 +73,9 @@ CREATE TABLE
 
 CREATE TABLE
 	ExerciseMuscle (
-		exerciseId			INT UNSIGNED	NOT NULL,
-		muscleId			INT UNSIGNED	NOT NULL,
-		isSecondary			INT UNSIGNED	NOT NULL DEFAULT 0,
+		exerciseId	INT UNSIGNED	NOT NULL,
+		muscleId	INT UNSIGNED	NOT NULL,
+		isSecondary	INT UNSIGNED	NOT NULL DEFAULT 0,
 
 		PRIMARY KEY(exerciseId, muscleId), INDEX(muscleId, exerciseId),
 		FOREIGN KEY(exerciseId)	REFERENCES Exercise(id)	ON DELETE CASCADE,
@@ -100,7 +116,7 @@ CREATE TABLE
 
 CREATE TABLE
 	Image (
-		id		INT UNSIGNED			NOT NULL AUTO_INCREMENT,
+		id		INT UNSIGNED	NOT NULL AUTO_INCREMENT,
 		image	MEDIUMBLOB,
 
 		PRIMARY KEY(id)
@@ -119,28 +135,10 @@ CREATE TABLE
 
 CREATE TABLE
 	EquipmentImage (
-		equipmentId		INT UNSIGNED	NOT NULL,
-		imageId			INT UNSIGNED	NOT NULL,
+		equipmentId	INT UNSIGNED	NOT NULL,
+		imageId		INT UNSIGNED	NOT NULL,
 		
 		PRIMARY KEY(equipmentId, imageId), INDEX(imageId, equipmentId),
 		FOREIGN KEY(equipmentId)	REFERENCES Equipment(id)	ON DELETE CASCADE,
 		FOREIGN KEY(imageId) 		REFERENCES Image(id)		ON DELETE CASCADE
-	) ENGINE=InnoDB;
-
--- PLAN ---------------------------------------------------------------- PLAN --
-
-CREATE TABLE
-	Plan (
-		userId		INT UNSIGNED		NOT NULL,
-		exerciseId	INT UNSIGNED		NOT NULL,
-		dayOfWeek	TINYINT UNSIGNED	NOT	NULL,
-		position	INT UNSIGNED		NOT NULL,
-		sets		SMALLINT UNSIGNED,
-		reps		SMALLINT UNSIGNED,
-		weight		SMALLINT UNSIGNED,
-		isDone		TINYINT UNSIGNED DEFAULT 0,
-
-		PRIMARY KEY(userId, exerciseId), INDEX(exerciseId, userId),
-		FOREIGN KEY(userId)		REFERENCES User(id)		ON DELETE CASCADE,
-		FOREIGN KEY(exerciseId)	REFERENCES Exercise(id)	ON DELETE CASCADE
 	) ENGINE=InnoDB;

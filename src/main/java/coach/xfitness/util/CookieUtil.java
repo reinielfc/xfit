@@ -5,7 +5,7 @@ import javax.servlet.http.Cookie;
 public class CookieUtil {
 
     public static String find(Cookie[] cookies, String cookieName) {
-        String cookieValue = "";
+        String cookieValue = null;
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {

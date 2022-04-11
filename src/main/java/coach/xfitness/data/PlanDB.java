@@ -1,68 +1,98 @@
 package coach.xfitness.data;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import coach.xfitness.business.Plan;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
 
 public class PlanDB {
-    public static void insert(Plan plan) {
-        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction entityTransaction = entityManager.getTransaction();
-        entityTransaction.begin();
-        try {
-                entityManager.persist(plan);
-                entityTransaction.commit();
-        } catch (Exception e) {
-            System.out.println("Failed to add Plan.");
-        } finally {
-            entityManager.close();
-        }
-    }
+    final static int BATCH_SIZE = 8;
 
-    public static Plan selectPlan(String plan) {
+    public static Plan selectBy(Byte dayOfWeek, Integer position) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+        TypedQuery<Plan> typedQuery = entityManager.createNamedQuery("Exercise.selectByPositionInDay", Plan.class);
+        typedQuery.setParameter("dayOfWeek", dayOfWeek);
+        typedQuery.setParameter("position", position);
+
         Plan result = null;
-        try{
-            String queryString = "SELECT plan FROM Plan WHERE plan.planId = :planId";
-            TypedQuery<Plan> typedQuery = entityManager.createQuery(queryString, Plan.class);
-            typedQuery.setParameter("planId", plan);
+        try {
             result = typedQuery.getSingleResult();
         } catch (NoResultException e) {
-            System.out.println("Could not find plan in database.");
-        } finally {
-            entityManager.close();
+            e.printStackTrace();
         }
 
         return result;
     }
-    // TODO:Complete
-    public static boolean hasPlan(String planName) {
-        Plan plan  = selectPlan(planName);
-        return plan != null;
-    }  
 
-    public static void deletePlan(String plan){
+    public static List<Plan> selectDay(Byte dayOfWeek) {
+        EntityManager entityManager = null;
+        List<Plan> resultsList = null;
+
+        try {
+            entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+            Query query = entityManager.createNamedQuery("Exercise.selectDay");
+            query.setParameter("dayOfWeek", dayOfWeek);
+            resultsList = DBUtil.castList(Plan.class, query.getResultList());
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        return resultsList;
+    }
+
+    private static void doActionOnList(List<Plan> planList, String action) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        entityManager.getTransaction().begin();
-        try{
-            Plan s = selectPlan(plan);
-            Plan u = entityManager.find(Plan.class, s.getPlanID());
-           entityManager.remove(u);
-           entityManager.getTransaction().commit();
-        }
-        catch(Exception e){
-            System.out.println("Couldn't delete Plan");
-        }
-        finally{
-            entityManager.close();
+        entityManager.setProperty("hibernate.jdbc.batch_size", String.valueOf(BATCH_SIZE));
+
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
+        entityTransaction.begin();
+        try {
+            for (int i = 0; i < planList.size(); i++) {
+                if (i > 0 && i % BATCH_SIZE == 0) {
+                    entityManager.flush();
+                    entityManager.clear();
+                }
+
+                Plan plan = planList.get(i);
+
+                switch (action) {
+                    case "insert":
+                        entityManager.persist(plan);
+                        break;
+                    case "update":
+                        entityManager.merge(plan);
+                        break;
+                    case "delete":
+                        if (!entityManager.contains(plan)) {
+                            plan = entityManager.merge(plan);
+                        }
+
+                        entityManager.remove(plan);
+                        break;
+                }
+            }
+            entityTransaction.commit();
+        } catch (Exception e) {
+            entityTransaction.rollback();
+            e.printStackTrace();
         }
     }
 
-    public static boolean updatePlan( Plan user) {
-
-        return true;
+    public static void insertList(List<Plan> planList) {
+        doActionOnList(planList, "insert");
     }
+
+    public static void updateList(List<Plan> planList) {
+        doActionOnList(planList, "update");
+    }
+
+    public static void deleteList(List<Plan> planList) {
+        doActionOnList(planList, "delete");
+    }
+
 }
