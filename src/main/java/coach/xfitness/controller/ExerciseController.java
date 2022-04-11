@@ -21,7 +21,7 @@ public class ExerciseController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String url = "";
+        String url = "/exercise/list.jsp";
         String exerciseName = request.getParameter("name");
 
         if (exerciseName == null || exerciseName.isBlank()) {
