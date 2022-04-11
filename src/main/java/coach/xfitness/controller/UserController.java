@@ -3,6 +3,9 @@ package coach.xfitness.controller;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,10 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import coach.xfitness.business.Equipment;
 import coach.xfitness.business.User;
+import coach.xfitness.data.EquipmentDB;
 import coach.xfitness.data.UserDB;
 import coach.xfitness.util.CookieUtil;
 import coach.xfitness.util.PasswordUtil;
+import coach.xfitness.util.ServletUtil;
 
 @WebServlet(name = "UserController", urlPatterns = { "/signin", "/register", "/settings" })
 public class UserController extends HttpServlet {
@@ -210,8 +216,90 @@ public class UserController extends HttpServlet {
 
     // #region configure
 
-    private String configure(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+    private String configure(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String setting = request.getParameter("setting");
+        String url = "settings.jsp";
+
+        if (setting.equals("user")) {
+            url = configureUserSettings(request, response);
+        } else if (setting.equals("equipment")) {
+            url = configureEquipmentSettings(request);
+        }
+
+        return url;
+    }
+
+    private String configureUserSettings(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        String url = "/settings.jsp";
+
+        if (session == null) {
+            request.setAttribute("validationMessage", "Please sign in to configure your account.");
+            return "signin.jsp";
+        }
+
+        String validationMessage = "";
+
+        User user = (User) session.getAttribute("user");
+
+        // validate username
+        String newName = request.getParameter("newName");
+        if (!newName.isBlank()) {
+            user.setName(newName);
+        }
+
+        // validate password
+        String newPassword = request.getParameter("newPassword");
+        if (!newPassword.isBlank()) {
+            validationMessage = validatePassword(newPassword);
+            user.setPassword(newPassword);
+            try {
+                securePassword(user);
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+                validationMessage = "An error has occurred. Please try again later.";
+                request.setAttribute("validationMessage", validationMessage);
+                return url;
+            }
+        }
+
+        UserDB.update(user);
+
+        ServletUtil.forwardToReferer(request, response);
+
+        return url;
+    }
+
+    private String configureEquipmentSettings(HttpServletRequest request) {
+        List<Equipment> equipments = makeEquipmentsFromRequest(request);
+
+        HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            request.setAttribute("validationMessage", "Please sign in to configure your equipment");
+            return "/signin.jsp";
+        }
+
+        User user = (User) request.getAttribute("user");
+        user.setUserEquipmentsByEquipments(equipments);
+
+        UserDB.update(user);
+
+        return "/planner.jsp";
+    }
+
+    private List<Equipment> makeEquipmentsFromRequest(HttpServletRequest request) {
+        // get selected equipments id list
+        String[] equipmentIdValues = request.getParameterValues("equipmentId");
+
+        // convert list to integers
+        List<Integer> equipmentIds = Arrays.stream(equipmentIdValues).map(Integer::valueOf)
+                .collect(Collectors.toList());
+
+        // fetch equipment from database
+        return EquipmentDB.selectByIdIn(equipmentIds);
     }
 
     // #endregion configure
