@@ -17,7 +17,7 @@ import coach.xfitness.data.UserDB;
 import coach.xfitness.util.CookieUtil;
 import coach.xfitness.util.PasswordUtil;
 
-@WebServlet(name = "UserController", urlPatterns = {"/signin", "/register", "/settings"})
+@WebServlet(name = "UserController", urlPatterns = { "/signin", "/register", "/settings" })
 public class UserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -38,7 +38,7 @@ public class UserController extends HttpServlet {
             url = configure(request, response);
         }
         //AUTOLOGIN
-      /*  else if (requestURI.endsWith("/")){
+        /*  else if (requestURI.endsWith("/")){
             url = autolog(request, response);
         } */
         getServletContext()
@@ -46,33 +46,7 @@ public class UserController extends HttpServlet {
                 .forward(request, response);
     }
 
-    private String autolog(HttpServletRequest request, HttpServletResponse response){
-       String url = "";
-       String email;
-        HttpSession session = request.getSession();
-        User user = (User) request.getAttribute("user");
-        if(user == null){
-            Cookie[] get = request.getCookies();
-            email = CookieUtil.getCookieValue(get, "loginCookie");
-            
-            if(email.equals("") || email == null){
-                url = "/index.jsp";
-                return url;
-            }
-            else{
-                user = UserDB.select(email);
-
-                if(user == null){
-                    url = "/index.jsp";
-                    return url;
-                }
-                session.setAttribute("user", user);
-            }
-        }
-
-        url = ""; //URL FOR TODAYS WORKOUT
-        return url;
-    }
+    // #region register
 
     private String register(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("name");
@@ -88,7 +62,7 @@ public class UserController extends HttpServlet {
 
         String url = "";
         String message = "";
-        if (UserDB.has(email)) {
+        if (UserDB.hasUserWithEmail(email)) {
             message = "This email address is already in use.";
         } else {
             try {
@@ -100,7 +74,7 @@ public class UserController extends HttpServlet {
             } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 System.out.println(e);
                 // url = "?"; // TODO: add error page
-            } 
+            }
             message = "";
             request.setAttribute("message", message);
             //before url is set to email validation, email the user with a randomly generated code and store it in the session
@@ -113,34 +87,73 @@ public class UserController extends HttpServlet {
         return url;
     }
 
-    private String signIn(HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    // #endregion register
+
+    // #region configure
+
+    private String configure(HttpServletRequest request, HttpServletResponse response) {
+        return null;
+    }
+
+    // #endregion configure
+
+    // #region signin
+
+    private String signIn(HttpServletRequest request, HttpServletResponse response)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         String url, message;
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        if(UserDB.has(email)){
-            User search = UserDB.select(email);
-            
-            if(PasswordUtil.validate(password, search.getPassword())){
+        if (UserDB.hasUserWithEmail(email)) {
+            User search = UserDB.selectByEmail(email);
+
+            if (PasswordUtil.verify(password, search.getPassword())) {
                 url = "/"; //Direct to Today's workout page
                 Cookie log1 = new Cookie("loginCookie", search.getEmail());
-                log1.setMaxAge(60*60*24*3); //cookie max age is 2 days
+                log1.setMaxAge(60 * 60 * 24 * 3); //cookie max age is 2 days
                 log1.setPath("/"); //path for cookie to be used by entire application
                 response.addCookie(log1); //saves cookie to client pc
-            }
-            else{
+            } else {
                 message = "Invalid Password.";
                 url = "/"; //Refresh to current page
             }
-        }
-        else{
+        } else {
             message = "Invalid Email and/or Password.";
             url = "/"; //Refresh to current page
         }
         return url;
     }
-    
-    private String configure(HttpServletRequest request, HttpServletResponse response) {
-        return null;
+
+    // #endregion signin
+
+    // #region signout
+    // #endregion signout
+
+    private String autolog(HttpServletRequest request, HttpServletResponse response) {
+        String url = "";
+        String email;
+        HttpSession session = request.getSession();
+        User user = (User) request.getAttribute("user");
+        if (user == null) {
+            Cookie[] get = request.getCookies();
+            email = CookieUtil.find(get, "loginCookie");
+
+            if (email.equals("") || email == null) {
+                url = "/index.jsp";
+                return url;
+            } else {
+                user = UserDB.selectByEmail(email);
+
+                if (user == null) {
+                    url = "/index.jsp";
+                    return url;
+                }
+                session.setAttribute("user", user);
+            }
+        }
+
+        url = ""; //URL FOR TODAYS WORKOUT
+        return url;
     }
 }
