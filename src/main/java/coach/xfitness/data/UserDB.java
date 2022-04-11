@@ -1,6 +1,5 @@
 package coach.xfitness.data;
 
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
@@ -8,6 +7,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 
 import coach.xfitness.business.User;
+
 public class UserDB {
 
     public static User selectByEmail(String email) {

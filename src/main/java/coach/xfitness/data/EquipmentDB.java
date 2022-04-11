@@ -1,6 +1,7 @@
 package coach.xfitness.data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -19,12 +20,6 @@ public class EquipmentDB {
         Query query = entityManager.createNamedQuery("Equipment.selectAll");
         List<Equipment> resultsList = DBUtil.castList(Equipment.class, query.getResultList());
         return resultsList;
-    }
-
-    public static List<String> fetchNamesList() {
-        return EquipmentDB.selectAll().stream()
-                .map(Equipment::getName)
-                .toList();
     }
 
     public static List<Equipment> selectByIdIn(List<Integer> ids) {
@@ -48,6 +43,12 @@ public class EquipmentDB {
         }
 
         return result;
+    }
+
+    public static List<String> fetchNamesList() {
+        return EquipmentDB.selectAll().stream()
+                .map(Equipment::getName)
+                .collect(Collectors.toList());
     }
 
 }
