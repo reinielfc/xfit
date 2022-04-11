@@ -10,6 +10,23 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class PasswordUtil {
+
+    public static boolean validate(String password) {
+        if (password == null || password.isBlank()) {
+            return false;
+        }
+
+        String[] requirements = new String[] { "\\S{8,}", "[A-Z]", "[a-z]", "[0-9]" };
+
+        for (String requirement : requirements) {
+            // if password does not match requirement regex
+            if (!Pattern.compile(requirement).matcher(password).find()) {
+                return false; // it is invalid
+            }
+        }
+
+        return true;
+    }
     public static String generate(String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         char[] chars = password.toCharArray();
