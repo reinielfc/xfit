@@ -43,13 +43,13 @@ public class UserDBTest {
         
         UserDB.insert(test);
         assertTrue(UserDB.has("JHerdocia112@att.net"));
-        UserDB.delete(test.getEmail());
+        UserDB.deleteByEmail(test.getEmail());
     }
 
     @Test
     //test that selectUser will return a null value for invalid selection
     public void testSelectInvalidUser() {
-       User test = UserDB.select("test@gmail.com");
+       User test = UserDB.selectByEmail("test@gmail.com");
        if(test != null){
            fail("Must return a null value for invalid or non exsistent user");
        }
@@ -74,7 +74,7 @@ public class UserDBTest {
         UserDB.insert(test2);
         String output = out.toString();
         assertTrue(output.contains(message));
-        UserDB.delete(test1.getEmail());
+        UserDB.deleteByEmail(test1.getEmail());
     }
 
     @Test
