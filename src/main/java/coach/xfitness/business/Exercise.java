@@ -224,10 +224,15 @@ public class Exercise {
 
     // #endregion boilerplate
 
+    public Collection<Equipment> getEquipment() {
+        return exerciseEquipmentsById.stream()
+                .map(ExerciseEquipment::getEquipmentByEquipmentId)
+                .collect(Collectors.toList());
+    }
+
     private Collection<Muscle> getMuscles(boolean isSecondary) {
         int isSecondaryInt = isSecondary ? 1 : 0;
-        return exerciseMusclesById
-                .stream()
+        return exerciseMusclesById.stream()
                 .filter(em -> em.getIsSecondary() == isSecondaryInt)
                 .map(ExerciseMuscle::getMuscleByMuscleId)
                 .collect(Collectors.toList());

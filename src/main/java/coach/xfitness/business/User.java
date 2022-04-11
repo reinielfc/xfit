@@ -155,6 +155,21 @@ public class User {
     // #endregion boilerplate
 
     public void setUserEquipmentsByEquipments(Collection<Equipment> equipments) {
-        this.userEquipmentsById = equipments.stream().map(e -> new UserEquipment(this, e)).toList();
+        this.userEquipmentsById = equipments.stream()
+                .map(e -> new UserEquipment(this, e))
+                .collect(Collectors.toList());
+    }
+
+    public List<Plan> getPlanListForDay(byte dayOfWeek) {
+        return this.getPlansById().stream()
+                .filter(p -> p.getDayOfWeek() == dayOfWeek)
+                .collect(Collectors.toList());
+    }
+
+    public Plan getPlanByPositionInDayOfWeek(Integer position, Byte dayOfWeek) {
+        return this.getPlansById().stream()
+                .filter(p -> p.getPosition() == position && p.getDayOfWeek() == dayOfWeek)
+                .findFirst()
+                .get();
     }
 }
