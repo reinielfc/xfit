@@ -95,22 +95,4 @@ public class ExerciseDB {
         }
     }
 
-    public static boolean updateExercise( Exercise exercise) {
-        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        EntityTransaction entityTransaction = entityManager.getTransaction();
-        entityTransaction.begin();
-        try {
-                entityManager.merge(exercise);
-                entityTransaction.commit();
-
-        } catch (Exception e) {
-            System.out.println("Failed to update Exercise.");
-        } finally {
-            entityManager.close();
-        }
-        return true; // does this need to return true
-
-    }
-
-    
-}// 
+}
