@@ -24,27 +24,28 @@ import coach.xfitness.util.CookieUtil;
 import coach.xfitness.util.PasswordUtil;
 import coach.xfitness.util.ServletUtil;
 
-@WebServlet(name = "UserController", urlPatterns = { "/signin", "/register", "/settings" })
+@WebServlet(name = "UserController", urlPatterns = {
+        "/register", "/signin", "/authenticate", "/signout", "/configure"
+})
 public class UserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        String url = "";
+        String url = "/signin.jsp";
 
-        if (requestURI.endsWith("/register")) {
+        if (requestURI.endsWith("/authenticate")) {
+            signInWithAuthenticationCookie(request);
+        } else if (requestURI.endsWith("/register")) {
             url = register(request, response);
         } else if (requestURI.endsWith("/signin")) {
             url = signIn(request, response);
         } else if (requestURI.endsWith("/signout")) {
             url = signOut(request, response);
-        } else if (requestURI.endsWith("/settings")) {
+        } else if (requestURI.endsWith("/configure")) {
             url = configure(request, response);
         }
-        //AUTOLOGIN
-        /*  else if (requestURI.endsWith("/")){
-            url = autolog(request, response);
-        } */
+        // TODO: handle authenticate here
         getServletContext()
                 .getRequestDispatcher(url)
                 .forward(request, response);
@@ -361,6 +362,22 @@ public class UserController extends HttpServlet {
         UserDB.update(user); // save to database
     }
 
+    private static void signInWithAuthenticationCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        String accessToken = CookieUtil.find(cookies, "accessToken");
+        String email = CookieUtil.find(cookies, "email");
+
+        if (!(accessToken == null || email == null)) {
+            User user = UserDB.selectByEmail(email);
+
+            if (user.getAccessToken().equals(accessToken)) {
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+            }
+        }
+
+    }
+
     // #endregion signin
 
     // #region signout
@@ -393,30 +410,4 @@ public class UserController extends HttpServlet {
 
     // #endregion signout
 
-    private String autolog(HttpServletRequest request, HttpServletResponse response) {
-        String url = "";
-        String email;
-        HttpSession session = request.getSession();
-        User user = (User) request.getAttribute("user");
-        if (user == null) {
-            Cookie[] get = request.getCookies();
-            email = CookieUtil.find(get, "loginCookie");
-
-            if (email.equals("") || email == null) {
-                url = "/index.jsp";
-                return url;
-            } else {
-                user = UserDB.selectByEmail(email);
-
-                if (user == null) {
-                    url = "/index.jsp";
-                    return url;
-                }
-                session.setAttribute("user", user);
-            }
-        }
-
-        url = ""; //URL FOR TODAYS WORKOUT
-        return url;
-    }
 }
