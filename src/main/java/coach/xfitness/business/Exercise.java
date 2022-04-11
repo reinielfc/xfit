@@ -21,7 +21,8 @@ import javax.persistence.OneToMany;
 @NamedQueries({
         @NamedQuery(name = "Exercise.selectAll", query = "SELECT e FROM Exercise e"),
         @NamedQuery(name = "Exercise.selectByName", query = "SELECT e FROM Exercise e WHERE e.name = :name"),
-        @NamedQuery(name = "Exercise.selectDistinctTypes", query = "SELECT DISTINCT e.type FROM Exercise e")
+        @NamedQuery(name = "Exercise.selectDistinctTypes", query = "SELECT DISTINCT e.type FROM Exercise e"),
+        @NamedQuery(name = "Exercise.selectAllAvailable", query = "SELECT e FROM Exercise e WHERE e.userByUserId = :userByUserId OR e.userByUserId = null")
 })
 public class Exercise {
 

@@ -42,6 +42,21 @@ public class ExerciseDB {
         }
     }
 
+    public static List<Exercise> selectAllAvailableTo(User user) {
+        EntityManager entityManager = null;
+        List<Exercise> resultsList = null;
+
+        try {
+            entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+            Query query = entityManager.createNamedQuery("Exercise.selectAllAvailable");
+            query.setParameter("userByUserId", user);
+            resultsList = DBUtil.castList(Exercise.class, query.getResultList());
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        return resultsList;
+    }
+
     public static Exercise selectByName(String name) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         TypedQuery<Exercise> typedQuery = entityManager.createNamedQuery("Exercise.selectByName", Exercise.class);
