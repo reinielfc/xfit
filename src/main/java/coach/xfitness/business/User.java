@@ -40,13 +40,13 @@ public class User {
     @Column(name = "accessToken")
     private String accessToken;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
     private Collection<Exercise> exercisesById;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
     private Collection<FavoriteExercise> favoriteExercisesById;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
     private Collection<Plan> plansById;
 
     @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)

@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,19 +62,19 @@ public class Exercise {
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User userByUserId;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<ExerciseEquipment> exerciseEquipmentsById;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<ExerciseImage> exerciseImagesById;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<ExerciseMuscle> exerciseMusclesById;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<FavoriteExercise> favoriteExercisesById;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<Plan> plansById;
 
     // #region boilerplate
