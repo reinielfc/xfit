@@ -7,9 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.NamedQuery;
+
 import java.util.Objects;
 
 @Entity
+@NamedQuery(name = "Exercise.selectByPositionInDay", query = "SELECT p FROM Plan p WHERE p.dayOfWeek = :dayOfWeek AND p.position = :position")
 public class Plan {
 
     @EmbeddedId

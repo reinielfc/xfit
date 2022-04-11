@@ -4,11 +4,45 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import coach.xfitness.business.Plan;
 
 public class PlanDB {
     final static int BATCH_SIZE = 8;
+
+    public static Plan selectBy(Byte dayOfWeek, Integer position) {
+        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+        TypedQuery<Plan> typedQuery = entityManager.createNamedQuery("Exercise.selectByPositionInDay", Plan.class);
+        typedQuery.setParameter("dayOfWeek", dayOfWeek);
+        typedQuery.setParameter("position", position);
+
+        Plan result = null;
+        try {
+            result = typedQuery.getSingleResult();
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static List<Plan> selectDay(Byte dayOfWeek) {
+        EntityManager entityManager = null;
+        List<Plan> resultsList = null;
+
+        try {
+            entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+            Query query = entityManager.createNamedQuery("Exercise.selectDay");
+            query.setParameter("dayOfWeek", dayOfWeek);
+            resultsList = DBUtil.castList(Plan.class, query.getResultList());
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        return resultsList;
+    }
 
     private static void doActionOnList(List<Plan> planList, String action) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
