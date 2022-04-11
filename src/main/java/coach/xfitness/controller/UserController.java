@@ -29,12 +29,7 @@ public class UserController extends HttpServlet {
         if (requestURI.endsWith("/register")) {
             url = register(request, response);
         } else if (requestURI.endsWith("/signin")) {
-            try {
-                url = signIn(request, response);
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            url = signIn(request, response);
         } else if (requestURI.endsWith("/settings")) {
             url = configure(request, response);
         }
@@ -221,30 +216,59 @@ public class UserController extends HttpServlet {
 
     // #region signin
 
-    private String signIn(HttpServletRequest request, HttpServletResponse response)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
-        String url, message;
+    private String signIn(HttpServletRequest request, HttpServletResponse response) {
+        String validationMessage = "";
+        String url = "/signin.jsp";
+
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        if (UserDB.hasUserWithEmail(email)) {
-            User search = UserDB.selectByEmail(email);
+        User user = UserDB.selectByEmail(email);
 
-            if (PasswordUtil.verify(password, search.getPassword())) {
-                url = "/"; //Direct to Today's workout page
-                Cookie log1 = new Cookie("loginCookie", search.getEmail());
-                log1.setMaxAge(60 * 60 * 24 * 3); //cookie max age is 2 days
-                log1.setPath("/"); //path for cookie to be used by entire application
-                response.addCookie(log1); //saves cookie to client pc
+        try {
+            if (user != null && PasswordUtil.verify(password, user.getPassword())) {
+                boolean rememberUser = Boolean.parseBoolean(request.getParameter("rememberMe"));
+
+                if (rememberUser) {
+                    saveAuthenticationCookie(user, response);
+                }
+
+                request.getSession().setAttribute("user", user);
+
+                url = "/workout.jsp";
             } else {
-                message = "Invalid Password.";
-                url = "/"; //Refresh to current page
+                validationMessage = "Invalid credentials.";
             }
-        } else {
-            message = "Invalid Email and/or Password.";
-            url = "/"; //Refresh to current page
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+            validationMessage = "An error has occurred. Please try again later.";
         }
+
+        request.setAttribute("validationMessage", validationMessage);
+
         return url;
+    }
+
+    private void saveAuthenticationCookie(User user, HttpServletResponse response) {
+        String accessToken = PasswordUtil.generateAccessToken();
+        String email = user.getEmail();
+
+        Cookie[] cookies = new Cookie[] {
+                new Cookie("accessToken", accessToken),
+                new Cookie("email", email)
+        };
+
+        // save to client
+        for (Cookie cookie : cookies) {
+            cookie.setMaxAge(60 * 60 * 24 * 3); // 3 days
+            cookie.setPath("/"); // entire app
+            //cookie.setSecure(true); // only accessible through https // TODO:
+            cookie.setHttpOnly(true); // not accessible to client-side scripting
+            response.addCookie(cookie);
+        }
+
+        user.setAccessToken(accessToken); // save to user
+        UserDB.update(user); // save to database
     }
 
     // #endregion signin
