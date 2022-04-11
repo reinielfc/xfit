@@ -3,11 +3,13 @@ package coach.xfitness.data;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import coach.xfitness.business.Exercise;
+import coach.xfitness.business.User;
 
 public class ExerciseDB {
 
@@ -55,6 +57,11 @@ public class ExerciseDB {
         return result;
     }
 
+    public static boolean hasExerciseByName(String name) {
+        Exercise exercise = selectByName(name);
+        return exercise != null;
+    }
+
     public static List<String> fetchTypesList() {
         EntityManager entityManager = null;
         List<String> resultsList = null;
@@ -69,29 +76,21 @@ public class ExerciseDB {
     }
 
 
-    public static boolean hasExercise(String exercise) {
-        boolean success = false;
-        Exercise myExercise = selectExercise(exercise);
-        if(myExercise != null) 
-        success = true;
 
-        return success;
-    }  
-
-    public static void deleteExercise(String exercise){
+    public static void deleteByName(String name) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        entityManager.getTransaction().begin();
-        try{
-            Exercise s = selectExercise(exercise);
-            Exercise u = entityManager.find(Exercise.class, s.getExerciseID());
-           entityManager.remove(u);
-           entityManager.getTransaction().commit();
-        }
-        catch(Exception e){
-            System.out.println("Couldn't delete Exercise");
-        }
-        finally{
-            entityManager.close();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
+        entityTransaction.begin();
+        try {
+            // TODO: there might be some redundancy here
+            Exercise exercise = selectByName(name);
+            exercise = entityManager.find(Exercise.class, exercise.getId());
+            entityManager.remove(exercise);
+            entityTransaction.commit();
+        } catch (Exception e) {
+            entityTransaction.rollback();
+            e.printStackTrace();
         }
     }
 
