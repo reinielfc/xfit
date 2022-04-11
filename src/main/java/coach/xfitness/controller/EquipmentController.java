@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import coach.xfitness.business.Equipment;
 import coach.xfitness.data.EquipmentDB;
 
-@WebServlet(name = "ExerciseController", urlPatterns = { "/equipment" })
+@WebServlet(name = "EquipmentController", urlPatterns = { "/equipment" })
 public class EquipmentController extends HttpServlet {
 
     @Override
