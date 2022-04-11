@@ -17,10 +17,8 @@ public class UserDB {
         User result = null;
 
         try {
-            System.out.println("[DATABASE] SELECT: User with email '" + email + "' from database.");
             result = typedQuery.getSingleResult();
         } catch (NoResultException e) {
-            System.err.println("[DATABASE ERROR] SELECT FAIL: User with email '" + email + "' not found:");
             e.printStackTrace();
         }
 
@@ -40,24 +38,21 @@ public class UserDB {
         String email = user.getEmail();
 
         try {
-            System.out.println("[DATABASE] INSERT: User with email '" + email  + "' to database.");
-            if (UserDB.has(email)) {
-                System.err.println("[DATABASE ERROR] INSERT FAIL: User with email '" + email + "' already exists:");
+            if (UserDB.hasUserWithEmail(email)) {
                 throw new NonUniqueResultException();
             } else {
                 entityManager.persist(user);
                 entityTransaction.commit();
             }
         } catch (Exception e) {
-            System.err.println("[DATABASE ERROR] INSERT FAIL: User with email '" + email + "' could not be inserted:");
+            
             e.printStackTrace();
         }
     }
 
     public static void update(User user) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        entityManager.getTransaction().begin();
-        System.out.println("[DATABASE] UPDATE: User with email '" + user.getEmail() + "'.");
+
         entityManager.merge(user);
         entityManager.getTransaction().commit();
     }
