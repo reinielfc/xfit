@@ -59,7 +59,7 @@ public class PasswordUtilTest {
             e.printStackTrace();
         }
 
-        thePassword.isEmpty();
+        assertFalse(thePassword.isEmpty());
     }
 
     @Test
