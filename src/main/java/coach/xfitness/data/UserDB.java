@@ -27,6 +27,11 @@ public class UserDB {
         return result;
     }
 
+    public static boolean hasUserWithEmail(String email) {
+        User user = selectByEmail(email);
+        return user != null;
+    }
+
     public static void insert(User user) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();
@@ -47,11 +52,6 @@ public class UserDB {
             System.err.println("[DATABASE ERROR] INSERT FAIL: User with email '" + email + "' could not be inserted:");
             e.printStackTrace();
         }
-    }
-
-    public static boolean has(String email) {
-        User user = selectByEmail(email);
-        return user != null;
     }
 
     public static void update(User user) {
