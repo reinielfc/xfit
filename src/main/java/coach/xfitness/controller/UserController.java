@@ -30,6 +30,8 @@ public class UserController extends HttpServlet {
             url = register(request, response);
         } else if (requestURI.endsWith("/signin")) {
             url = signIn(request, response);
+        } else if (requestURI.endsWith("/signout")) {
+            url = signOut(request, response);
         } else if (requestURI.endsWith("/settings")) {
             url = configure(request, response);
         }
@@ -274,6 +276,33 @@ public class UserController extends HttpServlet {
     // #endregion signin
 
     // #region signout
+
+    private String signOut(HttpServletRequest request, HttpServletResponse response) {
+        invalidateSession(request);
+        clearCookies(request, response);
+        return "/index.jsp";
+    }
+
+    private void invalidateSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            session.invalidate();
+        }
+    }
+
+    private void clearCookies(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setMaxAge(0);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+            }
+        }
+    }
+
     // #endregion signout
 
     private String autolog(HttpServletRequest request, HttpServletResponse response) {
