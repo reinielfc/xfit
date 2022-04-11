@@ -5,11 +5,16 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Random;
+import java.util.regex.Pattern;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class PasswordUtil {
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+    private static final Base64.Encoder BASE64_ENCODER = Base64.getUrlEncoder();
 
     public static boolean validate(String password) {
         if (password == null || password.isBlank()) {
@@ -32,6 +37,17 @@ public class PasswordUtil {
         int code = new Random().nextInt(999999);
         return String.format("%06d", code);
     }
+
+    public static String generateAccessToken() {
+        return generateRandomBase64String(24);
+    }
+
+    public static String generateRandomBase64String(int length) {
+        byte[] randomBytes = new byte[length];
+        SECURE_RANDOM.nextBytes(randomBytes);
+        return BASE64_ENCODER.encodeToString(randomBytes);
+    }
+
     public static String generate(String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         char[] chars = password.toCharArray();
