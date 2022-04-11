@@ -61,12 +61,13 @@ public class UserDB {
 
     public static void deleteByEmail(String email) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        entityManager.getTransaction().begin();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
 
-        User user = entityManager.find(User.class, UserDB.selectByEmail(email).getId());
-        System.out.println("[DATABASE] DELETE: User with email '" + user.getEmail() + "'.");
+        entityTransaction.begin();
+        User user = UserDB.selectByEmail(email);
         entityManager.remove(user);
-        entityManager.getTransaction().commit();
+
+        entityTransaction.commit();
     }
 
 }
