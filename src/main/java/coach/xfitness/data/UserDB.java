@@ -45,7 +45,7 @@ public class UserDB {
                 entityTransaction.commit();
             }
         } catch (Exception e) {
-            
+            entityTransaction.rollback();
             e.printStackTrace();
         }
     }
