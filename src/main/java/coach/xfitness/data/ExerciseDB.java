@@ -10,13 +10,11 @@ import javax.persistence.TypedQuery;
 import coach.xfitness.business.Exercise;
 
 public class ExerciseDB {
-    // TODO: change to selectAvailable(String user) when custom exercises are
-    // integrated
-    // TODO: also make a selectAvailable() that selects exercises available to
-    // logged out user
+
     public static List<Exercise> selectAll() {
         EntityManager entityManager = null;
         List<Exercise> resultsList = null;
+
         try {
             entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
             Query query = entityManager.createNamedQuery("Exercise.selectAll");
@@ -24,12 +22,14 @@ public class ExerciseDB {
         } catch (NoResultException e) {
             System.err.println(e);
         }
+
         return resultsList;
     }
 
     public static void insert(Exercise exercise) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();
+
         entityTransaction.begin();
         try {
             entityManager.persist(exercise);
@@ -72,7 +72,6 @@ public class ExerciseDB {
         return resultsList;
     }
 
-}
 
     public static boolean hasExercise(String exercise) {
         boolean success = false;
