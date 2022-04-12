@@ -30,9 +30,11 @@ public class ExerciseController extends HttpServlet {
             url = show(request, response);
         }
 
-        getServletContext()
-                .getRequestDispatcher(url)
-                .forward(request, response);
+        if (request.getRequestURI().endsWith("/exercise")) {
+            getServletContext()
+                    .getRequestDispatcher(url)
+                    .forward(request, response);
+        }
     }
 
     private String list(HttpServletRequest request, HttpServletResponse response) {
