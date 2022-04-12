@@ -27,7 +27,7 @@ public class ExerciseController extends HttpServlet {
         if (exerciseName == null || exerciseName.isBlank()) {
             url = list(request, response);
         } else {
-            url = showDetails(exerciseName, request, response);
+            url = show(request, response);
         }
 
         getServletContext()
@@ -50,12 +50,12 @@ public class ExerciseController extends HttpServlet {
         return "/exercise/list.jsp";
     }
 
-    private String showDetails(String exerciseName, HttpServletRequest request, HttpServletResponse response) {
-        Exercise exercise = ExerciseDB.select(exerciseName);
+    private String show(HttpServletRequest request, HttpServletResponse response) {
+        String exerciseName = request.getParameter("name");
+        Exercise exercise = ExerciseDB.selectByName(exerciseName);
 
         request.setAttribute("exercise", exercise);
 
-        request.setAttribute("activePage", "exercises");
         return "/exercise/details.jsp";
     }
 
