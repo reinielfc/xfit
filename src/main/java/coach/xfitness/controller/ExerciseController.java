@@ -38,17 +38,19 @@ public class ExerciseController extends HttpServlet {
     }
 
     private String list(HttpServletRequest request, HttpServletResponse response) {
-        List<Exercise> exerciseList = ExerciseDB.selectAll();
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("user");
+
+        List<Exercise> exerciseList = ExerciseDB.selectAllAvailableTo(user);
         List<String> exerciseTypesList = ExerciseDB.fetchTypesList();
         List<String> equipmentNamesList = EquipmentDB.fetchNamesList();
         List<String> muscleNamesList = MuscleDB.fetchNamesList();
-
-        request.setAttribute("exerciseList", exerciseList);
+        
         request.setAttribute("exerciseTypesList", exerciseTypesList);
+        request.setAttribute("exerciseList", exerciseList);
         request.setAttribute("equipmentList", equipmentNamesList);
         request.setAttribute("muscleList", muscleNamesList);
 
-        request.setAttribute("activePage", "exercises");
         return "/exercise/list.jsp";
     }
 
