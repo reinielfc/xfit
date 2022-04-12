@@ -36,13 +36,13 @@ public class EmailServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if (action.equals("verify")) {
+        if (action.equals("register")) {
             sendCode(request);
         }
     }
 
     private void sendCode(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
 
         // get user stored in session
         User recipient = (User) session.getAttribute("recipient");
@@ -72,7 +72,7 @@ public class EmailServlet extends HttpServlet {
                 .append("<h1><strong>XFit:</strong> Email Verification</h1>")
                 .append("<p>Hi ").append(recipientName).append("!</p>")
                 .append("<p>Enter the following code in the email verification page:</p>")
-                .append("<h3 style=\"text-align: center\">").append(code).append("</h3>")
+                .append("<h3>").append(code).append("</h3>")
                 .toString();
     }
 
