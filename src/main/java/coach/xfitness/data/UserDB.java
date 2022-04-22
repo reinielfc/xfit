@@ -60,14 +60,20 @@ public class UserDB {
     }
 
     public static void deleteByEmail(String email) {
+
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();
-
         entityTransaction.begin();
-        User user = UserDB.selectByEmail(email);
-        entityManager.remove(user);
+        try {
 
-        entityTransaction.commit();
+            User user = selectByEmail(email);
+            user = entityManager.find(User.class, user.getId());
+            entityManager.remove(user);
+            entityTransaction.commit();
+
+        } catch (Exception e) {
+            entityTransaction.rollback();
+            e.printStackTrace();
+        }
     }
-
 }
