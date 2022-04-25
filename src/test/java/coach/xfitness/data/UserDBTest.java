@@ -5,12 +5,6 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.TypedQuery;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -148,41 +142,77 @@ public class UserDBTest {
     }
 
     @Test
-    public void testDeleteByEmailSuccess() {
-        String actualEmail = "marioisaman@gmail.com";
-        //create our user objects
-        User expected = new User();
-        //set both emails equal to the same email
+    public void testHasUserWithEmailFailure() {
 
+        User expected = new User();
+
+        String actualEmail = "";
         expected.setEmail(actualEmail);
         expected.setPassword("password");
         expected.setName("name");
-        //insert the actual value into the database
+
+        UserDB.insert(expected);
+        try {
+            UserDB.selectByEmail(actualEmail);
+        } catch (Exception e) {
+            //TODO: handle exception
+            fail("unable to find user with email");
+        }
+
+        UserDB.deleteByEmail(actualEmail);
+
+    }
+
+    @Test
+    public void testDeleteByEmailSuccess() {
+        String actualEmail = "marioisaman@gmail.com";
+
+        User expected = new User();
+
+        expected.setEmail(actualEmail);
+        expected.setPassword("password");
+        expected.setName("name");     
 
         UserDB.insert(expected);
 
         UserDB.deleteByEmail(actualEmail);
 
-        assertNull(expected.getEmail());
+        try {
+            UserDB.selectByEmail(actualEmail);
+        } catch (Exception e) {
+            //TODO: handle exception
+            fail("Unable to find User");
+        }
     }
-
     @Test
     public void testUpdateSuccess() {
+        String emptyEmail = "";
+        String actualEmail = "fillinganemail@gmail.com";
         User missing = new User();
 
-        missing.setEmail("");
-        missing.setPassword("password");
-        missing.setName("name");
+        missing.setEmail(emptyEmail);
+        missing.setPassword("");
+        missing.setName("");
         UserDB.insert(missing);
         
         User fill = new User();
 
-        fill.setEmail("fillinganemail@gmail.com");
+        fill.setEmail(actualEmail);
+        fill.setPassword("fillpassword");
+        fill.setName("fillaname");
+        UserDB.insert(fill);
 
         UserDB.update(missing);
+    
+        try {
+            UserDB.selectByEmail(emptyEmail);
+        } catch (Exception e) {
+            //TODO: handle exception
+            fail("email does not match the records");
+        }
 
-        assertEquals(fill.getEmail(), missing.getEmail());
         UserDB.deleteByEmail(missing.getEmail());
+        UserDB.deleteByEmail(fill.getEmail());
     }
 
 }
