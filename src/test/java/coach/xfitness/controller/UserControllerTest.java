@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.junit.Test;
 
 import coach.xfitness.business.User;
@@ -27,7 +30,7 @@ public class UserControllerTest {
         user2.setEmail("JohnSmith@112.com");
         user2.setPassword("reinielisasleep");
 
-        if(UserDB.has(user2.getEmail())){
+        if(UserDB.hasUserWithEmail(user2.getEmail())){
             message = "This email address is already in use.";
         }
         else{    
@@ -41,11 +44,20 @@ public class UserControllerTest {
         }
 
         assertEquals(message, error);
-        UserDB.delete(user1.getEmail());
+        UserDB.deleteByEmail(user1.getEmail());
     }
     @Test
     //test if method returns String value of '/'
     public void testReturnSignUp(){
 
+    }
+
+    @Test
+    public void testRegister() {
+        HttpServletRequest request;
+        HttpServletResponse response;
+
+        String action = request.getParameter("action");
+        String url = "/register.jsp";
     }
 }

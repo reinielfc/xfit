@@ -17,7 +17,7 @@
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
     <properties>
-      <property name="hibernate.connection.url" value="jdbc:mariadb://172.20.0.2:3306/xfit"/>
+      <property name="hibernate.connection.url" value="jdbc:mariadb://db:3306/xfit"/>
       <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver"/>
       <property name="hibernate.connection.username" value="root"/>
       <property name="hibernate.connection.password" value="s3cret"/>
