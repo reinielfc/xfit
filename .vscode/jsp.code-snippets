@@ -1,0 +1,101 @@
+{
+    // Place your code workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+    // description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+    // is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+    // used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+    // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
+    // Placeholders with the same ids are connected.
+    // Example:
+    // "Print to console": {
+    // 	"scope": "javascript,typescript",
+    // 	"prefix": "log",
+    // 	"body": [
+    // 		"console.log('$1');",
+    // 		"$2"
+    // 	],
+    // 	"description": "Log output to console"
+    // }
+    "HTML Comment": {
+        "scope": "html",
+        "prefix": "<!--",
+        "body": "<!--$0-->"
+    },
+    "JSP Comment": {
+        "scope": "html",
+        "prefix": "<%-",
+        "body": "<%--$0--%>"
+    },
+    "JSTL Core Tag Library Header": {
+        "scope": "html",
+        "prefix": ["ctaglib", "taglib"],
+        "body": [
+            "<%@ page contentType=\"text/html\" pageEncoding=\"UTF-8\" %>",
+            "<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\" %>$0"
+        ]
+    },
+    "JSTL Core Import": {
+        "scope": "html",
+        "prefix": "c:import",
+        "body": ["<c:import url=\"${1:url}\" charEncoding=\"UTF-8\" />$0"]
+    },
+    "JSTL Core Set": {
+        "scope": "html",
+        "prefix": "c:set",
+        "body": ["<c:set var=\"${1:variableName}\" value=\"${2:value}\" />$0"]
+    },
+    "JSTL Core Set Scope": {
+        "scope": "html",
+        "prefix": "c:set[scope=]",
+        "body": ["<c:set scope=\"${3:request}\" var=\"${1:variableName}\" value=\"${2:value}\" />$0"]
+    },
+    "JSTL Core Remove": {
+        "scope": "html",
+        "prefix": "c:remove",
+        "body": ["<c:remove var=\"${1:variableName}\" />$0"]
+    },
+    "JSTL Core URL": {
+        "scope": "html",
+        "prefix": "c:url",
+        "body": ["<c:url value='${1:url}' />$0"]
+    },
+    "JSTL Core If": {
+        "scope": "html",
+        "prefix": "c:if",
+        "body": ["<c:if test=\"${1:test}\">$0</c:if>"]
+    },
+    "JSTL Core Choose": {
+        "scope": "html",
+        "prefix": "c:choose",
+        "body": ["<c:choose>$0</c:choose>"]
+    },
+    "JSTL Core When": {
+        "scope": "html",
+        "prefix": "c:when",
+        "body": ["<c:when test=\"${1:test}\">$0</c:when>"]
+    },
+    "JSTL Core Otherwise": {
+        "scope": "html",
+        "prefix": "c:otherwise",
+        "body": ["<c:otherwise>$0</c:otherwise>"]
+    },
+	"JSTL Core ForIndex": {
+		"scope": "html",
+		"prefix": "c:fori",
+		"body": ["<c:forEach var=\"${3:i}\" begin=\"${1:0}\" end=\"${2:n}\">$0</c:forEach>"]
+	},
+	"JSTL Core ForEach": {
+		"scope": "html",
+		"prefix": "c:foreach",
+		"body": ["<c:forEach items=\"${1:items}\" var=\"${2:variableName}\">$0</c:forEach>"]
+	},
+	"JSTL Core ForTokens": {
+		"scope": "html",
+		"prefix": "c:forTokens",
+		"body": ["<c:forTokens items=\"${1:itemsString}\" delims=\"${2:,}\" var=\"variableName\">$0</c:forTokens>"]
+	},
+    "prettier-ignore": {
+        "scope": "html",
+        "prefix": "prettier-ignore",
+        "body": "<!-- prettier-ignore -->"
+    }
+}

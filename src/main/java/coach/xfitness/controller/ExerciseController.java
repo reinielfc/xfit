@@ -1,7 +1,9 @@
 package coach.xfitness.controller;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,23 +13,99 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import coach.xfitness.business.Exercise;
+import coach.xfitness.business.FavoriteExercise;
+import coach.xfitness.business.FavoriteExercisePK;
 import coach.xfitness.business.User;
 import coach.xfitness.data.EquipmentDB;
 import coach.xfitness.data.ExerciseDB;
 import coach.xfitness.data.MuscleDB;
+import coach.xfitness.data.UserDB;
+import coach.xfitness.util.ParameterAsMapRequestWrapper;
 
 @WebServlet(name = "ExerciseController", urlPatterns = { "/exercise" })
 public class ExerciseController extends HttpServlet {
+
+    /**
+     * If the request is for a specific exercise, show it, otherwise list all exercises
+     * 
+     * @param request The request object
+     * @param response The response object
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String url = "";
+        String url = "/exercise/list.jsp";
         String exerciseName = request.getParameter("name");
+        String requestURI = request.getRequestURI();
 
         if (exerciseName == null || exerciseName.isBlank()) {
-            url = list(request, response);
+            url = list(request);
         } else {
-            url = showDetails(exerciseName, request, response);
+            url = show(request);
+        }
+
+        if (requestURI.endsWith("/exercise")) {
+            getServletContext()
+                    .getRequestDispatcher(url)
+                    .forward(request, response);
+        }
+    }
+
+    /**
+     * Get all the exercises, exercise types, equipment names, and muscle names,
+     * and put them in the request.
+     * 
+     * @param request The request object
+     * @return The URL of the JSP page for the exercise list.
+     */
+    private String list(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        User user = (session == null ? null : (User) session.getAttribute("user"));
+
+        List<Exercise> exerciseList = ExerciseDB.selectAllAvailableTo(user);
+        List<String> exerciseTypesList = ExerciseDB.fetchTypesList();
+        List<String> equipmentNamesList = EquipmentDB.fetchNamesList();
+        List<String> muscleNamesList = MuscleDB.fetchNamesList();
+
+        request.setAttribute("exerciseTypesList", exerciseTypesList);
+        request.setAttribute("exerciseList", exerciseList);
+        request.setAttribute("equipmentList", equipmentNamesList);
+        request.setAttribute("muscleList", muscleNamesList);
+
+        return "/exercise/list.jsp";
+    }
+
+    /**
+     * Gets the exercise name from the request, gets the exercise from the database,
+     * and puts the exercise in the request
+     * 
+     * @param request The request object
+     * @return The URL of the JSP page for the exercise details.
+     */
+    private String show(HttpServletRequest request) {
+        String exerciseName = request.getParameter("name");
+        Exercise exercise = ExerciseDB.selectByName(exerciseName);
+
+        request.setAttribute("exercise", exercise);
+
+        return "/exercise/details.jsp";
+    }
+
+    // TODO: add documentation
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        String url = "/exercise";
+
+        updateFavorites(request);
+
+        if (action.equals("create")) {
+            doCreateAction(request);
+        } else if (action.equals("save")) {
+            doSaveAction(request);
+        } else if (action.equals("delete")) {
+            doDeleteAction(request);
         }
 
         getServletContext()
@@ -35,96 +113,105 @@ public class ExerciseController extends HttpServlet {
                 .forward(request, response);
     }
 
-    private String list(HttpServletRequest request, HttpServletResponse response) {
-        List<Exercise> exerciseList = ExerciseDB.selectAll();
-        List<String> exerciseTypesList = ExerciseDB.fetchTypesList();
-        List<String> equipmentNamesList = EquipmentDB.fetchNamesList();
-        List<String> muscleNamesList = MuscleDB.fetchNamesList();
 
-        request.setAttribute("exerciseList", exerciseList);
-        request.setAttribute("exerciseTypesList", exerciseTypesList);
-        request.setAttribute("equipmentList", equipmentNamesList);
-        request.setAttribute("muscleList", muscleNamesList);
-
-        request.setAttribute("activePage", "exercises");
-        return "/exercise/list.jsp";
-    }
-
-    private String showDetails(String exerciseName, HttpServletRequest request, HttpServletResponse response) {
-        Exercise exercise = ExerciseDB.select(exerciseName);
-
-        request.setAttribute("exercise", exercise);
-
-        request.setAttribute("activePage", "exercises");
-        return "/exercise/details.jsp";
-    }
-
-    private String addCustomExercise(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession();
+    // TODO:
+    private void updateFavorites(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("user");
-        Long userID = user.getUserID();
+
+        ParameterAsMapRequestWrapper requestWrapper = new ParameterAsMapRequestWrapper(request);
+        Object mapObject = requestWrapper.getParameterAsMap("exercise").get("exercise");
+
+        @SuppressWarnings("unchecked")
+        Map<String, Map<String, String[]>> parameterAsMap = (Map<String, Map<String, String[]>>) mapObject;
+
+        parameterAsMap.forEach((name, parameter) -> {
+            Exercise exercise = ExerciseDB.selectByName(name);
+            Collection<FavoriteExercise> favoriteExercisesById = user.getFavoriteExercisesById();
+
+            FavoriteExercise favoriteExercise = new FavoriteExercise();
+            FavoriteExercisePK favoriteExercisePK = new FavoriteExercisePK();
+
+            favoriteExercisePK.setUserId(user.getId());
+            favoriteExercisePK.setExerciseId(exercise.getId());
+
+            favoriteExercise.setId(favoriteExercisePK);
+            favoriteExercisesById.add(favoriteExercise);
+
+            user.setFavoriteExercisesById(favoriteExercisesById);
+        });
+
+        UserDB.update(user);
+    }
+
+    /**
+     * If the user is signed in, creates a new exercise with the given title and
+     * primer, and inserts it into the database.
+     * 
+     * @param request The request object
+     */
+    private void doCreateAction(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("user");
+
         String title = request.getParameter("title");
-        String steps = request.getParameter("steps");
-        String [] tags = request.getParameterValues("tags");
+        String primer = request.getParameter("primer");
+
+        String name = ExerciseDB.makeUniqueName(user.getName(), title);
 
         Exercise exercise = new Exercise();
-        
-        if (userID != null ) {
-            exercise.setUserID(userID);
-        }
-    
-        // title
-        if (title != null && !title.isEmpty()) {
-            
-            exercise.setName(title);
-        }
-        // steps
-        if (steps != null && !steps.isEmpty()) {
-            exercise.setDescription(steps);
-        }
-        //tags
-        if (tags != null && tags.length != 0) {
-        
-            exercise.setTags(tags);
-        } 
-        
-        ExerciseDB.insert(exercise);//find out how to respond , how does it return, what is response
-        return title;
+        exercise.setName(name);
+        exercise.setTitle(title);
+        exercise.setPrimer(primer);
+
+        ExerciseDB.insert(exercise);
     }
 
-    private String updateCustomExercise(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession();
+    /**
+     * If the user is signed and is the owner of the exercise, then it updates
+     * the exercise.
+     * 
+     * @param request The request object
+     */
+    private void doSaveAction(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("user");
-        Long userID = user.getUserID();
-        String title = request.getParameter("title");
-        String steps = request.getParameter("steps");
-        String [] tags = request.getParameterValues("tags");
 
-        Exercise exercise = new Exercise();
-        
-        if (userID != null ) {
-            exercise.setUserID(userID);
+        String name = request.getParameter("name");
+
+        Exercise exercise = ExerciseDB.selectByName(name);
+
+        if (exercise.getUserByUserId().equals(user)) {
+            String title = request.getParameter("title");
+            String primer = request.getParameter("primer");
+
+            name = ExerciseDB.makeUniqueName(user.getName(), title);
+
+            exercise.setName(name);
+            exercise.setTitle(title);
+            exercise.setPrimer(primer);
+
+            ExerciseDB.update(exercise);
         }
-    
-        // title
-        if (title != null && !title.isEmpty()) {
-            
-            exercise.setName(title);
+    }
+
+    /**
+     * If the user is signed and is the owner of the exercise, then it deletes 
+     * the exercise
+     * 
+     * @param request The request object 
+     */
+    private void doDeleteAction(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("user");
+
+        String name = request.getParameter("name");
+
+        Exercise exercise = ExerciseDB.selectByName(name);
+
+        if (exercise.getUserByUserId().equals(user)) {
+            ExerciseDB.deleteByName(name);
         }
-        // steps
-        if (steps != null && !steps.isEmpty()) {
-            exercise.setDescription(steps);
-        }
-        //tags
-        if (tags != null && tags.length != 0) {
-        
-            exercise.setTags(tags);
-        } 
-        
-        ExerciseDB.updateExercise(exercise);//find out how to respond , how does it return, what is response
-        return title;
     }
 
 }

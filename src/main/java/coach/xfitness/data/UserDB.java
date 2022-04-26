@@ -1,5 +1,6 @@
 package coach.xfitness.data;
 
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -8,8 +9,15 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 
 import coach.xfitness.business.User;
+
 public class UserDB {
 
+    /**
+    * Get the user with the given email address.
+    * 
+    * @param email The email address of the user we want to select.
+    * @return A single user object.
+    */
     public static User selectByEmail(String email) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         TypedQuery<User> typedQuery = entityManager.createNamedQuery("User.selectByEmail", User.class);
@@ -17,16 +25,30 @@ public class UserDB {
         User result = null;
 
         try {
-            System.out.println("[DATABASE] SELECT: User with email '" + email + "' from database.");
             result = typedQuery.getSingleResult();
         } catch (NoResultException e) {
-            System.err.println("[DATABASE ERROR] SELECT FAIL: User with email '" + email + "' not found:");
             e.printStackTrace();
         }
 
         return result;
     }
 
+    /**
+    * If a user with the given email exists, return true, otherwise return false.
+    * 
+    * @param email The email address of the user to check for.
+    * @return A boolean value.
+    */
+    public static boolean hasUserWithEmail(String email) {
+        User user = selectByEmail(email);
+        return user != null;
+    }
+
+    /**
+    * If the user doesn't exist, add the user to the database
+    * 
+    * @param user The user object that you want to insert into the database.
+    */
     public static void insert(User user) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();
@@ -35,41 +57,71 @@ public class UserDB {
         String email = user.getEmail();
 
         try {
-            System.out.println("[DATABASE] INSERT: User with email '" + email  + "' to database.");
-            if (UserDB.has(email)) {
-                System.err.println("[DATABASE ERROR] INSERT FAIL: User with email '" + email + "' already exists:");
+            if (UserDB.hasUserWithEmail(email)) {
                 throw new NonUniqueResultException();
             } else {
                 entityManager.persist(user);
                 entityTransaction.commit();
             }
         } catch (Exception e) {
-            System.err.println("[DATABASE ERROR] INSERT FAIL: User with email '" + email + "' could not be inserted:");
+            entityTransaction.rollback();
             e.printStackTrace();
         }
     }
 
-    public static boolean has(String email) {
-        User user = selectByEmail(email);
-        return user != null;
-    }
-
+    /**
+    * Updates a user in the database.
+    * 
+    * @param user The user object that you want to update.
+    */
     public static void update(User user) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        entityManager.getTransaction().begin();
-        System.out.println("[DATABASE] UPDATE: User with email '" + user.getEmail() + "'.");
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
+        entityTransaction.begin();
         entityManager.merge(user);
-        entityManager.getTransaction().commit();
+        entityTransaction.commit();
     }
 
     public static void deleteByEmail(String email) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        entityManager.getTransaction().begin();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
 
-        User user = entityManager.find(User.class, UserDB.selectByEmail(email).getId());
-        System.out.println("[DATABASE] DELETE: User with email '" + user.getEmail() + "'.");
-        entityManager.remove(user);
-        entityManager.getTransaction().commit();
+        entityTransaction.begin();
+        try {
+            User user = selectByEmail(email);
+            user = entityManager.find(User.class, user.getId());
+            entityManager.remove(user);
+            entityTransaction.commit();
+        } catch (Exception e) {
+            entityTransaction.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    /**
+    * If the password is not null or blank, and if the password contains at least 8
+    * characters, at least one uppercase letter, at least one lowercase letter, and
+    * at least one digit, then the password is valid
+    * 
+    * @param password The password to validate.
+    * @return A boolean value.
+    */
+    public static boolean isPasswordValid(String password) {
+        if (password == null || password.isBlank()) {
+            return false;
+        }
+
+        String[] requirements = new String[] { "\\S{8,}", "[A-Z]", "[a-z]", "[0-9]" };
+
+        for (String requirement : requirements) {
+            // if password does not match requirement regex
+            if (!Pattern.compile(requirement).matcher(password).find()) {
+                return false; // it is invalid
+            }
+        }
+
+        return true;
     }
 
 }

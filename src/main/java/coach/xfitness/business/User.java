@@ -1,9 +1,24 @@
 package coach.xfitness.business;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.time.DayOfWeek;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 @Entity
 @NamedQuery(name = "User.selectByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
@@ -30,13 +45,13 @@ public class User {
     @Column(name = "accessToken")
     private String accessToken;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
     private Collection<Exercise> exercisesById;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
     private Collection<FavoriteExercise> favoriteExercisesById;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
     private Collection<Plan> plansById;
 
     @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
@@ -145,6 +160,32 @@ public class User {
     // #endregion boilerplate
 
     public void setUserEquipmentsByEquipments(Collection<Equipment> equipments) {
-        this.userEquipmentsById = equipments.stream().map(e -> new UserEquipment(this, e)).toList();
+        this.userEquipmentsById = equipments.stream()
+                .map(e -> new UserEquipment(this, e))
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, List<Plan>> getPlanListByDayMap() {
+        Map<String, List<Plan>> planListByDayMap = this.getPlansById().stream()
+                .collect(Collectors.groupingBy(Plan::getDayOfWeekShortName, Collectors.toList()));
+
+        planListByDayMap.values().forEach(planList -> {
+            planList.sort(Comparator.comparing(Plan::getPosition));
+        });
+
+        return planListByDayMap;
+    }
+
+    public List<Plan> getPlanListForDay(byte dayOfWeek) {
+        return this.getPlansById().stream()
+                .filter(p -> p.getDayOfWeek() == dayOfWeek)
+                .collect(Collectors.toList());
+    }
+
+    public Plan getPlanByPositionInDayOfWeek(Integer position, Byte dayOfWeek) {
+        return this.getPlansById().stream()
+                .filter(p -> p.getPosition() == position && p.getDayOfWeek() == dayOfWeek)
+                .findFirst()
+                .get();
     }
 }

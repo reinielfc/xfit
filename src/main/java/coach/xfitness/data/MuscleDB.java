@@ -10,6 +10,11 @@ import coach.xfitness.business.Muscle;
 
 public class MuscleDB {
 
+    /**
+    * Returns a list of all the muscles in the database
+    * 
+    * @return A list of all the muscles in the database.
+    */
     public static List<Muscle> selectAll() {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         Query query = entityManager.createNamedQuery("Muscle.selectAll");
@@ -17,8 +22,13 @@ public class MuscleDB {
         return resultsList;
     }
 
+    /**
+    * Returns a list of all the names of the muscles in the database.
+    * 
+    * @return A list of all the names of the muscles in the database.
+    */
     public static List<String> fetchNamesList() {
-        return MuscleDB.selectAll().stream()
+        return selectAll().stream()
             .map(Muscle::getName)
             .collect(Collectors.toList());
     }

@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,8 @@ import javax.persistence.OneToMany;
 @NamedQueries({
         @NamedQuery(name = "Exercise.selectAll", query = "SELECT e FROM Exercise e"),
         @NamedQuery(name = "Exercise.selectByName", query = "SELECT e FROM Exercise e WHERE e.name = :name"),
-        @NamedQuery(name = "Exercise.selectDistinctTypes", query = "SELECT DISTINCT e.type FROM Exercise e")
+        @NamedQuery(name = "Exercise.selectDistinctTypes", query = "SELECT DISTINCT e.type FROM Exercise e"),
+        @NamedQuery(name = "Exercise.selectAllAvailable", query = "SELECT e FROM Exercise e WHERE e.userByUserId = :userByUserId OR e.userByUserId = null")
 })
 public class Exercise {
 
@@ -61,19 +63,19 @@ public class Exercise {
     @JoinColumn(name = "userId", referencedColumnName = "id")
     private User userByUserId;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<ExerciseEquipment> exerciseEquipmentsById;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<ExerciseImage> exerciseImagesById;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<ExerciseMuscle> exerciseMusclesById;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<FavoriteExercise> favoriteExercisesById;
 
-    @OneToMany(mappedBy = "exerciseByExerciseId")
+    @OneToMany(mappedBy = "exerciseByExerciseId", cascade = CascadeType.ALL)
     private Collection<Plan> plansById;
 
     // #region boilerplate
@@ -223,10 +225,15 @@ public class Exercise {
 
     // #endregion boilerplate
 
+    public Collection<Equipment> getEquipment() {
+        return exerciseEquipmentsById.stream()
+                .map(ExerciseEquipment::getEquipmentByEquipmentId)
+                .collect(Collectors.toList());
+    }
+
     private Collection<Muscle> getMuscles(boolean isSecondary) {
         int isSecondaryInt = isSecondary ? 1 : 0;
-        return exerciseMusclesById
-                .stream()
+        return exerciseMusclesById.stream()
                 .filter(em -> em.getIsSecondary() == isSecondaryInt)
                 .map(ExerciseMuscle::getMuscleByMuscleId)
                 .collect(Collectors.toList());
@@ -246,6 +253,18 @@ public class Exercise {
 
     public Collection<String> getTipsList() {
         return tips.lines().collect(Collectors.toList());
+    }
+
+    public Collection<String> getLinksList() {
+        return links.lines().collect(Collectors.toList());
+    }
+
+    public boolean isFavoritedBy(User user) {
+        return favoriteExercisesById.stream()
+                .map(FavoriteExercise::getUserByUserId)
+                .anyMatch(u -> u.equals(user));
+                
+                
     }
 
 }
