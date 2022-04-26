@@ -4,10 +4,8 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -15,23 +13,6 @@ import javax.crypto.spec.PBEKeySpec;
 public class PasswordUtil {
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final Base64.Encoder BASE64_ENCODER = Base64.getUrlEncoder();
-
-    public static boolean validate(String password) {
-        if (password == null || password.isBlank()) {
-            return false;
-        }
-
-        String[] requirements = new String[] { "\\S{8,}", "[A-Z]", "[a-z]", "[0-9]" };
-
-        for (String requirement : requirements) {
-            // if password does not match requirement regex
-            if (!Pattern.compile(requirement).matcher(password).find()) {
-                return false; // it is invalid
-            }
-        }
-
-        return true;
-    }
 
     public static String generateCode() {
         int code = new Random().nextInt(999999);
@@ -51,7 +32,7 @@ public class PasswordUtil {
     public static String generate(String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         char[] chars = password.toCharArray();
-        byte[] salt = getSalt().getBytes();
+        byte[] salt = getSalt();
         int iterations = 65536; // password strength (2^16 iterations in this case)
         int keyLength = 256;
 
@@ -63,11 +44,11 @@ public class PasswordUtil {
         return iterations + ":" + toHex(salt) + ":" + toHex(hash);
     }
 
-    private static String getSalt() throws NoSuchAlgorithmException {
+    private static byte[] getSalt() throws NoSuchAlgorithmException {
         SecureRandom secureRandom = SecureRandom.getInstanceStrong();
-        byte[] salt = new byte[16];
+        byte[] salt = new byte[32];
         secureRandom.nextBytes(salt);
-        return Arrays.toString(salt);
+        return salt;
     }
 
     private static String toHex(byte[] array) throws NoSuchAlgorithmException {
@@ -82,7 +63,7 @@ public class PasswordUtil {
         }
     }
 
-    public static boolean verify(String originalPassword, String storedPassword)
+    public static boolean verify(String password, String storedPassword)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         String[] parts = storedPassword.split(":");
         int iterations = Integer.parseInt(parts[0]);
@@ -90,7 +71,7 @@ public class PasswordUtil {
         byte[] salt = fromHex(parts[1]);
         byte[] hash = fromHex(parts[2]);
 
-        PBEKeySpec spec = new PBEKeySpec(originalPassword.toCharArray(), salt, iterations, hash.length * 8);
+        PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, hash.length * 8);
         SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 
         byte[] testHash = secretKeyFactory.generateSecret(spec).getEncoded();
@@ -112,5 +93,6 @@ public class PasswordUtil {
 
         return bytes;
     }
+
 
 }

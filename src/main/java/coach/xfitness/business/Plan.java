@@ -1,5 +1,11 @@
 package coach.xfitness.business;
 
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -9,11 +15,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.NamedQuery;
 
-import java.util.Objects;
-
 @Entity
 @NamedQuery(name = "Exercise.selectByPositionInDay", query = "SELECT p FROM Plan p WHERE p.dayOfWeek = :dayOfWeek AND p.position = :position")
 public class Plan {
+
+    private static final List<DayOfWeek> DAYS_OF_WEEK = List.of(
+            DayOfWeek.SUNDAY,
+            DayOfWeek.MONDAY,
+            DayOfWeek.TUESDAY,
+            DayOfWeek.WEDNESDAY,
+            DayOfWeek.THURSDAY,
+            DayOfWeek.FRIDAY,
+            DayOfWeek.SATURDAY);
 
     @EmbeddedId
     private PlanPK id;
@@ -152,4 +165,24 @@ public class Plan {
     }
 
     // #endregion boilerplate
+
+    // TODO: some of these might not be used
+
+    public String getDayOfWeekShortName() {
+        return getDayOfWeekObject().getDisplayName(TextStyle.SHORT, Locale.getDefault()).toLowerCase();
+    }
+
+    public DayOfWeek getDayOfWeekObject() {
+        return DAYS_OF_WEEK.get(dayOfWeek);
+    }
+
+    public static List<DayOfWeek> getDaysOfWeek() {
+        return DAYS_OF_WEEK;
+    }
+
+    public static byte getDayOfWeek(String dayOfWeek) {
+        Integer index = DAYS_OF_WEEK.indexOf(DayOfWeek.valueOf(dayOfWeek));
+        return index.byteValue();
+    }
+
 }

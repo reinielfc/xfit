@@ -4,17 +4,26 @@ import javax.servlet.http.Cookie;
 
 public class CookieUtil {
 
-    public static String find(Cookie[] cookies, String cookieName) {
-        String cookieValue = null;
+    public static Cookie find(Cookie[] cookies, String name) {
+        if (cookies == null) {
+            return null;
+        }
 
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookieName.equals(cookie.getName())) {
-                    cookieValue = cookie.getValue();
-                }
+        Cookie foundCookie = null;
+
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName())) {
+                foundCookie = cookie;
+                break;
             }
         }
 
-        return cookieValue;
+        return foundCookie;
     }
+
+    public static String findValue(Cookie[] cookies, String name) {
+        Cookie foundCookie = find(cookies, name);
+        return foundCookie == null ? null : foundCookie.getValue();
+    }
+
 }

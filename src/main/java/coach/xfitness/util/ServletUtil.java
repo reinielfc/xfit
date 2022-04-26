@@ -13,10 +13,9 @@ public class ServletUtil {
             throws ServletException, IOException {
         String referer = request.getHeader("referer");
         String[] path = new URL(referer).getPath().split("/");
-        String url = "/" + path[path.length - 1];
+        String url = request.getContextPath() + "/" + path[path.length - 1];
 
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(url);
         requestDispatcher.forward(request, response);
     }
-
 }

@@ -147,4 +147,31 @@ $imageInsertList;
 INSERT INTO
 	ExerciseImage (exerciseId, imageId, exerciseState)
 VALUES
-$exerciseImageInsertList;"
+$exerciseImageInsertList;
+
+INSERT INTO User
+	(name, email, password) 
+VALUES
+	(
+		'jsmith',
+		'jsmith@email.com',
+		-- 'password123A'
+		'65536:71d42013f9f29b5016837d9a9a7529e6afeb1c4119b8f2841b86f9cb52f5c5d1:04e5fac99a4bf81b481a826ed1d59234f01a4ac619c4b4cfcdd831651302d2f5'
+	);
+
+
+INSERT INTO Plan
+	(	userId,	 exerciseId,	dayOfWeek,	 position,	 sets,	  reps,	weight,	isDone)
+VALUES 
+	(		 1,			  7,			5,			0,		5,		10,		25,		 0),
+	(		 1,			 15,			5,			1,		5,		10,		25,		 1),
+	(		 1,			 31,			5,			2,		5,		10,		25,		 0),
+	(		 1,			 67,			5,			3,		5,		10,		25,		 0),
+	(		 1,			127,			5,			4,		5,		10,		25,		 1),
+
+	(		 1,			126,			3,			0,		5,		10,		25,		 1),
+	(		 1,			 68,			3,			1,		5,		10,		25,		 0),
+	(		 1,			 30,			3,			2,		5,		10,		25,		 1),
+	(		 1,			 14,			3,			3,		5,		10,		25,		 0),
+	(		 1,			  6,			3,			4,		5,		10,		25,		 1);
+"

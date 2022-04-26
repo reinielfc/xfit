@@ -1,9 +1,14 @@
 package coach.xfitness.business;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.time.DayOfWeek;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -158,6 +163,17 @@ public class User {
         this.userEquipmentsById = equipments.stream()
                 .map(e -> new UserEquipment(this, e))
                 .collect(Collectors.toList());
+    }
+
+    public Map<String, List<Plan>> getPlanListByDayMap() {
+        Map<String, List<Plan>> planListByDayMap = this.getPlansById().stream()
+                .collect(Collectors.groupingBy(Plan::getDayOfWeekShortName, Collectors.toList()));
+
+        planListByDayMap.values().forEach(planList -> {
+            planList.sort(Comparator.comparing(Plan::getPosition));
+        });
+
+        return planListByDayMap;
     }
 
     public List<Plan> getPlanListForDay(byte dayOfWeek) {
