@@ -93,7 +93,7 @@ public class UserDBTest {
 
         UserDB.insert(expected);
 
-        assertTrue(expected.getEmail(), check);
+        assertEquals(UserDB.hasUserWithEmail(actualEmail), check);
 
         UserDB.deleteByEmail(actualEmail);
 
