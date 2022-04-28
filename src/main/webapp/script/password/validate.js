@@ -95,7 +95,7 @@ $(window).on("load", function () {
     });
 
     $validationMessage.append(validationMessageStart.add(validationMessageList));
-
+    // TODO: targets instead of form 
     $(".new-password-form").on("submit", function (event) {
         let $icon = $("#password-icon");
 

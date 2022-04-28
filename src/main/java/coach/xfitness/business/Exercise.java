@@ -255,4 +255,16 @@ public class Exercise {
         return tips.lines().collect(Collectors.toList());
     }
 
+    public Collection<String> getLinksList() {
+        return links.lines().collect(Collectors.toList());
+    }
+
+    public boolean isFavoritedBy(User user) {
+        return favoriteExercisesById.stream()
+                .map(FavoriteExercise::getUserByUserId)
+                .anyMatch(u -> u.equals(user));
+                
+                
+    }
+
 }

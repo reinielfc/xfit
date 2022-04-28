@@ -13,18 +13,26 @@ import coach.xfitness.data.ExerciseDB;
 
 @WebServlet(name = "ImageServlet", urlPatterns = { "/img/*" })
 public class ImageServlet extends HttpServlet {
+
+    /**
+    * If the request is for an exercise image, get the exercise image content,
+    * otherwise get the equipment image content
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param response The response object that will be sent back to the client.
+    */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String imageType = request.getParameter("of");
-        
+
         if (!(imageType == null || imageType.isEmpty())) {
             byte[] content = new byte[0];
-            
+
             if (imageType.equals("exercise")) {
-                content = getExerciseImageContent(request, response);
+                content = getExerciseImageContent(request);
             } else if (imageType.equals("equipment")) {
-                content = getEquipmentImageContent(request, response);
+                content = getEquipmentImageContent(request);
             }
 
             String imageName = request.getPathInfo().substring(1);
@@ -35,7 +43,14 @@ public class ImageServlet extends HttpServlet {
         }
     }
 
-    private byte[] getExerciseImageContent(HttpServletRequest request, HttpServletResponse response) {
+    /**
+    * Get the exercise image content from the database, given the exercise name and
+    * exercise image state.
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @return The image of the exercise.
+    */
+    private byte[] getExerciseImageContent(HttpServletRequest request) {
         String exerciseName = request.getParameter("name");
         String exerciseImageState = request.getParameter("state");
 
@@ -48,7 +63,13 @@ public class ImageServlet extends HttpServlet {
                 .getImage();
     }
 
-    private byte[] getEquipmentImageContent(HttpServletRequest request, HttpServletResponse response) {
+    /**
+    * Get the first image of the equipment with the given id.
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @return The first image of the equipment with the given id.
+    */
+    private byte[] getEquipmentImageContent(HttpServletRequest request) {
         int equipmentId = Integer.valueOf(request.getParameter("id"));
 
         return EquipmentDB.selectById(equipmentId).getEquipmentImagesById()
