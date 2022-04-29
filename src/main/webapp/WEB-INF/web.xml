@@ -14,22 +14,22 @@
 
     <!-- CONTEXT PARAMETERS -->
     <context-param>
-        <param-name>host</param-name>
+        <param-name>SMTP_HOST</param-name>
         <param-value>smtp.gmail.com</param-value>
     </context-param>
 
     <context-param>
-        <param-name>port</param-name>
+        <param-name>SMTP_PORT</param-name>
         <param-value>587</param-value>
     </context-param>
     
     <context-param>
-        <param-name>user</param-name>
+        <param-name>SMTP_USERNAME</param-name>
         <param-value>xfit.donotreply@gmail.com</param-value>
     </context-param>
 
     <context-param>
-        <param-name>pass</param-name>
+        <param-name>SMTP_PASSWORD</param-name>
         <param-value>c5']flGzQlEfM(Y,</param-value>
     </context-param>
     

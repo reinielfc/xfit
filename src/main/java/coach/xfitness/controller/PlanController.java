@@ -1,14 +1,15 @@
 package coach.xfitness.controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,35 +21,32 @@ import coach.xfitness.business.Exercise;
 import coach.xfitness.business.Plan;
 import coach.xfitness.business.User;
 import coach.xfitness.data.ExerciseDB;
-import coach.xfitness.data.PlanDB;
+import coach.xfitness.data.UserDB;
+import coach.xfitness.util.ParameterAsMapRequestWrapper;
 
 @WebServlet(name = "PlanController", urlPatterns = { "/planner", "/workout" })
 public class PlanController extends HttpServlet {
 
-    // TODO: remove repeticious code Integer.valueOf(0).byteValue(), use static block
-    static final Map<String, Byte> dayOfWeekMap = Stream.of(new Object[][] {
-            { "SUN", Integer.valueOf(0).byteValue() },
-            { "MON", Integer.valueOf(1).byteValue() },
-            { "TUE", Integer.valueOf(2).byteValue() },
-            { "WED", Integer.valueOf(3).byteValue() },
-            { "THU", Integer.valueOf(4).byteValue() },
-            { "FRI", Integer.valueOf(5).byteValue() },
-            { "SAT", Integer.valueOf(6).byteValue() }
-    }).collect(Collectors.toMap(
-            dayOfWeek -> (String) dayOfWeek[0],
-            dayOfWeek -> (Byte) dayOfWeek[1]));
-
+    /**
+     * If the request URI ends with "/planner", then call the getPlanner() method and
+     * set the url to the return value of that method. Otherwise, if the request URI
+     * ends with "/workout", then call the getWorkout() method and set the url to the
+     * return value of that method
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object that will be sent back to the client.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
-        String url = "/planner.jsp";
+        String url = "/routine/planner.jsp";
 
         if (requestURI.endsWith("/planner")) {
-            url = showPlanner(request, response);
+            url = getPlanner(request, response);
         } else if (requestURI.endsWith("/workout")) {
-            url = showWorkout(request, response);
+            url = getWorkout(request);
         }
 
         getServletContext()
@@ -56,211 +54,235 @@ public class PlanController extends HttpServlet {
                 .forward(request, response);
     }
 
-    private String showPlanner(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * If the user is signed in, get today's day of week, include the exercises list,
+     * and set the user's plans by day.
+     * 
+     * @param request the request object
+     * @param response the response object
+     * @return The planner.jsp page.
+     */
+    private String getPlanner(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
-        if (session != null) {
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/exercise");
-            requestDispatcher.include(request, response);
-            
-            User user = (User) session.getAttribute("user");
-            request.setAttribute("plans", user.getPlansById());
+        // get user if in session
+        User user = (session == null ? null : (User) session.getAttribute("user"));
+
+        if (user == null) {
+            request.setAttribute("message", "Sign in to plan your routine.");
+            return "/user/signin.jsp";
         }
 
-        return "/planner.jsp";
+        // get today's day of week
+        String today = getDayOfWeek();
+
+        request.setAttribute("today", today);
+
+        // include exercises list
+        request.getRequestDispatcher("/exercise")
+                .include(request, response);
+
+        // set user plans by day
+        request.setAttribute("planListByDayMap", user.getPlanListByDayMap());
+
+        return "/routine/planner.jsp";
     }
 
-    private String showWorkout(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * Get today's day of week in short format, eg. 'Mon', and convert it to lowercase.
+     * 
+     * @return The day of the week in lowercase.
+     */
+    private static String getDayOfWeek() {
+        return LocalDate.now() // today
+                .getDayOfWeek() // day of week
+                .getDisplayName( // short format, eg. 'Mon'
+                        TextStyle.SHORT, Locale.getDefault())
+                .toLowerCase(); // lowercase
+    }
+
+    /**
+     * If the user is signed in, get the plan for the day of the week and return the
+     * workout page.
+     *
+     * @param request The request object that was sent to the servlet.
+     * @return A list of plans for the day of the week.
+     */
+    private String getWorkout(HttpServletRequest request)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
-        if (session == null) {
-            request.setAttribute("validationMessage", "Sign in to view today's workout.");
-            return "/signin.jsp";
+        // get user if in session
+        User user = (session == null ? null : (User) session.getAttribute("user"));
+
+        if (user == null) {
+            request.setAttribute("message", "Sign in to view today's workout.");
+            return "/user/signin.jsp";
         }
 
-        User user = (User) session.getAttribute("user");
+        Byte dayOfWeek = Plan.getDayOfWeek(getDayOfWeek());
+        List<Plan> planList = user.getPlanListForDay(dayOfWeek);
 
-        Byte dayOfWeek = dayOfWeekMap.get(request.getParameter("dayOfWeek"));
+        request.setAttribute("planList", planList);
 
-        List<Plan> workout = user.getPlanListForDay(dayOfWeek);
-
-        request.setAttribute("workout", workout);
-
-        return "/workout.jsp";
+        return "/routine/workout.jsp";
     }
 
+    /**
+     * If the request URI ends with "/planner", then call the postPlanner method.
+     * Otherwise, if the request URI ends with "/workout", then call the getWorkout
+     * method and set the url to the return value of the getWorkout method
+     *
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object is used to send data back to the client.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        String url = "/planner.jsp";
+        String url = "/routine/planner.jsp";
 
         if (requestURI.endsWith("/planner")) {
-            url = updatePlanner(request);
+            url = postPlanner(request, response);
         } else if (requestURI.endsWith("/workout")) {
-            url = updateWorkout(request);
+            url = getWorkout(request); // TODO: actually update workout
         }
 
-        updatePlanner(request);
-        // TODO: redirect to workout.jsp when /wprkout
         getServletContext()
                 .getRequestDispatcher(url)
                 .forward(request, response);
-
     }
 
-    private String updatePlanner(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+    /**
+     * If the action is "add", then call the doAddAction method. If the action is
+     * "update", then call the doUpdateAction method
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object is used to send data back to the client.
+     * @return The url is being returned.
+     */
+    private String postPlanner(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        String url = "/routine/planner.jsp";
 
-        if (session == null) {
-            request.setAttribute("validationMessage", "Please sign in to update your planner.");
-            return "/signin.jsp";
+        if (action.equals("add")) {
+            url = doAddAction(request, response);
+        } else if (action.equals("update")) {
+            url = doUpdateAction(request, response);
         }
 
-        User user = (User) session.getAttribute("user");
-
-        Map<Byte, Map<Integer, Map<String, String>>> planNestedParameterMap = getPlanNestedParameterMap(request);
-
-        List<Plan> insertList = new ArrayList<>();
-        List<Plan> updateList = new ArrayList<>();
-        List<Plan> deleteList = new ArrayList<>();
-
-        planNestedParameterMap.forEach((dayOfWeek, planDayMap) -> {
-            planDayMap.forEach((position, parameterMap) -> {
-                String exerciseName = parameterMap.get("exerciseName");
-                Short sets = Short.valueOf(parameterMap.get("sets"));
-                Short reps = Short.valueOf(parameterMap.get("sets"));
-                Short weight = Short.valueOf(parameterMap.get("sets"));
-                String action = parameterMap.get("action");
-
-                Exercise exercise = ExerciseDB.selectByName(exerciseName);
-
-                if (exercise == null) {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Exercise> updatedCustomExercisesMap = (Map<String, Exercise>) session
-                            .getAttribute("updatedCustomExercisesMap");
-
-                    exercise = updatedCustomExercisesMap.get(exerciseName);
-                    // TODO: throw exception of this ^ exercise is null / show error
-                }
-
-                Plan plan;
-
-                if (action.equals("add")) {
-                    plan = new Plan(); // make new plan
-                } else {
-                    plan = PlanDB.selectBy(dayOfWeek, position);
-                }
-
-                if (!action.equals("delete")) {
-                    // set plan properties
-                    plan.setUserByUserId(user);
-                    plan.setExerciseByExerciseId(exercise);
-                    plan.setDayOfWeek(dayOfWeek);
-                    plan.setPosition(position);
-                    plan.setSets(sets);
-                    plan.setReps(reps);
-                    plan.setWeight(weight);
-                }
-
-                // filter to each list depending on action
-                switch (action) {
-                    case "add":
-                        insertList.add(plan);
-                        break;
-                    case "update":
-                        updateList.add(plan);
-                        break;
-                    case "delete":
-                        deleteList.add(plan);
-                        break;
-                }
-
-            });
-        });
-
-        // update database
-        PlanDB.insertList(insertList);
-        PlanDB.updateList(updateList);
-        PlanDB.deleteList(deleteList);
-
-        return "/planner.jsp";
+        return url;
     }
 
-    private Map<Byte, Map<Integer, Map<String, String>>> getPlanNestedParameterMap(HttpServletRequest request) {
-        Map<Byte, Map<Integer, Map<String, String>>> planNestedParameterMap = new HashMap<>();
-
-        // initialize planNestedParameterMap with days of week
-        dayOfWeekMap.values().forEach(dayOfWeek -> planNestedParameterMap.put(dayOfWeek, new HashMap<>()));
-
-        Map<String, String[]> requestParameterMap = request.getParameterMap();
-
-        requestParameterMap.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith("plannedExercise"))
-                .forEach(entry -> {
-                    // split parameter name with format "plannedExercise[<dayOfWeek>][<position>][<requestParameterName>]" into tokens
-                    String[] tokens = entry.getKey().replace("]", "").split("\\[");
-
-                    Byte dayOfWeek = dayOfWeekMap.get(tokens[1]);
-                    Integer position = Integer.valueOf(tokens[2]);
-
-                    String parameterName = tokens[3];
-                    String parameterValue = entry.getValue()[0];
-
-                    Map<Integer, Map<String, String>> planDayMap = planNestedParameterMap.get(dayOfWeek);
-
-                    Map<String, String> planParameterMap;
-                    if (planDayMap.containsKey(position)) {
-                        planParameterMap = planDayMap.get(position);
-                    } else {
-                        planParameterMap = new HashMap<>();
-                    }
-
-                    planParameterMap.put(parameterName, parameterValue);
-                    planDayMap.put(position, planParameterMap);
-                    //planNestedParameterMap.put(dayOfWeek, plannedDayMap); // TODO: remove?
-                });
-
-        return planNestedParameterMap;
-    }
-
-    private String updateWorkout(HttpServletRequest request) {
-        // workoutPlan[position]
+    /**
+     * The function checks if the user is logged in, if not, it redirects to the sign
+     * in page. If the user is logged in, it creates a new plan object and adds it to
+     * the user's plan for the day
+     * 
+     * @param request the request object
+     * @param response The response object that will be sent back to the client.
+     * @return The return value is the path to the next page to be displayed.
+     */
+    private String doAddAction(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
-        if (session == null) {
-            request.setAttribute("validationMessage", "Please sign in to update your workout.");
-            return "/signin.jsp";
+        // get user if in session
+        User user = (session == null ? null : (User) session.getAttribute("user"));
+
+        if (user == null) {
+            request.setAttribute("message", "Sign in to create a plan.");
+            return "/user/signin.jsp";
         }
 
-        User user = (User) request.getAttribute("user");
+        byte dayOfWeek = Plan.getDayOfWeek(request.getParameter("day"));
+        short sets = Short.valueOf(request.getParameter("sets"));
+        short reps = Short.valueOf(request.getParameter("reps"));
+        short weight = Short.valueOf(request.getParameter("weight"));
 
-        Map<String, String[]> requestParameterMap = request.getParameterMap();
-        Byte dayOfWeek = dayOfWeekMap.get(request.getParameter("dayOfWeek"));
+        String exerciseName = request.getParameter("exerciseName");
+        Exercise exercise = ExerciseDB.selectByName(exerciseName);
 
-        List<Plan> planList = new ArrayList<>();
+        Plan plan = new Plan(user, exercise);
+        plan.setSets(sets);
+        plan.setReps(reps);
+        plan.setWeight(weight);
 
-        requestParameterMap.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith("workoutPlan"))
-                .forEach(entry -> {
-                    // split parameter name with format "workoutPlan[<position>]" into tokens
-                    String[] tokens = entry.getKey().replace("]", "").split("\\[");
+        user.addPlanToDay(plan, dayOfWeek);
 
-                    Integer position = Integer.valueOf(tokens[1]);
-                    Byte isDone = (byte) (Boolean.valueOf(entry.getValue()[0]) ? 1 : 0);
+        UserDB.update(user);
 
-                    Plan plan = user.getPlanByPositionInDayOfWeek(position, dayOfWeek);
+        return getPlanner(request, response);
+    }
 
-                    plan.setIsDone(isDone);
+    /**
+     * It takes the request parameters, parses them into a map, then uses that map to
+     * update the user's planner
+     * 
+     * @param request The request object
+     * @param response The response object.
+     * @return The planner page.
+     */
+    private String doUpdateAction(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
 
-                    planList.add(plan);
+        // get user if in session
+        User user = (session == null ? null : (User) session.getAttribute("user"));
+
+        if (user == null) {
+            request.setAttribute("message", "Sign in to update your planner.");
+            return "/user/signin.jsp";
+        }
+
+        ParameterAsMapRequestWrapper requestWrapper = new ParameterAsMapRequestWrapper(request);
+        Map<String, Object> parameterAsMap = requestWrapper.getParameterAsMap("plan");
+
+        if (!(parameterAsMap == null || parameterAsMap.isEmpty())) {
+            Map<?, ?> plans = new HashMap<>((Map<?, ?>) parameterAsMap.get("plan"));
+
+            // TODO: I'm cheating a little here
+            Collection<Plan> oldPlans = user.getPlansById();
+            user.setPlansById(new ArrayList<>());
+
+            try {
+                plans.forEach((d, m) -> {
+                    byte dayOfWeek = Plan.getDayOfWeek((String) d);
+                    Map<?, ?> dayMap = new HashMap<>((Map<?, ?>) m);
+
+                    dayMap.forEach((p, pm) -> {
+                        Map<?, ?> planParameterMap = new HashMap<>((Map<?, ?>) pm);
+
+                        String exerciseName = ((String[]) planParameterMap.get("exerciseName"))[0];
+                        int position = Integer.valueOf(((String[]) planParameterMap.get("position"))[0]);
+                        
+                        short sets   = Short.valueOf(((String[]) planParameterMap.get("sets"))[0]);
+                        short reps   = Short.valueOf(((String[]) planParameterMap.get("reps"))[0]);
+                        short weight = Short.valueOf(((String[]) planParameterMap.get("weight"))[0]);
+
+                        Exercise exercise = ExerciseDB.selectByName(exerciseName);
+
+                        Plan plan = new Plan(user, exercise);
+                        plan.setPosition(position);
+                        plan.setDayOfWeek(dayOfWeek);
+                        plan.setSets(sets);
+                        plan.setReps(reps);
+                        plan.setWeight(weight);
+
+                        user.getPlansById().add(plan);
+                    });
                 });
 
-        PlanDB.updateList(planList);
+                session.setAttribute("user", UserDB.update(user));
+            } catch (Exception e) {
+                e.printStackTrace();
+                user.setPlansById(oldPlans);
+            }
+        }
 
-        return "/workout.jsp";
+        return getPlanner(request, response);
     }
 
 }

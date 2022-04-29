@@ -35,14 +35,17 @@ services:
       dockerfile: ./web/Dockerfile
     ports:
       - "8888:8080"
-    volumes:
-      - ../target/xfit:/usr/local/tomcat/webapps/xfit:rw
+    #volumes:
+    #  - ../target/xfit:/usr/local/tomcat/webapps/xfit:rw
     environment:
       - JPDA_OPTS="-agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8787,server=y,suspend=n"
     command: ["catalina.sh", "jpda", "run"]
   
   db:
-    image: reinielfc/xfit:db
+    build:
+      context: .
+      dockerfile: ./db/Dockerfile
+    #image: reinielfc/xfit:db
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=s3cret

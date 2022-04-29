@@ -10,10 +10,14 @@ import javax.persistence.TypedQuery;
 
 import coach.xfitness.business.Exercise;
 import coach.xfitness.business.User;
+import coach.xfitness.util.PasswordUtil;
 
 public class ExerciseDB {
-    final static int BATCH_SIZE = 8;
-
+    /**
+    * Select all exercises from the database and return them as a list.
+    * 
+    * @return A list of all exercises in the database.
+    */
     public static List<Exercise> selectAll() {
         EntityManager entityManager = null;
         List<Exercise> resultsList = null;
@@ -29,6 +33,12 @@ public class ExerciseDB {
         return resultsList;
     }
 
+    /**
+    * Select all exercises that are available to the user.
+    * 
+    * @param user The user that is currently signed in.
+    * @return A list of exercises that are available to the user.
+    */
     public static List<Exercise> selectAllAvailableTo(User user) {
         EntityManager entityManager = null;
         List<Exercise> resultsList = null;
@@ -44,6 +54,12 @@ public class ExerciseDB {
         return resultsList;
     }
 
+    /**
+    * Select an exercise by name.
+    * 
+    * @param name the name of the exercise
+    * @return Exercise object
+    */
     public static Exercise selectByName(String name) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         TypedQuery<Exercise> typedQuery = entityManager.createNamedQuery("Exercise.selectByName", Exercise.class);
@@ -59,11 +75,22 @@ public class ExerciseDB {
         return result;
     }
 
+    /**
+    * If the exercise exists, return true, otherwise return false.
+    * 
+    * @param name The name of the exercise.
+    * @return A boolean value.
+    */
     public static boolean hasExerciseByName(String name) {
         Exercise exercise = selectByName(name);
         return exercise != null;
     }
 
+    /**
+    * Returns a list of all the distinct types of exercises in the database
+    * 
+    * @return A list of all the distinct types of exercises in the database.
+    */
     public static List<String> fetchTypesList() {
         EntityManager entityManager = null;
         List<String> resultsList = null;
@@ -77,6 +104,11 @@ public class ExerciseDB {
         return resultsList;
     }
 
+    /**
+    * Inserts an exercise into the database.
+    * 
+    * @param exercise the exercise object to be inserted into the database
+    */
     public static void insert(Exercise exercise) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();
@@ -108,57 +140,42 @@ public class ExerciseDB {
         }
     }
 
-    private static void doActionOnList(List<Exercise> exerciseList, String action) {
-        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        entityManager.setProperty("hibernate.jdbc.batch_size", String.valueOf(BATCH_SIZE));
+    /**
+     * It takes a user name and an exercise title, and returns a unique name for the
+     * exercise
+     * 
+     * @param userName The name of the user who is creating the exercise.
+     * @param exerciseTitle The title of the exercise.
+     * @return A unique name for an exercise.
+     */
+    public static String makeUniqueName(String userName, String exerciseTitle) {
+        String name = "";
 
+        StringBuilder sb = new StringBuilder()
+                .append(userName.replaceAll("[^A-Za-z0-9_]+", "")
+                        .toLowerCase())
+                .append("-")
+                .append(exerciseTitle.replaceAll("[^A-Za-z0-9 ]+", "")
+                        .replace(' ', '-')
+                        .toLowerCase());
+
+        name = sb.toString();
+
+        while (hasExerciseByName(name)) {
+            String id = PasswordUtil.generateRandomBase64String(6);
+            name = new StringBuilder(sb).append("-").append(id).toString();
+        }
+
+        return name;
+    }
+
+    public static void update(Exercise exercise) {
+        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();
 
         entityTransaction.begin();
-        try {
-            for (int i = 0; i < exerciseList.size(); i++) {
-                if (i > 0 && i % BATCH_SIZE == 0) {
-                    entityManager.flush();
-                    entityManager.clear();
-                }
-
-                Exercise exercise = exerciseList.get(i);
-
-                System.out.println(exercise.getId() + " : " + exercise.getName());
-
-                switch (action) {
-                    case "insert":
-                        entityManager.persist(exercise);
-                        break;
-                    case "update":
-                        entityManager.merge(exercise);
-                        break;
-                    case "delete":
-                        if (!entityManager.contains(exercise)) {
-                            exercise = entityManager.merge(exercise);
-                        }
-
-                        entityManager.remove(exercise);
-                        break;
-                }
-            }
-            entityTransaction.commit();
-        } catch (Exception e) {
-            entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    public static void insertList(List<Exercise> exerciseList) {
-        doActionOnList(exerciseList, "insert");
-    }
-
-    public static void updateList(List<Exercise> exerciseList) {
-        doActionOnList(exerciseList, "update");
-    }
-
-    public static void deleteList(List<Exercise> exerciseList) {
-        doActionOnList(exerciseList, "delete");
+        entityManager.merge(exercise);
+        entityTransaction.commit();
     }
 
 }

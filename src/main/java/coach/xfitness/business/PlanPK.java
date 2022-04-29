@@ -19,9 +19,15 @@ public class PlanPK implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int exerciseId;
 
+    public PlanPK(int userId, int exerciseId) {
+        this.userId = userId;
+        this.exerciseId = exerciseId;
+    }
+
     // #region boilerplate
     public PlanPK() {
     }
+
 
     public int getUserId() {
         return userId;

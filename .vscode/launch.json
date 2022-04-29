@@ -19,6 +19,10 @@
             "url": "http://localhost:8888/xfit",
             "pathMappings": [
                 {
+                    "url": "http://localhost:8888/xfit",
+                    "path": "${workspaceFolder}/src/main/webapp"
+                },
+                {
                     "url": "http://localhost:8888/xfit/",
                     "path": "${workspaceFolder}/src/main/webapp/"
                 }
