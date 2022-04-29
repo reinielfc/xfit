@@ -28,7 +28,6 @@
 		"yzhang.markdown-all-in-one",				// Markdown language support
 		"redhat.vscode-yaml",						// yaml language support
 		"redhat.vscode-xml",						// xml language support
-		"albymor.increment-selection",				// increment numbers in selection
 		
 		// project
 		"eamodio.gitlens",							// enhance git in vscode

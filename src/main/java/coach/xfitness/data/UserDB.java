@@ -93,9 +93,9 @@ public class UserDB {
     }
 
     public static void deleteByEmail(String email) {
+
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();
-
         entityTransaction.begin();
         try {
             User user = selectByEmail(email);
@@ -132,5 +132,4 @@ public class UserDB {
 
         return true;
     }
-
 }
