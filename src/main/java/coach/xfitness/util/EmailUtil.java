@@ -16,11 +16,22 @@ import javax.mail.internet.MimeMessage;
 
 public class EmailUtil {
 
+    /**
+     * It sends an email to the specified address with the specified subject and body
+     * 
+     * @param SMTP_HOST The hostname of the SMTP server.
+     * @param SMTP_PORT The port number of the SMTP server.
+     * @param SMTP_USERNAME The username of the email account you want to send the email from.
+     * @param SMTP_PASSWORD The password for the SMTP server.
+     * @param toAddress The email address of the recipient.
+     * @param subject The subject of the email.
+     * @param body The body of the email.
+     */
     public static void send(
             final String SMTP_HOST, final String SMTP_PORT,
             final String SMTP_USERNAME, final String SMTP_PASSWORD,
             String toAddress, String subject, String body)
-            throws AddressException, MessagingException {
+            throws MessagingException {
 
         // local SMTP server properties
         Properties serverProperties = new Properties();

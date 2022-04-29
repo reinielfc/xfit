@@ -15,10 +15,18 @@ import coach.xfitness.data.EquipmentDB;
 @WebServlet(name = "EquipmentController", urlPatterns = { "/equipment" })
 public class EquipmentController extends HttpServlet {
 
+    /**
+    * Called when the user navigates to the equipment page.
+    * It retrieves a list of all equipment from the database and forwards the request
+    * to the equipment.jsp page
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param response The response object that will be sent back to the client.
+    */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String url = "equipment.jsp";
+        String url = "/user/equipment.jsp";
 
         // list equipment
         List<Equipment> equipmentList = EquipmentDB.selectAll();

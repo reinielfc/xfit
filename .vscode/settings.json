@@ -1,0 +1,10 @@
+{
+    "docwriter.progress.trackClasses": true,
+    "docwriter.progress.trackTypes": true,
+    "docwriter.style": "Javadoc",
+    "docwriter.progress.trackMethods": true,
+    "AllAutocomplete.showCurrentDocument": true,
+    "[html]": {
+        "editor.tabSize": 2
+    }
+}

@@ -1,5 +1,6 @@
 ## Project Specific ##
 .devcontainer/db/exercises
+.devcontainer/db/equipment
 .idea/
 TODO.md
 
