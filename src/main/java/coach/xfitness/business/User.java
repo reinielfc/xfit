@@ -1,7 +1,9 @@
 package coach.xfitness.business;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -154,22 +156,45 @@ public class User {
 
     // #endregion boilerplate
 
-    public void setUserEquipmentsByEquipments(Collection<Equipment> equipments) {
-        this.userEquipmentsById = equipments.stream()
-                .map(e -> new UserEquipment(this, e))
-                .collect(Collectors.toList());
+
+    /**
+     * Add a plan to a day, and set the day and position of the plan.
+     * 
+     * @param plan The plan to add to the day
+     * @param day The day of the week to add the plan to.
+     */
+    public void addPlanToDay(Plan plan, byte day) {
+        int position = getPlanListForDay(day).size();
+        plan.setDayOfWeek(day);
+        plan.setPosition(position);
+        
+        this.plansById.add(plan);
     }
 
+    /**
+     * Get all the plans for a given day of the week.
+     * 
+     * 
+     * @param dayOfWeek The day of the week to get the plans for.
+     * @return A list of plans for a given day of the week.
+     */
     public List<Plan> getPlanListForDay(byte dayOfWeek) {
         return this.getPlansById().stream()
                 .filter(p -> p.getDayOfWeek() == dayOfWeek)
                 .collect(Collectors.toList());
     }
 
-    public Plan getPlanByPositionInDayOfWeek(Integer position, Byte dayOfWeek) {
-        return this.getPlansById().stream()
-                .filter(p -> p.getPosition() == position && p.getDayOfWeek() == dayOfWeek)
-                .findFirst()
-                .get();
+    /**
+     * Get a map of the plans grouped by day of the week, sorted by position.
+     * 
+     * @return A map of the plans grouped by day of the week.
+     */
+    public Map<String, List<Plan>> getPlanListByDayMap() {
+        Map<String, List<Plan>> planListByDayMap = this.getPlansById().stream()
+                .collect(Collectors.groupingBy(Plan::getDayOfWeekShortName, Collectors.toList()));
+
+        planListByDayMap.values().forEach(planList -> planList.sort(Comparator.comparing(Plan::getPosition)));
+
+        return planListByDayMap;
     }
 }
