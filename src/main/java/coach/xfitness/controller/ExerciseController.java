@@ -30,21 +30,22 @@ public class ExerciseController extends HttpServlet {
             throws ServletException, IOException {
         String url = "/exercise/list.jsp";
         String exerciseName = request.getParameter("name");
+        String requestURI = request.getRequestURI();
 
         if (exerciseName == null || exerciseName.isBlank()) {
-            url = list(request, response);
+            url = getList(request);
         } else {
-            url = show(request, response);
+            url = getDetails(request);
         }
 
-        if (request.getRequestURI().endsWith("/exercise")) {
+        if (requestURI.endsWith("/exercise")) {
             getServletContext()
                     .getRequestDispatcher(url)
                     .forward(request, response);
         }
     }
 
-    private String list(HttpServletRequest request, HttpServletResponse response) {
+    private String getList(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("user");
 
@@ -61,7 +62,7 @@ public class ExerciseController extends HttpServlet {
         return "/exercise/list.jsp";
     }
 
-    private String show(HttpServletRequest request, HttpServletResponse response) {
+    private String getDetails(HttpServletRequest request) {
         String exerciseName = request.getParameter("name");
         Exercise exercise = ExerciseDB.selectByName(exerciseName);
 

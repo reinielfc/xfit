@@ -22,9 +22,9 @@ public class ImageServlet extends HttpServlet {
             byte[] content = new byte[0];
             
             if (imageType.equals("exercise")) {
-                content = getExerciseImageContent(request, response);
+                content = getExerciseImageContent(request);
             } else if (imageType.equals("equipment")) {
-                content = getEquipmentImageContent(request, response);
+                content = getEquipmentImageContent(request);
             }
 
             String imageName = request.getPathInfo().substring(1);
@@ -35,7 +35,7 @@ public class ImageServlet extends HttpServlet {
         }
     }
 
-    private byte[] getExerciseImageContent(HttpServletRequest request, HttpServletResponse response) {
+    private byte[] getExerciseImageContent(HttpServletRequest request) {
         String exerciseName = request.getParameter("name");
         String exerciseImageState = request.getParameter("state");
 
@@ -48,8 +48,8 @@ public class ImageServlet extends HttpServlet {
                 .getImage();
     }
 
-    private byte[] getEquipmentImageContent(HttpServletRequest request, HttpServletResponse response) {
-        int equipmentId = Integer.valueOf(request.getParameter("id"));
+    private byte[] getEquipmentImageContent(HttpServletRequest request) {
+        int equipmentId = Integer.parseInt(request.getParameter("id"));
 
         return EquipmentDB.selectById(equipmentId).getEquipmentImagesById()
                 .stream()

@@ -99,7 +99,7 @@ public class Equipment {
 
     // #endregion boilerplate
 
-    public boolean isUsedBy(User user) {
+    public boolean isOwnedBy(User user) {
         return getUserEquipmentsById()
                 .stream()
                 .anyMatch(ue -> ue.getUserByUserId().equals(user));

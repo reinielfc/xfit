@@ -68,12 +68,10 @@ public class EmailServlet extends HttpServlet {
     }
 
     private String buildCodeEmailBody(String code, String recipientName) {
-        return new StringBuilder()
-                .append("<h1><strong>XFit:</strong> Email Verification</h1>")
-                .append("<p>Hi ").append(recipientName).append("!</p>")
-                .append("<p>Enter the following code in the email verification page:</p>")
-                .append("<h3>").append(code).append("</h3>")
-                .toString();
+        return "<h1><strong>XFit:</strong> Email Verification</h1>" +
+                "<p>Hi " + recipientName + "!</p>" +
+                "<p>Enter the following code in the email verification page:</p>" +
+                "<h3>" + code + "</h3>";
     }
 
 }

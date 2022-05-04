@@ -18,16 +18,14 @@ public class EquipmentDB {
     public static List<Equipment> selectAll() {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         Query query = entityManager.createNamedQuery("Equipment.selectAll");
-        List<Equipment> resultsList = DBUtil.castList(Equipment.class, query.getResultList());
-        return resultsList;
+        return DBUtil.castList(Equipment.class, query.getResultList());
     }
 
     public static List<Equipment> selectByIdIn(List<Integer> ids) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         Session session = entityManager.unwrap(Session.class);
         MultiIdentifierLoadAccess<Equipment> multiLoadAccess = session.byMultipleIds(Equipment.class);
-        List<Equipment> equipments = multiLoadAccess.multiLoad(ids);
-        return equipments;
+        return multiLoadAccess.multiLoad(ids);
     }
 
     public static Equipment selectById(int id) {
