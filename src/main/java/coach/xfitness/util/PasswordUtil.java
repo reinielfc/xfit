@@ -38,10 +38,23 @@ public class PasswordUtil {
         return String.format("%06d", code);
     }
 
+    /**
+     * It generates a random string of 24 characters, each of which is a letter or
+     * number
+     * 
+     * @return A random string of 24 characters.
+     */
     public static String generateAccessToken() {
         return generateRandomBase64String(24);
     }
 
+    /**
+     * It generates a random string of the specified length, using the characters A-Z,
+     * a-z, 0-9, and + and /
+     * 
+     * @param length The length of the random string to be generated.
+     * @return A random string of length `length`
+     */
     public static String generateRandomBase64String(int length) {
         byte[] randomBytes = new byte[length];
         SECURE_RANDOM.nextBytes(randomBytes);
@@ -70,6 +83,12 @@ public class PasswordUtil {
         return Arrays.toString(salt);
     }
 
+    /**
+     * It takes a byte array and returns a hexadecimal string representation of it
+     * 
+     * @param array The byte array to convert to hex.
+     * @return The hexadecimal representation of the SHA-256 hash of the input string.
+     */
     private static String toHex(byte[] array) throws NoSuchAlgorithmException {
         BigInteger bigInteger = new BigInteger(1, array);
         String hex = bigInteger.toString(16);
@@ -104,6 +123,12 @@ public class PasswordUtil {
         return diff == 0;
     }
 
+    /**
+     * It takes a string of hexadecimal characters and converts it to a byte array
+     * 
+     * @param hex The hexadecimal string to convert to bytes.
+     * @return The bytes of the hex string.
+     */
     private static byte[] fromHex(String hex) {
         byte[] bytes = new byte[hex.length() / 2];
         for (int i = 0; i < bytes.length; i++) {

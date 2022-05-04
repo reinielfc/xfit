@@ -29,6 +29,12 @@ public class ExerciseDB {
         return resultsList;
     }
 
+    /**
+    * Select all exercises that are available to the user.
+    * 
+    * @param user The user that is currently signed in.
+    * @return A list of exercises that are available to the user.
+    */
     public static List<Exercise> selectAllAvailableTo(User user) {
         EntityManager entityManager = null;
         List<Exercise> resultsList = null;
@@ -44,6 +50,12 @@ public class ExerciseDB {
         return resultsList;
     }
 
+    /**
+    * Select an exercise by name.
+    * 
+    * @param name the name of the exercise
+    * @return Exercise object
+    */
     public static Exercise selectByName(String name) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         TypedQuery<Exercise> typedQuery = entityManager.createNamedQuery("Exercise.selectByName", Exercise.class);
@@ -59,11 +71,22 @@ public class ExerciseDB {
         return result;
     }
 
+    /**
+    * If the exercise exists, return true, otherwise return false.
+    * 
+    * @param name The name of the exercise.
+    * @return A boolean value.
+    */
     public static boolean hasExerciseByName(String name) {
         Exercise exercise = selectByName(name);
         return exercise != null;
     }
 
+    /**
+    * Returns a list of all the distinct types of exercises in the database
+    * 
+    * @return A list of all the distinct types of exercises in the database.
+    */
     public static List<String> fetchTypesList() {
         EntityManager entityManager = null;
         List<String> resultsList = null;
@@ -77,6 +100,11 @@ public class ExerciseDB {
         return resultsList;
     }
 
+    /**
+    * Inserts an exercise into the database.
+    * 
+    * @param exercise the exercise object to be inserted into the database
+    */
     public static void insert(Exercise exercise) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();

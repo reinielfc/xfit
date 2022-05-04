@@ -25,6 +25,12 @@ import coach.xfitness.util.ServletUtil;
 @WebServlet(name = "ExerciseController", urlPatterns = { "/exercise" })
 public class ExerciseController extends HttpServlet {
 
+    /**
+     * If the request is for a specific exercise, show it, otherwise list all exercises
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object that will be sent back to the client.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

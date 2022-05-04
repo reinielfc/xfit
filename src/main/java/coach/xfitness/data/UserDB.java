@@ -10,6 +10,12 @@ import coach.xfitness.business.User;
 
 public class UserDB {
 
+    /**
+    * Get the user with the given email address.
+    * 
+    * @param email The email address of the user we want to select.
+    * @return A single user object.
+    */
     public static User selectByEmail(String email) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         TypedQuery<User> typedQuery = entityManager.createNamedQuery("User.selectByEmail", User.class);
@@ -25,11 +31,22 @@ public class UserDB {
         return result;
     }
 
+    /**
+    * If a user with the given email exists, return true, otherwise return false.
+    * 
+    * @param email The email address of the user to check for.
+    * @return A boolean value.
+    */
     public static boolean hasUserWithEmail(String email) {
         User user = selectByEmail(email);
         return user != null;
     }
 
+    /**
+    * If the user doesn't exist, add the user to the database
+    * 
+    * @param user The user object that you want to insert into the database.
+    */
     public static void insert(User user) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();

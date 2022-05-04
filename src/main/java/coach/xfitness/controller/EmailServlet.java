@@ -22,6 +22,11 @@ public class EmailServlet extends HttpServlet {
     private static String smtpUsername;
     private static String smtpPassword;
 
+    /**
+    * Called when the servlet is first loaded. It reads the
+    * SMTP server settings from the web.xml file and stores them in the variables
+    * smtpHost, smtpPort, smtpUsername, and smtpPassword
+    */
     public void init() {
         // SMTP server from web.xml file
         ServletContext context = getServletContext();
@@ -31,6 +36,12 @@ public class EmailServlet extends HttpServlet {
         smtpPassword = context.getInitParameter("SMTP_PASSWORD");
     }
 
+    /**
+    * If the action is register or resend, send the code
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param response The response object that will be sent back to the client.
+    */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -41,6 +52,12 @@ public class EmailServlet extends HttpServlet {
         }
     }
 
+    /**
+    * Send an email to the user with the code that was generated in the previous
+    * step. The session is needed to get the user and the code.
+    * 
+    * @param request The request object that was sent to the servlet.
+    */
     private void sendCode(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
@@ -67,6 +84,13 @@ public class EmailServlet extends HttpServlet {
 
     }
 
+    /**
+    * Builds the body of the email that will be sent to the user
+    * 
+    * @param code The code that will be sent to the user.
+    * @param recipientName The name of the recipient of the email.
+    * @return A string that contains the body of the email.
+    */
     private String buildCodeEmailBody(String code, String recipientName) {
         return "<h1><strong>XFit:</strong> Email Verification</h1>" +
                 "<p>Hi " + recipientName + "!</p>" +
