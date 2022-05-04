@@ -67,13 +67,21 @@ public class UserDB {
         }
     }
 
-    public static void update(User user) {
+    /**
+     * The method takes a User object as a parameter, and returns a User object
+     * 
+     * @param user The user object that you want to update.
+     * @return The updated user.
+     */
+    public static User update(User user) {
         EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();
 
         entityTransaction.begin();
-        entityManager.merge(user);
+        user = entityManager.merge(user);
         entityTransaction.commit();
+
+        return user;
     }
 
     public static void deleteByEmail(String email) {
