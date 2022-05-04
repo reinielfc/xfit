@@ -33,6 +33,12 @@ public class UserDB {
         return result;
     }
 
+    public static User select(int id) {
+        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+
+        return entityManager.find(User.class, id);
+    }
+
     /**
     * If a user with the given email exists, return true, otherwise return false.
     * 
