@@ -42,16 +42,16 @@ public class User {
     @Column(name = "accessToken")
     private String accessToken;
 
-    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Exercise> exercisesById;
 
-    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<FavoriteExercise> favoriteExercisesById;
 
-    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Plan> plansById;
 
-    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<UserEquipment> userEquipmentsById;
 
     // #region boilerplate
