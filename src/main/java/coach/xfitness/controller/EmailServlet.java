@@ -47,7 +47,7 @@ public class EmailServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if (action.equals("register")) {
+        if (action.equals("register") || action.equals("resend")) {
             sendCode(request);
         }
     }
@@ -78,7 +78,6 @@ public class EmailServlet extends HttpServlet {
                     smtpHost, smtpPort, smtpUsername, smtpPassword,
                     toAddress, subject, body);
         } catch (MessagingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
