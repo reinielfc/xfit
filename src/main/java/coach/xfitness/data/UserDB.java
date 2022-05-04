@@ -1,5 +1,7 @@
 package coach.xfitness.data;
 
+import java.util.regex.Pattern;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
@@ -91,8 +93,31 @@ public class UserDB {
         entityTransaction.begin();
         User user = UserDB.selectByEmail(email);
         entityManager.remove(user);
+    }
 
-        entityTransaction.commit();
+    /**
+    * If the password is not null or blank, and if the password contains at least 8
+    * characters, at least one uppercase letter, at least one lowercase letter, and
+    * at least one digit, then the password is valid
+    * 
+    * @param password The password to validate.
+    * @return A boolean value.
+    */
+    public static boolean isPasswordValid(String password) {
+        if (password == null || password.isBlank()) {
+            return false;
+        }
+
+        String[] requirements = new String[] { "\\S{8,}", "[A-Z]", "[a-z]", "[0-9]" };
+
+        for (String requirement : requirements) {
+            // if password does not match requirement regex
+            if (!Pattern.compile(requirement).matcher(password).find()) {
+                return false; // it is invalid
+            }
+        }
+
+        return true;
     }
 
 }
