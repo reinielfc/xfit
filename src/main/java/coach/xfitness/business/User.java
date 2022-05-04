@@ -215,6 +215,17 @@ public class User {
     }
 
     /**
+     * Set the user's equipments by creating a new UserEquipment for each equipment.
+     * 
+     * @param equipments Collection of equipments to be added to the user
+     */
+    public void setUserEquipmentsByEquipments(Collection<Equipment> equipments) {
+        this.userEquipmentsById = equipments.stream()
+                .map(e -> new UserEquipment(this, e))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Get a map of the plans grouped by day of the week, sorted by position.
      * 
      * @return A map of the plans grouped by day of the week.
