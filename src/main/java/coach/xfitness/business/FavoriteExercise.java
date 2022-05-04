@@ -25,6 +25,13 @@ public class FavoriteExercise {
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
 
+    public FavoriteExercise(User userByUserId, Exercise exerciseByExerciseId) {
+        this.setUserByUserId(userByUserId);
+        this.setExerciseByExerciseId(exerciseByExerciseId);
+
+        this.id = new FavoriteExercisePK(userByUserId.getId(), exerciseByExerciseId.getId());
+    }
+
     // #region boilerplate
     public FavoriteExercise() {
     }

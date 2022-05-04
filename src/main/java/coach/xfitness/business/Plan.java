@@ -52,6 +52,13 @@ public class Plan {
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
 
+    public Plan(User user, Exercise exercise) {
+        this.userByUserId = user;
+        this.exerciseByExerciseId = exercise;
+
+        this.id = new PlanPK(userByUserId.getId(), exerciseByExerciseId.getId());
+    }
+
     // #region boilerplate
     public Plan() {
     }
