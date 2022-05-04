@@ -12,8 +12,11 @@ import coach.xfitness.business.Exercise;
 import coach.xfitness.business.User;
 
 public class ExerciseDB {
-    final static int BATCH_SIZE = 8;
-
+    /**
+    * Select all exercises from the database and return them as a list.
+    * 
+    * @return A list of all exercises in the database.
+    */
     public static List<Exercise> selectAll() {
         EntityManager entityManager = null;
         List<Exercise> resultsList = null;
@@ -136,57 +139,5 @@ public class ExerciseDB {
         }
     }
 
-    private static void doActionOnList(List<Exercise> exerciseList, String action) {
-        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
-        entityManager.setProperty("hibernate.jdbc.batch_size", String.valueOf(BATCH_SIZE));
-
-        EntityTransaction entityTransaction = entityManager.getTransaction();
-
-        entityTransaction.begin();
-        try {
-            for (int i = 0; i < exerciseList.size(); i++) {
-                if (i > 0 && i % BATCH_SIZE == 0) {
-                    entityManager.flush();
-                    entityManager.clear();
-                }
-
-                Exercise exercise = exerciseList.get(i);
-
-                System.out.println(exercise.getId() + " : " + exercise.getName());
-
-                switch (action) {
-                    case "insert":
-                        entityManager.persist(exercise);
-                        break;
-                    case "update":
-                        entityManager.merge(exercise);
-                        break;
-                    case "delete":
-                        if (!entityManager.contains(exercise)) {
-                            exercise = entityManager.merge(exercise);
-                        }
-
-                        entityManager.remove(exercise);
-                        break;
-                }
-            }
-            entityTransaction.commit();
-        } catch (Exception e) {
-            entityTransaction.rollback();
-            e.printStackTrace();
-        }
-    }
-
-    public static void insertList(List<Exercise> exerciseList) {
-        doActionOnList(exerciseList, "insert");
-    }
-
-    public static void updateList(List<Exercise> exerciseList) {
-        doActionOnList(exerciseList, "update");
-    }
-
-    public static void deleteList(List<Exercise> exerciseList) {
-        doActionOnList(exerciseList, "delete");
-    }
 
 }
