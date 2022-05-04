@@ -91,8 +91,15 @@ public class UserDB {
         EntityTransaction entityTransaction = entityManager.getTransaction();
 
         entityTransaction.begin();
-        User user = UserDB.selectByEmail(email);
-        entityManager.remove(user);
+        try {
+            User user = selectByEmail(email);
+            user = entityManager.find(User.class, user.getId());
+            entityManager.remove(user);
+            entityTransaction.commit();
+        } catch (Exception e) {
+            entityTransaction.rollback();
+            e.printStackTrace();
+        }
     }
 
     /**
