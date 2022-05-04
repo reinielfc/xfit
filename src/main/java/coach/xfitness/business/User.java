@@ -156,6 +156,36 @@ public class User {
 
     // #endregion boilerplate
 
+    /**
+     * Add a new FavoriteExercise to the list of favorite exercises for this user.
+     * 
+     * @param exercise The exercise to add as a favorite
+     */
+    public void addExerciseAsFavorite(Exercise exercise) {
+        favoriteExercisesById.add(new FavoriteExercise(this, exercise));
+    }
+
+    /**
+     * Remove the favorite exercise from the list of favorite exercises if the exercise
+     * id of the favorite exercise is equal to the exercise id of the exercise passed
+     * in.
+     * 
+     * @param exercise the exercise to be removed from the list of favorite exercises
+     */
+    public void removeExerciseAsFavorite(Exercise exercise) {
+        favoriteExercisesById.removeIf(fe -> fe.getExerciseByExerciseId().getId() == exercise.getId());
+    }
+
+    /**
+     * Return true if the user has the given exercise as a favorite, false otherwise.
+     * 
+     * @param exercise the exercise to check if it's a favorite
+     * @return A boolean value.
+     */
+    public boolean hasExerciseAsFavorite(Exercise exercise) {
+        return this.favoriteExercisesById.stream()
+                .anyMatch(fe -> fe.getExerciseByExerciseId().getId() == exercise.getId());
+    }
 
     /**
      * Add a plan to a day, and set the day and position of the plan.
