@@ -26,7 +26,7 @@ public class EquipmentController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String url = "equipment.jsp";
+        String url = "/user/equipment.jsp";
 
         // list equipment
         List<Equipment> equipmentList = EquipmentDB.selectAll();
