@@ -61,10 +61,18 @@ public class PasswordUtil {
         return BASE64_ENCODER.encodeToString(randomBytes);
     }
 
+    /**
+     * It takes a password, generates a random salt, and then hashes the password using
+     * PBKDF2 with SHA-1 as the hashing algorithm
+     * 
+     * @param password The password to hash.
+     * @return The return value is a string that contains the number of iterations, the
+     * salt, and the hash.
+     */
     public static String generate(String password)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         char[] chars = password.toCharArray();
-        byte[] salt = getSalt().getBytes();
+        byte[] salt = getSalt();
         int iterations = 65536; // password strength (2^16 iterations in this case)
         int keyLength = 256;
 
@@ -76,11 +84,16 @@ public class PasswordUtil {
         return iterations + ":" + toHex(salt) + ":" + toHex(hash);
     }
 
-    private static String getSalt() throws NoSuchAlgorithmException {
+    /**
+     * It generates a random 32 byte salt using the SecureRandom class
+     * 
+     * @return A byte array of 32 random bytes.
+     */
+    private static byte[] getSalt() throws NoSuchAlgorithmException {
         SecureRandom secureRandom = SecureRandom.getInstanceStrong();
-        byte[] salt = new byte[16];
+        byte[] salt = new byte[32];
         secureRandom.nextBytes(salt);
-        return Arrays.toString(salt);
+        return salt;
     }
 
     /**
