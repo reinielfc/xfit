@@ -49,6 +49,13 @@ public class ExerciseController extends HttpServlet {
         }
     }
 
+    /**
+     * Get all the exercises, exercise types, equipment names, and muscle names,
+     * and put them in the request.
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @return The URL of the JSP page for the exercise list.
+     */
     private String getList(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("user");
@@ -66,6 +73,13 @@ public class ExerciseController extends HttpServlet {
         return "/exercise/list.jsp";
     }
 
+    /**
+     * Gets the exercise name from the request, gets the exercise from the database,
+     * and puts the exercise in the request
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @return The URL of the JSP page for the exercise details.
+     */
     private String getDetails(HttpServletRequest request) {
         String exerciseName = request.getParameter("name");
         Exercise exercise = ExerciseDB.selectByName(exerciseName);
