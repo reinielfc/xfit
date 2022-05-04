@@ -58,13 +58,13 @@ public class ExerciseController extends HttpServlet {
      */
     private String getList(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        User user = (User) session.getAttribute("user");
+        User user = (session == null ? null : (User) session.getAttribute("user"));
 
         List<Exercise> exerciseList = ExerciseDB.selectAllAvailableTo(user);
         List<String> exerciseTypesList = ExerciseDB.fetchTypesList();
         List<String> equipmentNamesList = EquipmentDB.fetchNamesList();
         List<String> muscleNamesList = MuscleDB.fetchNamesList();
-        
+
         request.setAttribute("exerciseTypesList", exerciseTypesList);
         request.setAttribute("exerciseList", exerciseList);
         request.setAttribute("equipmentList", equipmentNamesList);
