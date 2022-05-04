@@ -10,6 +10,7 @@ import javax.persistence.TypedQuery;
 
 import coach.xfitness.business.Exercise;
 import coach.xfitness.business.User;
+import coach.xfitness.util.PasswordUtil;
 
 public class ExerciseDB {
     /**
@@ -139,5 +140,42 @@ public class ExerciseDB {
         }
     }
 
+    /**
+     * It takes a username and an exercise title, and returns a unique name for the
+     * exercise
+     * 
+     * @param userName The name of the user who is creating the exercise.
+     * @param exerciseTitle The title of the exercise.
+     * @return A unique name for an exercise.
+     */
+    public static String makeUniqueName(String userName, String exerciseTitle) {
+        String name = "";
+
+        StringBuilder sb = new StringBuilder()
+                .append(userName.replaceAll("\\W+", "")
+                        .toLowerCase())
+                .append("-")
+                .append(exerciseTitle.replaceAll("[^A-Za-z\\d ]+", "")
+                        .replace(' ', '-')
+                        .toLowerCase());
+
+        name = sb.toString();
+
+        while (hasExerciseByName(name)) {
+            String id = PasswordUtil.generateRandomBase64String(6);
+            name = sb + "-" + id;
+        }
+
+        return name;
+    }
+
+    public static void update(Exercise exercise) {
+        EntityManager entityManager = DBUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
+        entityTransaction.begin();
+        entityManager.merge(exercise);
+        entityTransaction.commit();
+    }
 
 }
