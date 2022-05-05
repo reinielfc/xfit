@@ -27,6 +27,16 @@ import coach.xfitness.util.PasswordUtil;
         "/register", "/signin", "/authenticate", "/signout", "/configure"
 })
 public class UserController extends HttpServlet {
+    private static final String[] COOKIES_TO_CLEAR = new String[] { "accessToken" };
+
+    /**
+     * If the request is for the register page, call the register function, if it's for
+     * the signin page, call the signin function, if it's for the configure page, call
+     * the configure function
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object is used to send data back to the client.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -53,6 +63,15 @@ public class UserController extends HttpServlet {
 
     // #region register
 
+    /**
+     * If the action is "verify", then call doVerifyEmailAction(), if the action is
+     * "resend", then call doResendVerificationEmailAction(), otherwise call
+     * doRegisterAction()
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object is used to send data back to the client.
+     * @return The url of the page to be displayed.
+     */
     private String register(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -71,6 +90,15 @@ public class UserController extends HttpServlet {
 
     // #region doregisteraction
 
+    /**
+    * It gets the user from the request, validates the user, secures the user's
+    * password, saves the user in the session, and sends a verification email
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param response The response object that will be sent back to the client.
+    * @return The return value is a String that represents the path to the next JSP
+    * page.
+    */
     private String doRegisterAction(HttpServletRequest request, HttpServletResponse response) {
         User newUser = getUserFromRequest(request);
         String message = "";
@@ -104,6 +132,13 @@ public class UserController extends HttpServlet {
         return "/user/register.jsp";
     }
 
+    /**
+    * Get the name, email, and password from the request, and create a new User
+    * object with those values.
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @return A new user object with the name, email, and password set.
+    */
     private User getUserFromRequest(HttpServletRequest request) {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -117,16 +152,38 @@ public class UserController extends HttpServlet {
         return newUser;
     }
 
+    /**
+    * If the password is valid and the email is valid, then the user is valid.
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param user The user object that was created from the form data.
+    * @return A boolean value.
+    */
     private boolean isUserValid(HttpServletRequest request, User user) {
         return isPasswordValid(request, user.getPassword()) && isEmailValid(request, user.getEmail());
     }
 
+    /**
+    * If the password is valid, set the passwordIsValid attribute to true, and return
+    * true
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param password The password entered by the user.
+    * @return A boolean value.
+    */
     private boolean isPasswordValid(HttpServletRequest request, String password) {
         boolean passwordIsValid = UserDB.isPasswordValid(password);
         request.setAttribute("passwordIsValid", passwordIsValid);
         return passwordIsValid;
     }
 
+    /**
+    * If the email is not already in the database, then it is valid
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param email The email address entered by the user.
+    * @return A boolean value.
+    */
     private boolean isEmailValid(HttpServletRequest request, String email) {
         boolean emailIsValid = !UserDB.hasUserWithEmail(email);
         request.setAttribute("emailIsValid", emailIsValid);
@@ -144,6 +201,12 @@ public class UserController extends HttpServlet {
         user.setPassword(password);
     }
 
+    /**
+    * Generate a random code, store it in the session, and send it to the user.
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param response The response object that will be sent back to the client.
+    */
     private void sendVerificationEmail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // generate email verification code
@@ -159,6 +222,16 @@ public class UserController extends HttpServlet {
         requestDispatcher.include(request, response);
     }
 
+    // #endregion doregisteraction
+
+    // #region verifyemailaction
+
+    /**
+    * If the email is verified, register the user and sign them in
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @return The url of the next page to be displayed.
+    */
     private String doVerifyEmailAction(HttpServletRequest request) {
         String message = "Email verification was unsuccessful.";
         String url = "/user/verify.jsp";
@@ -186,6 +259,12 @@ public class UserController extends HttpServlet {
         return url;
     }
 
+    /**
+    * It checks if the code in the request is the same as the code in the session
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @return A boolean value. // TODO: a boolean value is not descriptive
+    */
     private boolean isEmailVerified(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         String emailVerificationCode = (String) session.getAttribute("emailVerificationCode");
@@ -198,6 +277,18 @@ public class UserController extends HttpServlet {
         return codeIsValid;
     }
 
+    // #endregion verifyemailaction
+
+    // #region resendverificationemailaction
+
+    /**
+    * It takes the user's email address from the form, changes the user's email
+    * address in the database, and sends a new verification email
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param response The response object that will be sent back to the client.
+    * @return The return value is the path to the verify.jsp page.
+    */
     private String doResendVerificationEmailAction(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
@@ -211,6 +302,13 @@ public class UserController extends HttpServlet {
         return "/user/verify.jsp";
     }
 
+    /**
+    * If the email parameter is not null and isEmailValid returns true, then set the
+    * user's email to the email parameter.
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param user The user object that is being edited.
+    */
     private void changeUserEmail(HttpServletRequest request, User user) {
         String email = request.getParameter("email");
         if (email != null && isEmailValid(request, email)) {
@@ -218,10 +316,21 @@ public class UserController extends HttpServlet {
         }
     }
 
+    // #endregion resendverificationemailaction
+
     // #endregion register
 
     // #region configure
 
+    /**
+    * If the user is changing their user settings, then call the
+    * configureUserSettings method, otherwise call the configureEquipmentSettings
+    * method
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param response The response object that will be sent back to the client.
+    * @return The url of the page to be forwarded to.
+    */
     private String configure(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String setting = request.getParameter("setting");
@@ -236,7 +345,14 @@ public class UserController extends HttpServlet {
         return url;
     }
 
-    // TODO: javadoc
+    /**
+     * "If the user is logged in, update their name and password if they've
+     * provided new values."
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object is used to send data back to the client.
+     * @return The url of the page to be displayed.
+     */
     private String configureUserSettings(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
@@ -277,6 +393,14 @@ public class UserController extends HttpServlet {
         return url;
     }
 
+    /**
+    * It takes a request, makes a list of equipments from the request, gets the user
+    * from the request, sets the user's equipments to the list of equipments, and
+    * updates the user in the database
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @return A string that is the path to the next page.
+    */
     private String configureEquipmentSettings(HttpServletRequest request) {
         List<Equipment> equipments = makeEquipmentsFromRequest(request);
 
@@ -295,6 +419,13 @@ public class UserController extends HttpServlet {
         return "/routine/planner.jsp";
     }
 
+    /**
+    * Get the selected equipment ids from the request, convert them to integers,
+    * fetch the equipment from the database, and return the list of equipment.
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @return A list of equipment objects
+    */
     private List<Equipment> makeEquipmentsFromRequest(HttpServletRequest request) {
         // get selected equipments id list
         String[] equipmentIdValues = request.getParameterValues("equipmentId");
@@ -311,6 +442,15 @@ public class UserController extends HttpServlet {
 
     // #region signin
 
+    /**
+     * If the user exists and the password is correct, then set the user's session and
+     * redirect to the workout page
+     * 
+     * @param request The request object that is passed to the servlet.
+     * @param response The response object is used to send the authentication cookies
+     * to the browser.
+     * @return The url is being returned.
+     */
     private String signIn(HttpServletRequest request, HttpServletResponse response) {
         String url = "/user/signin.jsp";
         String message = "";
@@ -347,6 +487,13 @@ public class UserController extends HttpServlet {
         return url;
     }
 
+    /**
+    * Creates two cookies, one for the access token and one for the email, and
+    * then saves them to the client and the database
+    * 
+    * @param user the user object that was just created
+    * @param response The response object that will be sent back to the client.
+    */
     private void saveAuthenticationCookies(User user, HttpServletResponse response) {
         String accessToken = PasswordUtil.generateAccessToken();
         String email = user.getEmail();
@@ -409,6 +556,13 @@ public class UserController extends HttpServlet {
     }
 
     // #endregion authenticate
+
+    /**
+     * If the user is not authenticated, then forward the request to the signin page
+     * 
+     * @param request The request object
+     * @param response The response object is used to send data back to the client.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -436,6 +590,13 @@ public class UserController extends HttpServlet {
 
     // #region signout
 
+    /**
+    * If there is a session, invalidate it, and clear all cookies.
+    * 
+    * @param request The request object that was sent to the servlet.
+    * @param response The response object that will be sent back to the client.
+    * @return The path to the index.jsp page.
+    */
     private String signOut(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
 
@@ -449,6 +610,14 @@ public class UserController extends HttpServlet {
         return "/index.jsp";
     }
 
+    /**
+    * For each cookie in the list of cookies to clear, find the cookie in the list of
+    * cookies sent by the browser, set its max age to 0, set its path to "/", and add
+    * it to the response.
+    * 
+    * @param cookies The cookies that were sent with the request.
+    * @param response The response object that will be sent back to the client.
+    */
     private void clearCookies(Cookie[] cookies, HttpServletResponse response) {
         Cookie cookie;
         for (String cookieName : COOKIES_TO_CLEAR) {
