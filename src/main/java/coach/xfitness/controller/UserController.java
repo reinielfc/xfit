@@ -22,7 +22,6 @@ import coach.xfitness.data.EquipmentDB;
 import coach.xfitness.data.UserDB;
 import coach.xfitness.util.CookieUtil;
 import coach.xfitness.util.PasswordUtil;
-import coach.xfitness.util.ServletUtil;
 
 @WebServlet(name = "UserController", urlPatterns = {
         "/register", "/signin", "/authenticate", "/signout", "/configure"
@@ -57,78 +56,55 @@ public class UserController extends HttpServlet {
     private String register(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        String url = "/register.jsp";
+        String url = "/user/register.jsp";
 
         if (action.equals("verify")) {
             url = doVerifyEmailAction(request);
+        } else if (action.equals("resend")) {
+            url = doResendVerificationEmailAction(request, response);
         } else {
-            url = registerAction(request, response);
+            url = doRegisterAction(request, response);
         }
 
         return url;
     }
 
-    // TODO: change name to something more descriptive?
-    private String registerAction(HttpServletRequest request, HttpServletResponse response) {
-        User newUser = makeFromRequest(request);
-        String validationMessage = validate(newUser);
+    // #region doregisteraction
 
-        if (validationMessage.isBlank()) {
+    private String doRegisterAction(HttpServletRequest request, HttpServletResponse response) {
+        User newUser = getUserFromRequest(request);
+        String message = "";
+
+        if (isUserValid(request, newUser)) {
             try {
-                securePassword(newUser);
+                // secure user password
+                secureUserPassword(newUser);
 
-                // save new user in session so it's accessible by email servlet
+                // save new user in session, so it's accessible by email servlet
                 HttpSession session = request.getSession();
                 session.setAttribute("recipient", newUser);
 
+                // send verification email with email servlet
                 sendVerificationEmail(request, response);
 
-                return "/verify-email.jsp";
+                return "/user/verify.jsp";
             } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 e.printStackTrace();
-                validationMessage = "An error has occurred. Please try again later.";
+                message = "An error has occurred. Please try again later.";
             } catch (ServletException | IOException e) {
                 e.printStackTrace();
-                validationMessage = "Verification email could not be sent. Please try again later.";
+                message = "Verification email could not be sent. Please try again later.";
             }
         }
 
-        request.setAttribute("validationMessage", validationMessage);
+        newUser.setPassword("");
+        request.setAttribute("newUser", newUser);
+        request.setAttribute("message", message);
 
-        return "/register.jsp";
+        return "/user/register.jsp";
     }
 
-    // TODO: change name to something more descriptive?
-    private String verifyAction(HttpServletRequest request) {
-        String validationMessage = "Email verification was unsuccessful.";
-        String url = "/verify-email.jsp";
-
-        boolean codeIsVerified = verifyEmailedCode(request);
-
-        if (codeIsVerified) {
-            // get user from session
-            HttpSession session = request.getSession(false);
-            User newUser = (User) session.getAttribute("recipient");
-
-            // register user
-            UserDB.insert(newUser);
-
-            // TODO: sign user in
-            session.setAttribute("user", newUser);
-
-            // remove new user
-            session.removeAttribute("recipient");
-
-            validationMessage = "Email verification was successful.";
-            url = "/equipment.jsp";
-        }
-
-        request.setAttribute("validationMessage", validationMessage);
-
-        return url;
-    }
-
-    private User makeFromRequest(HttpServletRequest request) {
+    private User getUserFromRequest(HttpServletRequest request) {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -141,40 +117,31 @@ public class UserController extends HttpServlet {
         return newUser;
     }
 
-    private void securePassword(User user) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private boolean isUserValid(HttpServletRequest request, User user) {
+        return isPasswordValid(request, user.getPassword()) && isEmailValid(request, user.getEmail());
+    }
+
+    private boolean isPasswordValid(HttpServletRequest request, String password) {
+        boolean passwordIsValid = UserDB.isPasswordValid(password);
+        request.setAttribute("passwordIsValid", passwordIsValid);
+        return passwordIsValid;
+    }
+
+    private boolean isEmailValid(HttpServletRequest request, String email) {
+        boolean emailIsValid = !UserDB.hasUserWithEmail(email);
+        request.setAttribute("emailIsValid", emailIsValid);
+        return emailIsValid;
+    }
+
+    /**
+    * Takes a user object, generates a secure password, and sets the password on
+    * the user object
+    * 
+    * @param user The user object that is being created.
+    */
+    private void secureUserPassword(User user) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String password = PasswordUtil.generate(user.getPassword());
         user.setPassword(password);
-    }
-
-    private String validate(User user) {
-        String validationMessage = validatePassword(user.getPassword());
-
-        if (!validationMessage.isBlank())
-            return validationMessage;
-
-        return validateEmail(user.getEmail());
-    }
-
-    private static String validatePassword(String password) {
-        String validationMessage = "";
-
-        if (!PasswordUtil.validate(password)) {
-            validationMessage = "Password is not strong enough! "
-                    + "Make sure it is at least 8 characters long, and "
-                    + "include at least 1 character from A-Z, a-z, and 0-9.";
-        }
-
-        return validationMessage;
-    }
-
-    private static String validateEmail(String email) {
-        String validationMessage = "";
-
-        if (UserDB.hasUserWithEmail(email)) {
-            validationMessage = "\"" + email + "\" is already in use.";
-        }
-
-        return validationMessage;
     }
 
     private void sendVerificationEmail(HttpServletRequest request, HttpServletResponse response)
