@@ -32,20 +32,21 @@ public class UserController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        String url = "/signin.jsp";
+        String url = "/user/signin.jsp";
 
-        if (requestURI.endsWith("/authenticate")) {
-            signInWithAuthenticationCookie(request);
-        } else if (requestURI.endsWith("/register")) {
+        if (request.getAttribute("authenticate") != null) {
+            authenticate(request);
+            return;
+        }
+
+        if (requestURI.endsWith("/register")) {
             url = register(request, response);
         } else if (requestURI.endsWith("/signin")) {
             url = signIn(request, response);
-        } else if (requestURI.endsWith("/signout")) {
-            url = signOut(request, response);
         } else if (requestURI.endsWith("/configure")) {
             url = configure(request, response);
         }
-        // TODO: handle authenticate here
+
         getServletContext()
                 .getRequestDispatcher(url)
                 .forward(request, response);
@@ -362,23 +363,70 @@ public class UserController extends HttpServlet {
         UserDB.update(user); // save to database
     }
 
-    private static void signInWithAuthenticationCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        String accessToken = CookieUtil.find(cookies, "accessToken");
-        String email = CookieUtil.find(cookies, "email");
+    // #endregion signin
+
+    // #region authenticate
+
+    /**
+     * If the user has valid cookies, then set the user attribute in the session
+     * 
+     * @param request The request object that is passed to the servlet.
+     */
+    private void authenticate(HttpServletRequest request) {
+        User user = makeUserFromCookies(request.getCookies());
+
+        if (user != null) {
+            request.getSession().setAttribute("user", user);
+        }
+    }
+
+    /**
+     * If the access token and email in the cookies match the access token and email
+     * in the database, return the user.
+      * 
+     * @param cookies The cookies that were sent with the request.
+     * @return A User object.
+     */
+    private User makeUserFromCookies(Cookie[] cookies) {
+        String accessToken = CookieUtil.findValue(cookies, "accessToken");
+        String email = CookieUtil.findValue(cookies, "email");
 
         if (!(accessToken == null || email == null)) {
             User user = UserDB.selectByEmail(email);
 
             if (user.getAccessToken().equals(accessToken)) {
-                HttpSession session = request.getSession();
-                session.setAttribute("user", user);
+                return user;
             }
         }
 
+        return null;
     }
 
-    // #endregion signin
+    // #endregion authenticate
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String url = "/user/signin.jsp";
+        String requestURI = request.getRequestURI();
+
+        if (request.getAttribute("authenticate") != null) {
+            authenticate(request);
+            return;
+        }
+
+        if (requestURI.endsWith("/signout")) {
+            url = signOut(request, response);
+        } else if (requestURI.endsWith("/register")) {
+            url = "/user/register.jsp";
+        } else if (requestURI.endsWith("/configure")) {
+            url = "/user/settings.jsp";
+        }
+
+        getServletContext()
+                .getRequestDispatcher(url)
+                .forward(request, response);
+
+    }
 
     // #region signout
 
