@@ -431,24 +431,23 @@ public class UserController extends HttpServlet {
     // #region signout
 
     private String signOut(HttpServletRequest request, HttpServletResponse response) {
-        invalidateSession(request);
-        clearCookies(request, response);
-        return "/index.jsp";
-    }
-
-    private void invalidateSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
+        // invalidate session
         if (session != null) {
             session.invalidate();
         }
+
+        clearCookies(request.getCookies(), response);
+
+        return "/index.jsp";
     }
 
-    private void clearCookies(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
+    private void clearCookies(Cookie[] cookies, HttpServletResponse response) {
+        Cookie cookie;
+        for (String cookieName : COOKIES_TO_CLEAR) {
+            cookie = CookieUtil.find(cookies, cookieName);
+            if (cookie != null) {
                 cookie.setMaxAge(0);
                 cookie.setPath("/");
                 response.addCookie(cookie);
