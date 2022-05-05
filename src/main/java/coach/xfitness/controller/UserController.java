@@ -309,39 +309,42 @@ public class UserController extends HttpServlet {
     // #region signin
 
     private String signIn(HttpServletRequest request, HttpServletResponse response) {
-        String validationMessage = "";
-        String url = "/signin.jsp";
+        String url = "/user/signin.jsp";
+        String message = "";
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+        String rememberMe = request.getParameter("rememberMe");
 
         User user = UserDB.selectByEmail(email);
 
         try {
             if (user != null && PasswordUtil.verify(password, user.getPassword())) {
-                boolean rememberUser = Boolean.parseBoolean(request.getParameter("rememberMe"));
 
-                if (rememberUser) {
-                    saveAuthenticationCookie(user, response);
+                if (rememberMe != null) {
+                    saveAuthenticationCookies(user, response);
                 }
 
                 request.getSession().setAttribute("user", user);
 
-                url = "/workout.jsp";
+                url = "/workout";
             } else {
-                validationMessage = "Invalid credentials.";
+                message = "Invalid credentials.";
+                request.setAttribute("email", email);
+                request.setAttribute("rememberMe", rememberMe);
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
-            validationMessage = "An error has occurred. Please try again later.";
+            message = "An error has occurred. Please try again later.";
         }
 
-        request.setAttribute("validationMessage", validationMessage);
+        System.out.println(message);
+        request.setAttribute("message", message);
 
         return url;
     }
 
-    private void saveAuthenticationCookie(User user, HttpServletResponse response) {
+    private void saveAuthenticationCookies(User user, HttpServletResponse response) {
         String accessToken = PasswordUtil.generateAccessToken();
         String email = user.getEmail();
 
