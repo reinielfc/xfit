@@ -60,7 +60,7 @@ public class UserController extends HttpServlet {
         String url = "/register.jsp";
 
         if (action.equals("verify")) {
-            url = verifyAction(request);
+            url = doVerifyEmailAction(request);
         } else {
             url = registerAction(request, response);
         }
@@ -180,38 +180,75 @@ public class UserController extends HttpServlet {
     private void sendVerificationEmail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // generate email verification code
-        String verificationCode = PasswordUtil.generateCode();
+        String code = PasswordUtil.generateCode();
 
         // send code email
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/email");
         HttpSession session = request.getSession(false);
 
         // store code in session
-        session.setAttribute("emailVerificationCode", verificationCode);
+        session.setAttribute("emailVerificationCode", code);
 
         requestDispatcher.include(request, response);
     }
 
-    private boolean verifyEmailedCode(HttpServletRequest request) {
-        // get session
+    private String doVerifyEmailAction(HttpServletRequest request) {
+        String message = "Email verification was unsuccessful.";
+        String url = "/user/verify.jsp";
+
+        if (isEmailVerified(request)) {
+            // get user from session
+            HttpSession session = request.getSession(false);
+            User newUser = (User) session.getAttribute("recipient");
+
+            // register user
+            UserDB.insert(newUser);
+
+            // sign user in
+            session.setAttribute("user", newUser);
+            session.removeAttribute("recipient");
+
+            message = "Email verification was successful.";
+            request.setAttribute("messageType", "success");
+
+            url = "/equipment.jsp";
+        }
+
+        request.setAttribute("message", message);
+
+        return url;
+    }
+
+    private boolean isEmailVerified(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            return false;
-        }
-
-        // get sent code from session
         String emailVerificationCode = (String) session.getAttribute("emailVerificationCode");
-        if (emailVerificationCode == null || emailVerificationCode.isEmpty()) {
-            return false;
-        }
-
-        // get and verify user input code from request
         String code = request.getParameter("code");
-        if (code == null || code.isBlank() || !code.equals(emailVerificationCode)) {
-            return false;
-        }
 
-        return true;
+        boolean codeIsValid = !(code.isBlank() || !code.equals(emailVerificationCode));
+
+        request.setAttribute("codeIsValid", codeIsValid);
+
+        return codeIsValid;
+    }
+
+    private String doResendVerificationEmailAction(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        User newUser = (User) session.getAttribute("recipient");
+
+        changeUserEmail(request, newUser);
+
+        session.setAttribute("recipient", newUser);
+        sendVerificationEmail(request, response);
+
+        return "/user/verify.jsp";
+    }
+
+    private void changeUserEmail(HttpServletRequest request, User user) {
+        String email = request.getParameter("email");
+        if (email != null && isEmailValid(request, email)) {
+            user.setEmail(email);
+        }
     }
 
     // #endregion register
