@@ -221,7 +221,7 @@ public class UserController extends HttpServlet {
     private String configure(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String setting = request.getParameter("setting");
-        String url = "settings.jsp";
+        String url = "/user/settings.jsp";
 
         if (setting.equals("user")) {
             url = configureUserSettings(request, response);
@@ -232,17 +232,18 @@ public class UserController extends HttpServlet {
         return url;
     }
 
+    // TODO: javadoc
     private String configureUserSettings(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        String url = "/settings.jsp";
+        String url = "/user/settings.jsp";
 
         if (session == null) {
-            request.setAttribute("validationMessage", "Please sign in to configure your account.");
-            return "signin.jsp";
+            request.setAttribute("message", "Please sign in to configure your account.");
+            return "/user/signin.jsp";
         }
 
-        String validationMessage = "";
+        String message = "";
 
         User user = (User) session.getAttribute("user");
 
@@ -255,21 +256,19 @@ public class UserController extends HttpServlet {
         // validate password
         String newPassword = request.getParameter("newPassword");
         if (!newPassword.isBlank()) {
-            validationMessage = validatePassword(newPassword);
+            //TODO: validatePassword(newPassword);
             user.setPassword(newPassword);
             try {
-                securePassword(user);
+                secureUserPassword(user);
             } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                 e.printStackTrace();
-                validationMessage = "An error has occurred. Please try again later.";
-                request.setAttribute("validationMessage", validationMessage);
+                message = "An error has occurred. Please try again later.";
+                request.setAttribute("message", message);
                 return url;
             }
         }
 
         UserDB.update(user);
-
-        ServletUtil.forwardToReferer(request, response);
 
         return url;
     }
@@ -280,8 +279,8 @@ public class UserController extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (session == null) {
-            request.setAttribute("validationMessage", "Please sign in to configure your equipment");
-            return "/signin.jsp";
+            request.setAttribute("message", "Please sign in to configure your equipment");
+            return "/signin";
         }
 
         User user = (User) request.getAttribute("user");
@@ -289,7 +288,7 @@ public class UserController extends HttpServlet {
 
         UserDB.update(user);
 
-        return "/planner.jsp";
+        return "/routine/planner.jsp";
     }
 
     private List<Equipment> makeEquipmentsFromRequest(HttpServletRequest request) {
