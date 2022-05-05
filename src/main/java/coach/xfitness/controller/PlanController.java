@@ -27,19 +27,15 @@ import coach.xfitness.util.ParameterAsMapRequestWrapper;
 @WebServlet(name = "PlanController", urlPatterns = { "/planner", "/workout" })
 public class PlanController extends HttpServlet {
 
-    // TODO: remove repeticious code Integer.valueOf(0).byteValue(), use static block
-    static final Map<String, Byte> dayOfWeekMap = Stream.of(new Object[][] {
-            { "SUN", Integer.valueOf(0).byteValue() },
-            { "MON", Integer.valueOf(1).byteValue() },
-            { "TUE", Integer.valueOf(2).byteValue() },
-            { "WED", Integer.valueOf(3).byteValue() },
-            { "THU", Integer.valueOf(4).byteValue() },
-            { "FRI", Integer.valueOf(5).byteValue() },
-            { "SAT", Integer.valueOf(6).byteValue() }
-    }).collect(Collectors.toMap(
-            dayOfWeek -> (String) dayOfWeek[0],
-            dayOfWeek -> (Byte) dayOfWeek[1]));
-
+    /**
+     * If the request URI ends with "/planner", then call the getPlanner() method and
+     * set the url to the return value of that method. Otherwise, if the request URI
+     * ends with "/workout", then call the getWorkout() method and set the url to the
+     * return value of that method
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object that will be sent back to the client.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -58,6 +54,14 @@ public class PlanController extends HttpServlet {
                 .forward(request, response);
     }
 
+    /**
+     * If the user is signed in, get today's day of week, include the exercises list,
+     * and set the user's plans by day.
+     * 
+     * @param request the request object
+     * @param response the response object
+     * @return The planner.jsp page.
+     */
     private String getPlanner(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
@@ -85,6 +89,11 @@ public class PlanController extends HttpServlet {
         return "/routine/planner.jsp";
     }
 
+    /**
+     * Get today's day of week in short format, eg. 'Mon', and convert it to lowercase.
+     * 
+     * @return The day of the week in lowercase.
+     */
     private static String getDayOfWeek() {
         return LocalDate.now() // today
                 .getDayOfWeek() // day of week
@@ -93,6 +102,13 @@ public class PlanController extends HttpServlet {
                 .toLowerCase(); // lowercase
     }
 
+    /**
+     * If the user is signed in, get the plan for the day of the week and return the
+     * workout page.
+     *
+     * @param request The request object that was sent to the servlet.
+     * @return A list of plans for the day of the week.
+     */
     private String getWorkout(HttpServletRequest request)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
@@ -113,6 +129,14 @@ public class PlanController extends HttpServlet {
         return "/routine/workout.jsp";
     }
 
+    /**
+     * If the request URI ends with "/planner", then call the postPlanner method.
+     * Otherwise, if the request URI ends with "/workout", then call the getWorkout
+     * method and set the url to the return value of the getWorkout method
+     *
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object is used to send data back to the client.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -130,6 +154,14 @@ public class PlanController extends HttpServlet {
                 .forward(request, response);
     }
 
+    /**
+     * If the action is "add", then call the doAddAction method. If the action is
+     * "update", then call the doUpdateAction method
+     * 
+     * @param request The request object that was sent to the servlet.
+     * @param response The response object is used to send data back to the client.
+     * @return The url is being returned.
+     */
     private String postPlanner(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -144,6 +176,15 @@ public class PlanController extends HttpServlet {
         return url;
     }
 
+    /**
+     * The function checks if the user is logged in, if not, it redirects to the sign
+     * in page. If the user is logged in, it creates a new plan object and adds it to
+     * the user's plan for the day
+     * 
+     * @param request the request object
+     * @param response The response object that will be sent back to the client.
+     * @return The return value is the path to the next page to be displayed.
+     */
     private String doAddAction(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
@@ -176,6 +217,14 @@ public class PlanController extends HttpServlet {
         return getPlanner(request, response);
     }
 
+    /**
+     * It takes the request parameters, parses them into a map, then uses that map to
+     * update the user's planner
+     * 
+     * @param request The request object
+     * @param response The response object.
+     * @return The planner page.
+     */
     private String doUpdateAction(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
