@@ -101,19 +101,21 @@ public class ExerciseController extends HttpServlet {
         String action = request.getParameter("action");
         String requestURI = request.getRequestURI();
 
-        switch (action) {
-            case "favorite":
-                doFavoriteAction(request);
-                break;
-            case "create":
-                doCreateAction(request);
-                break;
-            case "save":
-                doSaveAction(request);
-                break;
-            case "delete":
-                doDeleteAction(request);
-                break;
+        if (action != null) {
+            switch (action) {
+                case "favorite":
+                    doFavoriteAction(request);
+                    break;
+                case "create":
+                    doCreateAction(request);
+                    break;
+                case "save":
+                    doSaveAction(request);
+                    break;
+                case "delete":
+                    doDeleteAction(request);
+                    break;
+            }
         }
 
         String url = getList(request);
