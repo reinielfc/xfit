@@ -1,14 +1,15 @@
 package coach.xfitness.controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +21,8 @@ import coach.xfitness.business.Exercise;
 import coach.xfitness.business.Plan;
 import coach.xfitness.business.User;
 import coach.xfitness.data.ExerciseDB;
-import coach.xfitness.data.PlanDB;
+import coach.xfitness.data.UserDB;
+import coach.xfitness.util.ParameterAsMapRequestWrapper;
 
 @WebServlet(name = "PlanController", urlPatterns = { "/planner", "/workout" })
 public class PlanController extends HttpServlet {
@@ -43,12 +45,12 @@ public class PlanController extends HttpServlet {
             throws ServletException, IOException {
 
         String requestURI = request.getRequestURI();
-        String url = "/planner.jsp";
+        String url = "/routine/planner.jsp";
 
         if (requestURI.endsWith("/planner")) {
-            url = showPlanner(request, response);
+            url = getPlanner(request, response);
         } else if (requestURI.endsWith("/workout")) {
-            url = showWorkout(request, response);
+            url = getWorkout(request);
         }
 
         getServletContext()
@@ -56,39 +58,59 @@ public class PlanController extends HttpServlet {
                 .forward(request, response);
     }
 
-    private String showPlanner(HttpServletRequest request, HttpServletResponse response)
+    private String getPlanner(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
-        if (session != null) {
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/exercise");
-            requestDispatcher.include(request, response);
-            
-            User user = (User) session.getAttribute("user");
-            request.setAttribute("plans", user.getPlansById());
+        // get user if in session
+        User user = (session == null ? null : (User) session.getAttribute("user"));
+
+        if (user == null) {
+            request.setAttribute("message", "Sign in to plan your routine.");
+            return "/user/signin.jsp";
         }
 
-        return "/planner.jsp";
+        // get today's day of week
+        String today = getDayOfWeek();
+
+        request.setAttribute("today", today);
+
+        // include exercises list
+        request.getRequestDispatcher("/exercise")
+                .include(request, response);
+
+        // set user plans by day
+        request.setAttribute("planListByDayMap", user.getPlanListByDayMap());
+
+        return "/routine/planner.jsp";
     }
 
-    private String showWorkout(HttpServletRequest request, HttpServletResponse response)
+    private static String getDayOfWeek() {
+        return LocalDate.now() // today
+                .getDayOfWeek() // day of week
+                .getDisplayName( // short format, eg. 'Mon'
+                        TextStyle.SHORT, Locale.getDefault())
+                .toLowerCase(); // lowercase
+    }
+
+    private String getWorkout(HttpServletRequest request)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
-        if (session == null) {
-            request.setAttribute("validationMessage", "Sign in to view today's workout.");
-            return "/signin.jsp";
+        // get user if in session
+        User user = (session == null ? null : (User) session.getAttribute("user"));
+
+        if (user == null) {
+            request.setAttribute("message", "Sign in to view today's workout.");
+            return "/user/signin.jsp";
         }
 
-        User user = (User) session.getAttribute("user");
+        byte dayOfWeek = Plan.getDayOfWeek(getDayOfWeek());
+        List<Plan> planList = user.getPlanListForDay(dayOfWeek);
 
-        Byte dayOfWeek = dayOfWeekMap.get(request.getParameter("dayOfWeek"));
+        request.setAttribute("planList", planList);
 
-        List<Plan> workout = user.getPlanListForDay(dayOfWeek);
-
-        request.setAttribute("workout", workout);
-
-        return "/workout.jsp";
+        return "/routine/workout.jsp";
     }
 
     @Override
