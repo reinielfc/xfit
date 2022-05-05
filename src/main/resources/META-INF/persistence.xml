@@ -2,22 +2,10 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="default" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-      <class>coach.xfitness.business.Equipment</class>
-      <class>coach.xfitness.business.EquipmentImage</class>
-    <class>coach.xfitness.business.Exercise</class>
-    <class>coach.xfitness.business.ExerciseEquipment</class>
-    <class>coach.xfitness.business.ExerciseImage</class>
-    <class>coach.xfitness.business.ExerciseMuscle</class>
-    <class>coach.xfitness.business.FavoriteExercise</class>
-    <class>coach.xfitness.business.Image</class>
-    <class>coach.xfitness.business.Muscle</class>
-    <class>coach.xfitness.business.Plan</class>
-    <class>coach.xfitness.business.User</class>
-    <class>coach.xfitness.business.UserEquipment</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
     <properties>
-      <property name="hibernate.connection.url" value="jdbc:mariadb://172.20.0.2:3306/xfit"/>
+      <property name="hibernate.connection.url" value="jdbc:mariadb://db:3306/xfit"/>
       <property name="hibernate.connection.driver_class" value="org.mariadb.jdbc.Driver"/>
       <property name="hibernate.connection.username" value="root"/>
       <property name="hibernate.connection.password" value="s3cret"/>
