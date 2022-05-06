@@ -1,11 +1,13 @@
 package coach.xfitness.business;
 
+import java.util.Objects;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import java.util.Objects;
 
 @Entity
 public class FavoriteExercise {
@@ -13,15 +15,22 @@ public class FavoriteExercise {
     @EmbeddedId
     private FavoriteExercisePK id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("userId")
     @JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
     private User userByUserId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("exerciseId")
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
+
+    public FavoriteExercise(User userByUserId, Exercise exerciseByExerciseId) {
+        this.setUserByUserId(userByUserId);
+        this.setExerciseByExerciseId(exerciseByExerciseId);
+
+        this.id = new FavoriteExercisePK(userByUserId.getId(), exerciseByExerciseId.getId());
+    }
 
     // #region boilerplate
     public FavoriteExercise() {

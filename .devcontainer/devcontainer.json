@@ -17,7 +17,6 @@
 		"workbench.colorTheme": "Atom One Dark",					// enable dark theme
 		"editor.bracketPairColorization.enabled": true,				// enable bracket pair {} colorization
 		"java.configuration.updateBuildConfiguration": "automatic",	// update Java classpath automatically
-		"editor.defaultFormatter": "esbenp.prettier-vscode"			// set prettier as default formatter
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
@@ -38,6 +37,7 @@
 
 		// back end
 		"vscjava.vscode-java-pack",					// extension pack for java development
+		"mintlify.document",						// generate javadoc
 		
 		// front end
 		"formulahendry.auto-close-tag",				// auto-close tags
@@ -45,6 +45,8 @@
 		"JakeWilson.vscode-cdnjs",					// find CDNs for js and css libraries
 		"AnbuselvanRocky.bootstrap5-vscode",		// snippets for bootstrap 5
 		"ritwickdey.LiveServer",					// live server to debug html
+		"rbalet.vscode-sorting-attrs",				// sort html attributes
+
 
 		// debugging
 		"firefox-devtools.vscode-firefox-debug",	// firefox debugger
@@ -52,7 +54,7 @@
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [5500],
+	"forwardPorts": [2222],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "docker --version",
@@ -69,6 +71,7 @@
 			"ppa": true
 		},
 		"java": "11",
-		"maven": "3.8"
+		"maven": "3.8",
+		"sshd": "latest"
 	}
 }

@@ -95,13 +95,13 @@ $(window).on("load", function () {
     });
 
     $validationMessage.append(validationMessageStart.add(validationMessageList));
-
+    // TODO: targets instead of form 
     $(".new-password-form").on("submit", function (event) {
         let $icon = $("#password-icon");
 
         function passwordIsValid(passwordVal) {
             let isValid = true;
-            let requirements = [/\S{8,}/, /[A-Z]/, /[a-z]/, /[0-9]/]
+            let requirements = [/\S{8,}/, /[A-Z]/, /[a-z]/, /\d/]
             let validationMessageIconList = validationMessageList.find("svg");
 
             for (let i = 0; i < requirements.length; i++) {

@@ -1,5 +1,11 @@
 package coach.xfitness.business;
 
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -7,10 +13,20 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import java.util.Objects;
+import javax.persistence.NamedQuery;
 
 @Entity
+@NamedQuery(name = "Exercise.selectByPositionInDay", query = "SELECT p FROM Plan p WHERE p.dayOfWeek = :dayOfWeek AND p.position = :position")
 public class Plan {
+
+    private static final List<DayOfWeek> DAYS_OF_WEEK = List.of(
+            DayOfWeek.SUNDAY,
+            DayOfWeek.MONDAY,
+            DayOfWeek.TUESDAY,
+            DayOfWeek.WEDNESDAY,
+            DayOfWeek.THURSDAY,
+            DayOfWeek.FRIDAY,
+            DayOfWeek.SATURDAY);
 
     @EmbeddedId
     private PlanPK id;
@@ -48,6 +64,13 @@ public class Plan {
     @MapsId("exerciseId")
     @JoinColumn(name = "exerciseId", referencedColumnName = "id", nullable = false)
     private Exercise exerciseByExerciseId;
+
+    public Plan(User user, Exercise exercise) {
+        this.userByUserId = user;
+        this.exerciseByExerciseId = exercise;
+
+        this.id = new PlanPK(userByUserId.getId(), exerciseByExerciseId.getId());
+    }
 
     // #region boilerplate
     public Plan() {
@@ -149,4 +172,46 @@ public class Plan {
     }
 
     // #endregion boilerplate
+
+    /**
+     * Get the short name of the day of the week in lower case.
+     * 
+     * @return The day of the week in short form.
+     */
+    public String getDayOfWeekShortName() {
+        return getDayOfWeekObject().getDisplayName(TextStyle.SHORT, Locale.getDefault()).toLowerCase();
+    }
+
+    /**
+     * Return the DayOfWeek object that corresponds to the day of week integer stored
+     * in this object.
+     * 
+     * @return A DayOfWeek object
+     */
+    public DayOfWeek getDayOfWeekObject() {
+        return DAYS_OF_WEEK.get(dayOfWeek);
+    }
+
+    /**
+     * Given a day of the week, return the index of that day in the week.
+     * 
+     * @param dayOfWeek The day of the week to get the index for.
+     * @return The index of the day of the week.
+     */
+    public static byte getDayOfWeek(String dayOfWeek) {
+        String shortName;
+        
+        for (int i = 0; i < DAYS_OF_WEEK.size(); i++) {
+            shortName = DAYS_OF_WEEK.get(i)
+                    .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                    .toLowerCase();
+            
+            if (shortName.equals(dayOfWeek)) {
+                return Integer.valueOf(i).byteValue();
+            }
+        }
+
+        return 0;
+    }
+
 }

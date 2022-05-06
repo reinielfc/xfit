@@ -33,59 +33,186 @@ public class UserDBTest {
 	}
 
     @Test
-    //test that user is inputted into the data and exists in exists and deletes afterward
-    public void testInsert() {
-        User test = new User();
-        test.setId(1);
-        test.setEmail("JHerdocia112@att.net");
-        test.setName("JavierH");
-        test.setPassword("pass");
+
+    public void testSelectByEmailSuccess() {
+
+        String actualEmail = "marioisaman@gmail.com";
+        //create our user objects
+        User expected = new User();
+        //set both emails equal to the same email
+
+        expected.setEmail(actualEmail);
+        expected.setPassword("password");
+        expected.setName("name");
+        //insert the actual value into the database
+
+        UserDB.insert(expected);
+        User actual = UserDB.selectByEmail(actualEmail);
+
+        assertNotNull(actual);
+        //confirm that the user "actual" that we inserted is equal to
+        assertEquals(actualEmail, actual.getEmail());
+        //Clean up after test {delete user from table}
+        UserDB.deleteByEmail(actualEmail);
+
+    }
+
+    @Test
+
+    public void testSelectByEmailFailure() {
         
-        UserDB.insert(test);
-        assertTrue(UserDB.has("JHerdocia112@att.net"));
-        UserDB.delete(test.getEmail());
+        String actualEmail= "";
+        String actualPassword = "";
+        String actualName = "";
+        User expected = new User();
+
+        expected.setEmail(actualEmail);
+        expected.setPassword(actualPassword);
+        expected.setName(actualName);
+
+        UserDB.insert(expected);
+
+        try {
+            UserDB.selectByEmail(actualEmail);
+        } catch (Exception e) {
+            //TODO: handle exception
+            fail("unable to find the email");
+        }
+        UserDB.deleteByEmail(actualEmail);
     }
 
     @Test
-    //test that selectUser will return a null value for invalid selection
-    public void testSelectInvalidUser() {
-       User test = UserDB.select("test@gmail.com");
-       if(test != null){
-           fail("Must return a null value for invalid or non exsistent user");
-       }
+    public void testInsertSuccess() {
+        String actualEmail = "thisdoesexist@gmail.com";
+        User expected = new User();
+        boolean check = true;
+
+        expected.setEmail(actualEmail);
+        expected.setPassword("password");
+        expected.setName("name");
+
+        UserDB.insert(expected);
+
+        assertEquals(UserDB.hasUserWithEmail(actualEmail), check);
+
+        UserDB.deleteByEmail(actualEmail);
+
     }
 
     @Test
-    //test that duplicate insertion of emails will result in an error
-    public void testInsertDuplicateUserEmails(){
-        String message = "Failed to add User.";
-        User test1 = new User();
-        test1.setId(10);
-        test1.setEmail("JSmith001@gmail.com");
-        test1.setName("JohnSmith");
-        test1.setPassword("pass");
-        User test2 = new User();
-        test2.setId(11);
-        test2.setEmail("JSmith001@gmail.com");
-        test2.setName("JavierHerdocia");
-        test2.setPassword("pass");
-        //insert
-        UserDB.insert(test1);
-        UserDB.insert(test2);
-        String output = out.toString();
-        assertTrue(output.contains(message));
-        UserDB.delete(test1.getEmail());
+    public void testInsertFailure() {
+        
+        String actualEmail= "";
+        String actualPassword = "";
+        String actualName = "";
+        User expected = new User();
+
+        expected.setEmail(actualEmail);
+        expected.setPassword(actualPassword);
+        expected.setName(actualName);
+
+        try {
+                UserDB.insert(expected);
+        } catch (Exception e) {
+            //TODO: handle exception
+            fail("Unable to insert User");
+        }
+
+
     }
 
     @Test
-    //test that hasUser will return false for invalid user selection
-    public void testhasUser(){
-        assertFalse(UserDB.has("test@gmail.com"));
+    public void testHasUserWithEmailSuccess() {
+
+        User expected = new User();
+
+        String actualEmail = "marioisaman@gmail.com";
+        expected.setEmail(actualEmail);
+        expected.setPassword("password");
+        expected.setName("name");
+
+        UserDB.insert(expected);
+
+        User actual  = UserDB.selectByEmail(actualEmail);
+
+        assertNotNull(actual);
+
+        UserDB.deleteByEmail(actualEmail);
+
     }
 
     @Test
-    //test that User attributes cannot be null
-    public void testUserNullValues(){
+    public void testHasUserWithEmailFailure() {
+
+        User expected = new User();
+
+        String actualEmail = "";
+        expected.setEmail(actualEmail);
+        expected.setPassword("password");
+        expected.setName("name");
+
+        UserDB.insert(expected);
+        try {
+            UserDB.selectByEmail(actualEmail);
+        } catch (Exception e) {
+            //TODO: handle exception
+            fail("unable to find user with email");
+        }
+
+        UserDB.deleteByEmail(actualEmail);
 
     }
+
+    @Test
+    public void testDeleteByEmailSuccess() {
+        String actualEmail = "marioisaman@gmail.com";
+
+        User expected = new User();
+
+        expected.setEmail(actualEmail);
+        expected.setPassword("password");
+        expected.setName("name");     
+
+        UserDB.insert(expected);
+
+        UserDB.deleteByEmail(actualEmail);
+
+        try {
+            UserDB.selectByEmail(actualEmail);
+        } catch (Exception e) {
+            //TODO: handle exception
+            fail("Unable to find User");
+        }
+    }
+    @Test
+    public void testUpdateSuccess() {
+        String emptyEmail = "";
+        String actualEmail = "fillinganemail@gmail.com";
+        User missing = new User();
+
+        missing.setEmail(emptyEmail);
+        missing.setPassword("");
+        missing.setName("");
+        UserDB.insert(missing);
+        
+        User fill = new User();
+
+        fill.setEmail(actualEmail);
+        fill.setPassword("fillpassword");
+        fill.setName("fillaname");
+        UserDB.insert(fill);
+
+        UserDB.update(missing);
+    
+        try {
+            UserDB.selectByEmail(emptyEmail);
+        } catch (Exception e) {
+            //TODO: handle exception
+            fail("email does not match the records");
+        }
+
+        UserDB.deleteByEmail(missing.getEmail());
+        UserDB.deleteByEmail(fill.getEmail());
+    }
+
 }

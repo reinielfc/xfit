@@ -19,6 +19,12 @@ public class FavoriteExercisePK implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int exerciseId;
 
+
+    public FavoriteExercisePK(int userId, int exerciseId) {
+        this.userId = userId;
+        this.exerciseId = exerciseId;
+    }
+
     // #region boilerplate
     public FavoriteExercisePK() {
     }

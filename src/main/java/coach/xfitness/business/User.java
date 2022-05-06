@@ -1,9 +1,21 @@
 package coach.xfitness.business;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 @Entity
 @NamedQuery(name = "User.selectByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
@@ -30,16 +42,16 @@ public class User {
     @Column(name = "accessToken")
     private String accessToken;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Exercise> exercisesById;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<FavoriteExercise> favoriteExercisesById;
 
-    @OneToMany(mappedBy = "userByUserId")
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Plan> plansById;
 
-    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userByUserId", cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<UserEquipment> userEquipmentsById;
 
     // #region boilerplate
@@ -144,7 +156,86 @@ public class User {
 
     // #endregion boilerplate
 
+    /**
+     * Add a new FavoriteExercise to the list of favorite exercises for this user.
+     * 
+     * @param exercise The exercise to add as a favorite
+     */
+    public void addExerciseAsFavorite(Exercise exercise) {
+        favoriteExercisesById.add(new FavoriteExercise(this, exercise));
+    }
+
+    /**
+     * Remove the favorite exercise from the list of favorite exercises if the exercise
+     * id of the favorite exercise is equal to the exercise id of the exercise passed
+     * in.
+     * 
+     * @param exercise the exercise to be removed from the list of favorite exercises
+     */
+    public void removeExerciseAsFavorite(Exercise exercise) {
+        favoriteExercisesById.removeIf(fe -> fe.getExerciseByExerciseId().getId() == exercise.getId());
+    }
+
+    /**
+     * Return true if the user has the given exercise as a favorite, false otherwise.
+     * 
+     * @param exercise the exercise to check if it's a favorite
+     * @return A boolean value.
+     */
+    public boolean hasExerciseAsFavorite(Exercise exercise) {
+        return this.favoriteExercisesById.stream()
+                .anyMatch(fe -> fe.getExerciseByExerciseId().getId() == exercise.getId());
+    }
+
+    /**
+     * Add a plan to a day, and set the day and position of the plan.
+     * 
+     * @param plan The plan to add to the day
+     * @param day The day of the week to add the plan to.
+     */
+    public void addPlanToDay(Plan plan, byte day) {
+        int position = getPlanListForDay(day).size();
+        plan.setDayOfWeek(day);
+        plan.setPosition(position);
+        
+        this.plansById.add(plan);
+    }
+
+    /**
+     * Get all the plans for a given day of the week.
+     * 
+     * 
+     * @param dayOfWeek The day of the week to get the plans for.
+     * @return A list of plans for a given day of the week.
+     */
+    public List<Plan> getPlanListForDay(byte dayOfWeek) {
+        return this.getPlansById().stream()
+                .filter(p -> p.getDayOfWeek() == dayOfWeek)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Set the user's equipments by creating a new UserEquipment for each equipment.
+     * 
+     * @param equipments Collection of equipments to be added to the user
+     */
     public void setUserEquipmentsByEquipments(Collection<Equipment> equipments) {
-        this.userEquipmentsById = equipments.stream().map(e -> new UserEquipment(this, e)).toList();
+        this.userEquipmentsById = equipments.stream()
+                .map(e -> new UserEquipment(this, e))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get a map of the plans grouped by day of the week, sorted by position.
+     * 
+     * @return A map of the plans grouped by day of the week.
+     */
+    public Map<String, List<Plan>> getPlanListByDayMap() {
+        Map<String, List<Plan>> planListByDayMap = this.getPlansById().stream()
+                .collect(Collectors.groupingBy(Plan::getDayOfWeekShortName, Collectors.toList()));
+
+        planListByDayMap.values().forEach(planList -> planList.sort(Comparator.comparing(Plan::getPosition)));
+
+        return planListByDayMap;
     }
 }
