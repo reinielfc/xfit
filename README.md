@@ -10,7 +10,7 @@ XFit is a web application that helps users to plan daily workout routines accord
 
 Watch our [video presentation][video] on YouTube.
 
-[![Video Presentation](https://github.com/reinielfc/xfit/blob/main/doc/image/search-exercise-text.gif)](https://youtu.be/DOjRybasZp)
+[![Video Presentation](doc/image/search-exercise-text.gif)][video]
 
 _This video was put together and edited by [Javier Herdocia]_.
 
@@ -38,7 +38,7 @@ This app was made as final project for our Software Engineering Capstone class a
 [sds]: doc/SRS-SoftwareRequirementsSpecification/document.docx?raw=true
 [srs]: doc/SDS-SoftwareDesignSpecification.docx?raw=true
 [ppt]: doc/Presentation.pptx?raw=true
-[video]: https://youtu.be/DOjRybasZp
+[video]: https://youtu.be/DOjRybasZpA
 [bs-ist]: https://www.mdc.edu/softwareengineering/
 [reiniel fernandez]: https://github.com/reinielfc
 [javier herdocia]: https://github.com/JHerdocia112
