@@ -6,11 +6,11 @@ XFit is a web application that helps users to plan daily workout routines accord
 
 ## Video presentation
 
-> 🛈 _Since the video contains copyrighted music, it may have audio issues or it may have been taken down by YouTube._
+> 🛈 _Since the video contains copyrighted music, it may have audio issues or it may have been taken down._
 
 Watch our [video presentation][video] on YouTube.
 
-[![Video Presentation](doc/image/search-exercise-text.gif)][video]
+[![Video Presentation](https://github.com/reinielfc/xfit/blob/main/doc/image/search-exercise-text.gif)][video]
 
 _This video was put together and edited by [Javier Herdocia]_.
 
